@@ -18,6 +18,8 @@ struct LocalizationTests {
             }
         }
         #expect(count>400)
+        let englishHost=L10n.catalog(preferences:["en-US"])
+        #expect(englishHost.localizedString(forKey:"Listo",value:"__MISSING__",table:"Localizable")=="Listo")
         #expect(L10n.format("Fila %@, columna %@",2,3)=="Fila 2, columna 3")
     }
 }
