@@ -1,0 +1,22 @@
+Building for debugging...
+[Using on-disk description]
+[4 / 24] Naberius_NaberiusCore
+[4 / 16] Naberius-product
+[9 / 21] Naberius-product
+[13 / 25] Naberius
+[13 / 25] Naberius-product
+[17 / 27] Naberius-product
+[20 / 26] NaberiusAppTests-product
+[22 / 28] NaberiusAppTests-product
+[25 / 29] NaberiusAppTests-product
+[27 / 29] NaberiusAppTests-product
+[29 / 29] NaberiusCoreTests-product
+Build complete! (6,79 s)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite ProofProtectionTests started.
+◇ Test "PDF proof protects the hidden editor from direct formatting and insertion" started.
+✔ Test "PDF proof protects the hidden editor from direct formatting and insertion" passed after 0.643 seconds.
+✔ Suite ProofProtectionTests passed after 0.643 seconds.
+✔ Test run with 1 test in 1 suite passed after 0.643 seconds.

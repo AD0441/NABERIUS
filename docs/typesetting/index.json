@@ -1,0 +1,26 @@
+[
+  {
+    "template": "blank",
+    "pdf": "blank.pdf"
+  },
+  {
+    "template": "report",
+    "pdf": "report.pdf"
+  },
+  {
+    "template": "article",
+    "pdf": "article.pdf"
+  },
+  {
+    "template": "thesis",
+    "pdf": "thesis.pdf"
+  },
+  {
+    "template": "book",
+    "pdf": "book.pdf"
+  },
+  {
+    "template": "letter",
+    "pdf": "letter.pdf"
+  }
+]

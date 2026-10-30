@@ -1,0 +1,33 @@
+Pages: 3
+El oficio de escribir
+Del primer borrador a una idea que se entiende.
+1 Una idea necesita espacio
+Escribir es dar forma a lo que pensamos. Este documento de demostración muestra cómo orga-
+nizar un texto, enlazar sus fuentes y cuidar su presentación sin interrumpir la escritura.
+1.1 Estructura antes que apariencia
+Usa los estilos de la barra para expresar qué significa cada párrafo. El esquema se construye a
+partir de tus títulos; la plantilla se ocupa de la tipografía.
+Inserta una tabla, una figura o una ecuación desde el menú Insertar.
+• Guarda tu trabajo como .nab: contenido, imágenes y referencias viajan juntos.
+2 Un documento, dos maneras de verlo
+Alterna entre páginas y lienzo continuo. El texto y el historial son los mismos; la paginación
+definitiva corresponde al PDF compuesto con LaTeX.
+(Pérez, 2024)
+Tabla 1: Resultados sintéticos
+Variable Valor
+Muestra 12
+α + β
+2 (1)
+Figura 1
+1
+1Nota sintética
+1
+Figura 1: Figura de prueba
+2
+Índice
+1 Una idea necesita espacio 1
+1.1 Estructura antes que apariencia . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+2 Un documento, dos maneras de verlo 1
+Referencias
+Pérez, A. (2024). Synthetic study.
+3

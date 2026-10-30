@@ -1,0 +1,173 @@
+Building for debugging...
+[1 / 1]
+[3 / 15] Naberius-product
+[7 / 19] Naberius-product
+[11 / 23] Naberius
+[15 / 25] Naberius-product
+[18 / 24] NaberiusAppTests-product
+[20 / 26] NaberiusAppTests-product
+[24 / 28] NaberiusAppTests-product
+[26 / 28] NaberiusAppTests-product
+Build complete! (5,36 s)
+Test Suite 'All tests' started at 2026-10-30 00:59:48.520.
+Test Suite 'All tests' passed at 2026-10-30 00:59:48.522.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+Test Suite 'All tests' started at 2026-10-30 00:59:48.713.
+Test Suite 'All tests' passed at 2026-10-30 00:59:48.714.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite BibliographyTests started.
+◇ Suite StructuralTests started.
+◇ Suite TemplateCompositionTests started.
+◇ Suite JournalTests started.
+◇ Suite TemplateTests started.
+◇ Suite TemplateProtectionTests started.
+◇ Suite DocumentTests started.
+◇ Suite FragmentTests started.
+◇ Suite TypesettingTests started.
+◇ Suite CompositionTests started.
+◇ Test "RIS parser preserves missing metadata" started.
+◇ Test "CSL generates real citations and bibliography" started.
+◇ Test "external fragment targets become explicit missing references and ambiguous identities are rejected" started.
+◇ Test "CSL JSON roundtrip preserves represented fields" started.
+◇ Test "search whole words and case options" started.
+◇ Test "copied academic objects bring resources references and internal targets" started.
+◇ Test "BibTeX parser handles nested fields" started.
+◇ Test "template locks are per property and survive existing archive format" started.
+◇ Test "narrative parenthetical multiple and locator are linked to references" started.
+◇ Test "template changes preserve semantic document" started.
+◇ Test "replace respects Unicode and literal replacement syntax" started.
+◇ Test "large document serializes within a measurable budget" started.
+◇ Test "archive round trip preserves content identifiers assets and cursor" started.
+◇ Test "truncated corrupt and oversized declarations are rejected" started.
+◇ Test "all six templates compose actual LaTeX including letter and chapters" started.
+◇ Test "template scanner diagnoses compatibility without execution" started.
+◇ Test "moving figures renumbers references without changing destination" started.
+◇ Test "portable project uses internal resource paths and escapes input" started.
+◇ Test "atomic save detects conflicts and recovery remains intact" started.
+◇ Test "template importer maps class geometry and reports dependencies without running source" started.
+◇ Test "failed TeX composition leaves a document serializable" started.
+◇ Test "builtins export their actual class with safe portable font setup" started.
+◇ Test "appendices and separators export as semantic LaTeX commands" started.
+◇ Test "typographic logos are boundary aware escaped and preserve adjacent text" started.
+◇ Test "old template data remains readable with explicit typography preserved" started.
+◇ Test "layouts survive archive roundtrip and reject unsafe dimensions" started.
+◇ Test "table styles have distinct real LaTeX rules" started.
+◇ Test case passing 1 argument style → .vancouver to "CSL generates real citations and bibliography" started.
+◇ Test case passing 1 argument style → .ieee to "CSL generates real citations and bibliography" started.
+◇ Test case passing 1 argument style → .chicago to "CSL generates real citations and bibliography" started.
+◇ Test case passing 1 argument style → .apa to "CSL generates real citations and bibliography" started.
+◇ Test case passing 3 arguments text → "café cafétería CAFÉ", whole → true, expected → 2 to "search whole words and case options" started.
+◇ Test "real LaTeX compilation produces a PDF without mutating source" started.
+◇ Test case passing 2 arguments source → "\documentclass{article}", compatible → true to "template scanner diagnoses compatibility without execution" started.
+◇ Test case passing 1 argument template → DocumentTemplate(id: "blank", name: "En blanco", detail: "Una página para comenzar.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.article, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "all six templates compose actual LaTeX including letter and chapters" started.
+◇ Test case passing 3 arguments text → "cat scatter Cat", whole → false, expected → 3 to "search whole words and case options" started.
+◇ Test "journal recovers edits between snapshots and ignores a torn final transaction" started.
+◇ Test case passing 2 arguments source → "\immediate\write18{touch bad}", compatible → false to "template scanner diagnoses compatibility without execution" started.
+◇ Test case passing 2 arguments source → "\input{../secret}", compatible → false to "template scanner diagnoses compatibility without execution" started.
+◇ Test case passing 1 argument template → DocumentTemplate(id: "blank", name: "En blanco", detail: "Una página para comenzar.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.article, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "builtins export their actual class with safe portable font setup" started.
+◇ Test case passing 1 argument template → DocumentTemplate(id: "report", name: "Informe académico", detail: "Estructura clara para comunicar resultados.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.4, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.report, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "builtins export their actual class with safe portable font setup" started.
+◇ Test case passing 1 argument template → DocumentTemplate(id: "article", name: "Artículo científico", detail: "Resumen, secciones y bibliografía.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.article, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "builtins export their actual class with safe portable font setup" started.
+◇ Test case passing 1 argument template → DocumentTemplate(id: "thesis", name: "Tesis", detail: "Capítulos, portada y referencias.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.5, marginMM: 25.0, paper: "a4paper", cover: true, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.report, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "builtins export their actual class with safe portable font setup" started.
+◇ Test case passing 1 argument template → DocumentTemplate(id: "book", name: "Libro", detail: "Escritura extensa organizada en capítulos.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: true, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.book, paragraphIndentMM: 5.0, paragraphSpacingPT: 0.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "builtins export their actual class with safe portable font setup" started.
+◇ Test case passing 1 argument style → "Académico" to "table styles have distinct real LaTeX rules" started.
+◇ Test case passing 1 argument style → "Simple" to "table styles have distinct real LaTeX rules" started.
+◇ Test case passing 1 argument template → DocumentTemplate(id: "letter", name: "Carta", detail: "Correspondencia formal y sobria.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.letter, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "builtins export their actual class with safe portable font setup" started.
+◇ Test case passing 1 argument style → "Cuadrícula" to "table styles have distinct real LaTeX rules" started.
+✔ Test "RIS parser preserves missing metadata" passed after 0.044 seconds.
+✔ Test "BibTeX parser handles nested fields" passed after 0.044 seconds.
+✔ Test "external fragment targets become explicit missing references and ambiguous identities are rejected" passed after 0.044 seconds.
+✔ Test "CSL JSON roundtrip preserves represented fields" passed after 0.044 seconds.
+✔ Test "template locks are per property and survive existing archive format" passed after 0.044 seconds.
+✔ Test "template changes preserve semantic document" passed after 0.044 seconds.
+✔ Test "copied academic objects bring resources references and internal targets" passed after 0.044 seconds.
+✔ Test "archive round trip preserves content identifiers assets and cursor" passed after 0.044 seconds.
+✔ Test "truncated corrupt and oversized declarations are rejected" passed after 0.044 seconds.
+✔ Test "search whole words and case options" with 2 test cases passed after 0.045 seconds.
+✔ Test "replace respects Unicode and literal replacement syntax" passed after 0.045 seconds.
+✔ Test "template scanner diagnoses compatibility without execution" with 3 test cases passed after 0.050 seconds.
+✔ Test "moving figures renumbers references without changing destination" passed after 0.050 seconds.
+✔ Test "atomic save detects conflicts and recovery remains intact" passed after 0.054 seconds.
+✔ Test "portable project uses internal resource paths and escapes input" passed after 0.054 seconds.
+✔ Test "template importer maps class geometry and reports dependencies without running source" passed after 0.054 seconds.
+✔ Test "appendices and separators export as semantic LaTeX commands" passed after 0.054 seconds.
+✔ Test "typographic logos are boundary aware escaped and preserve adjacent text" passed after 0.054 seconds.
+✔ Test "old template data remains readable with explicit typography preserved" passed after 0.054 seconds.
+✔ Test "builtins export their actual class with safe portable font setup" with 6 test cases passed after 0.054 seconds.
+✔ Test "layouts survive archive roundtrip and reject unsafe dimensions" passed after 0.054 seconds.
+✔ Test "table styles have distinct real LaTeX rules" with 3 test cases passed after 0.054 seconds.
+✔ Test "journal recovers edits between snapshots and ignores a torn final transaction" passed after 0.045 seconds.
+✔ Suite FragmentTests passed after 0.054 seconds.
+✔ Suite TemplateProtectionTests passed after 0.054 seconds.
+✔ Suite TemplateTests passed after 0.054 seconds.
+✔ Suite TypesettingTests passed after 0.054 seconds.
+✔ Suite JournalTests passed after 0.054 seconds.
+✔ Test "failed TeX composition leaves a document serializable" passed after 0.130 seconds.
+✔ Suite StructuralTests passed after 0.131 seconds.
+BENCHMARK 3000 paragraphs, 150000 words, 87307 bytes, 0.071173791 seconds
+✔ Test "large document serializes within a measurable budget" passed after 0.248 seconds.
+✔ Suite DocumentTests passed after 0.249 seconds.
+TEMPLATE_PDF blank /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-278002A0-4A01-44EE-AC39-19928C9C8994/main.pdf
+◇ Test case passing 1 argument template → DocumentTemplate(id: "report", name: "Informe académico", detail: "Estructura clara para comunicar resultados.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.4, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.report, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "all six templates compose actual LaTeX including letter and chapters" started.
+TEMPLATE_PDF report /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-CAA413E4-1A77-4263-828D-0943C9C24D36/main.pdf
+◇ Test case passing 1 argument template → DocumentTemplate(id: "article", name: "Artículo científico", detail: "Resumen, secciones y bibliografía.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.article, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "all six templates compose actual LaTeX including letter and chapters" started.
+✔ Test "narrative parenthetical multiple and locator are linked to references" passed after 2.264 seconds.
+TEMPLATE_PDF article /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-CC26DBB3-F15B-444A-AABD-C0CE50F03A4D/main.pdf
+◇ Test case passing 1 argument template → DocumentTemplate(id: "thesis", name: "Tesis", detail: "Capítulos, portada y referencias.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.5, marginMM: 25.0, paper: "a4paper", cover: true, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.report, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "all six templates compose actual LaTeX including letter and chapters" started.
+PDF_TEST_OUTPUT /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-1AEC93C6-EB95-403B-B1C2-8C79EF4DF7DB/main.pdf
+✔ Test "real LaTeX compilation produces a PDF without mutating source" passed after 3.064 seconds.
+✔ Suite CompositionTests passed after 3.072 seconds.
+TEMPLATE_PDF thesis /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-9AB25153-C133-4330-BDE5-E181FCBDC472/main.pdf
+◇ Test case passing 1 argument template → DocumentTemplate(id: "book", name: "Libro", detail: "Escritura extensa organizada en capítulos.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: true, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.book, paragraphIndentMM: 5.0, paragraphSpacingPT: 0.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "all six templates compose actual LaTeX including letter and chapters" started.
+TEMPLATE_PDF book /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-8A32128E-E452-4563-AFAD-4C85A5928733/main.pdf
+◇ Test case passing 1 argument template → DocumentTemplate(id: "letter", name: "Carta", detail: "Correspondencia formal y sobria.", version: 1, category: "Integradas", font: "Latin Modern Roman", fontSize: 12.0, lineSpacing: 1.15, marginMM: 25.0, paper: "a4paper", cover: false, numberedHeadings: true, locked: false, lockedProperties: nil, layout: Optional(NaberiusCore.DocumentLayout(documentClass: NaberiusCore.DocumentClass.letter, paragraphIndentMM: 0.0, paragraphSpacingPT: 7.0, header: "", footer: "", pageNumbers: true, recipient: "", opening: "", closing: "Atentamente,"))) to "all six templates compose actual LaTeX including letter and chapters" started.
+✔ Test "CSL generates real citations and bibliography" with 4 test cases passed after 4.333 seconds.
+✔ Suite BibliographyTests passed after 4.334 seconds.
+TEMPLATE_PDF letter /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-221231D5-47A5-4F8A-9FFF-FD6E917B8AC2/main.pdf
+✔ Test "all six templates compose actual LaTeX including letter and chapters" with 6 test cases passed after 4.880 seconds.
+✔ Suite TemplateCompositionTests passed after 4.880 seconds.
+✔ Test run with 29 tests in 10 suites passed after 4.880 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite ListEditingTests started.
+◇ Suite LongDocumentEditingTests started.
+◇ Suite OutlineTests started.
+◇ Suite EditorTests started.
+◇ Test "semantic list formatting is immediate and empty return exits the list" started.
+◇ Suite TypographyTests started.
+◇ Suite FigureTests started.
+◇ Test "outline navigation uses semantic identity after list markers" started.
+◇ Test "LaTeX logo changes glyphs without changing editing or exported characters" started.
+◇ Test "document headings body and emphasis use bundled Latin Modern" started.
+◇ Test "equation preview is cropped from an actual TeX PDF" started.
+◇ Test "native edits preserve a long document and stable block identities" started.
+◇ Test "rich text roundtrip preserves marks styles inline nodes and block identity" started.
+◇ Suite ParagraphProjectionTests started.
+◇ Test "tall figure preview preserves aspect ratio when height is bounded" started.
+◇ Test "incremental edits handle middle paragraphs multiline insertion and final empty paragraph" started.
+◇ Test case passing 1 argument style → .bullet to "semantic list formatting is immediate and empty return exits the list" started.
+◇ Test "native typing stable identifiers undo and heading return" started.
+◇ Test case passing 1 argument style → .numbered to "semantic list formatting is immediate and empty return exits the list" started.
+✔ Test "LaTeX logo changes glyphs without changing editing or exported characters" passed after 0.658 seconds.
+✔ Test "outline navigation uses semantic identity after list markers" passed after 0.662 seconds.
+✔ Suite OutlineTests passed after 0.662 seconds.
+NATIVE_TYPING_BENCHMARK 1000 paragraphs, 51000 words, 40 edits: 0.052199917 seconds
+✔ Test "tall figure preview preserves aspect ratio when height is bounded" passed after 0.796 seconds.
+✔ Test "document headings body and emphasis use bundled Latin Modern" passed after 0.796 seconds.
+✔ Test "incremental edits handle middle paragraphs multiline insertion and final empty paragraph" passed after 0.796 seconds.
+✔ Test "native typing stable identifiers undo and heading return" passed after 0.797 seconds.
+✔ Suite FigureTests passed after 0.797 seconds.
+✔ Test "semantic list formatting is immediate and empty return exits the list" with 2 test cases passed after 0.797 seconds.
+✔ Test "native edits preserve a long document and stable block identities" passed after 0.797 seconds.
+✔ Suite ParagraphProjectionTests passed after 0.797 seconds.
+✔ Suite LongDocumentEditingTests passed after 0.797 seconds.
+✔ Suite ListEditingTests passed after 0.797 seconds.
+✔ Test "rich text roundtrip preserves marks styles inline nodes and block identity" passed after 0.797 seconds.
+✔ Suite EditorTests passed after 0.797 seconds.
+MATH_TEST_OUTPUT /var/folders/6w/n11_zcn55_7b5pxns6hbnx9h0000gn/T/Naberius-Math-19BF1CC7-4341-4955-BDFC-A056B6708458/main.pdf
+✔ Test "equation preview is cropped from an actual TeX PDF" passed after 1.105 seconds.
+✔ Suite TypographyTests passed after 1.105 seconds.
+✔ Test run with 10 tests in 7 suites passed after 1.106 seconds.

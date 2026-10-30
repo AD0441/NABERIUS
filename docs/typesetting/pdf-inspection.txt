@@ -1,0 +1,27 @@
+article.pdf: 1 páginas · fuente de la reconstrucción textual PDFKit: Helvetica (no identifica las fuentes incrustadas; ver embedded-fonts.txt)
+Prueba de LATEX
+Resumen
+Prueba tipográfica de LATEX: español, áéíóú y referencias.
+El oficio de escribir
+Del primer borrador a una idea que se entiende.
+1. Una idea necesita espacio
+Escribir es dar forma a lo que pensamos. Este documento de demostración muestra
+cómo organizar un texto, enlazar sus fuentes y cuidar su presentación sin interrumpir
+la escritura.
+1.1. Estructura antes que apariencia
+Usa los estilos de la barra para expresar qué significa cada párrafo. El esquema se
+construye a partir de tus títulos; la plantilla se ocupa de la tipografía.
+Inserta una tabla, una figura o una ecuación desde el menú Insertar.
+Guarda tu trabajo como .nab: contenido, imágenes y referencias viajan juntos.
+2. Un documento, dos maneras de verlo
+Alterna entre páginas y lienzo continuo. El texto y el historial son los mismos; la pagi-
+nación definitiva corresponde al PDF compuesto con LATEX.
+LATEX y TEX conservan su composición tipográfica.
+A. Datos complementarios
+Tabla 1: Resultados de prueba
+Variable Valor
+√α + β (1)
+Naberius 1
+equation.pdf: 1 páginas · fuente de la reconstrucción textual PDFKit: Helvetica (no identifica las fuentes incrustadas; ver embedded-fonts.txt)
+α + β
+2

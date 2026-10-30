@@ -1,0 +1,25 @@
+Building for debugging...
+[Using on-disk description]
+[2 / 21] NaberiusCore
+[4 / 23] NaberiusCore
+[9 / 28] NaberiusCore
+[13 / 26] Naberius
+[19 / 32] NaberiusCoreTests-product
+[21 / 33] NaberiusCoreTests-product
+[21 / 33] Naberius-product
+[25 / 37] Naberius-product
+[29 / 39] Naberius-product
+[32 / 38] NaberiusAppTests-product
+[34 / 40] NaberiusAppTests-product
+[38 / 42] NaberiusAppTests-product
+[40 / 42] NaberiusAppTests-product
+Build complete! (5,72 s)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite LongDocumentEditingTests started.
+◇ Test "native edits preserve a long document and stable block identities" started.
+NATIVE_TYPING_BENCHMARK 1000 paragraphs, 51000 words, 40 edits: 4.365517292 seconds
+✔ Test "native edits preserve a long document and stable block identities" passed after 4.911 seconds.
+✔ Suite LongDocumentEditingTests passed after 4.912 seconds.
+✔ Test run with 1 test in 1 suite passed after 4.912 seconds.

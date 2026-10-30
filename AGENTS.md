@@ -1,0 +1,11 @@
+# Naberius — working conventions
+
+- Preserve the user's native macOS direction: SwiftUI/AppKit, Apple Silicon, Swift 6.2+, minimum macOS 14. Use the requested swiftui-expert-skill, swift-testing-pro, write-swift, apple-silicon-optimizer, Build macOS Apps, impeccable, Software Architect and emil-design-eng guidance where relevant. Their files are installed under the user's Codex skills/plugins.
+- The requirements in docs/REQUIREMENTS.md are the product baseline. Track actual coverage in docs/STATUS.md and limitations honestly; 0.2.0 is not certification of all P0.
+- Preserve the Naberius mark, adaptive native surfaces, authorship 'Creado por Sebastián Pastén F.' and verified family Ko-fi destination. Read DESIGN.md and docs/BRAND.md before UI changes. Reference apps METATRON, RAZIEL and PAIMON are read-only evidence.
+- No GitHub publication, push, remote creation or release until the user explicitly authorizes publication. A local Git repository is allowed.
+- Build and run with script/build_and_run.sh. Test with script/test.sh; opt into real TeX integration with NABERIUS_COMPOSE=1. New unit/integration tests use Swift Testing. Use XCTest only for UI/performance cases that require it.
+- Keep .nab data portable and versioned. Preserve semantic identifiers, marks, resources and bibliography. Test round-trips, corruption and interrupted recovery when changing persistence.
+- Never execute imported LaTeX or macros. Import templates into safe semantic variants; generated export text is escaped. Network, Ko-fi and package downloads remain explicit actions.
+- Keep compilation and disk work outside the main actor, cancelable where reasonable. Do not compile per keystroke or add idle polling/animation. Measure performance claims and separate storage benchmarks from typing/energy measurements.
+- The DEBUG evidence capturer is a development tool. It must not be mistaken for full VoiceOver, keyboard, visual or P0 certification.

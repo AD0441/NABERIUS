@@ -1,0 +1,12 @@
+.build/
+dist/
+.DS_Store
+*.log
+/Naberius.app
+/.codex/
+/.impeccable/
+/docs/performance-sample.txt
+/docs/build-results*.txt
+/docs/test-results*.txt
+/docs/typing-development-*.txt
+/docs/typesetting/*/main.log

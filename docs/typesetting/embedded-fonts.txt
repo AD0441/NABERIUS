@@ -1,0 +1,7 @@
+article.pdf: BZIVMZ+LMRoman10-Bold, BZIVMZ+LMRoman10-Bold-Identity-H, IHAIZV+LMRoman10-Regular, IHAIZV+LMRoman10-Regular-Identity-H, IXFAWU+CMEX10, TQTHRL+CMMI12, YEUUOC+CMR12
+blank.pdf: BZIVMZ+LMRoman10-Bold, BZIVMZ+LMRoman10-Bold-Identity-H, IHAIZV+LMRoman10-Regular, IHAIZV+LMRoman10-Regular-Identity-H, IXFAWU+CMEX10, TQTHRL+CMMI12, YEUUOC+CMR12
+book.pdf: BZIVMZ+LMRoman10-Regular, BZIVMZ+LMRoman10-Regular-Identity-H, IHAIZV+LMRoman10-Bold, IHAIZV+LMRoman10-Bold-Identity-H, IXFAWU+CMEX10, TQTHRL+CMMI12, YEUUOC+CMR12
+equation.pdf: BZIVMZ+CMR10, IHAIZV+CMMI10
+letter.pdf: BZIVMZ+LMRoman10-Bold, BZIVMZ+LMRoman10-Bold-Identity-H, IHAIZV+LMRoman10-Regular, IHAIZV+LMRoman10-Regular-Identity-H, IXFAWU+CMEX10, TQTHRL+CMMI12, YEUUOC+CMR12
+report.pdf: BZIVMZ+LMRoman10-Bold, BZIVMZ+LMRoman10-Bold-Identity-H, IHAIZV+LMRoman10-Regular, IHAIZV+LMRoman10-Regular-Identity-H, IXFAWU+CMEX10, TQTHRL+CMMI12, YEUUOC+CMR12
+thesis.pdf: BZIVMZ+LMRoman10-Regular, BZIVMZ+LMRoman10-Regular-Identity-H, IHAIZV+LMRoman10-Bold, IHAIZV+LMRoman10-Bold-Identity-H, IXFAWU+CMEX10, TQTHRL+CMMI12, YEUUOC+CMR12

@@ -1,0 +1,9 @@
+# Preserve unmodified upstream code, styles, fonts and license texts.
+Sources/NaberiusCore/Resources/** linguist-vendored -whitespace
+docs/licenses/** linguist-vendored -whitespace
+LICENSE -whitespace
+docs/** linguist-documentation
+docs/typesetting/fonts/** -whitespace
+docs/**/*.tex -whitespace
+# The source requirements intentionally use Markdown hard line breaks.
+docs/REQUIREMENTS.md -whitespace
