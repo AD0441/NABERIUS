@@ -37,19 +37,8 @@ final class AppDelegate:NSObject,NSApplicationDelegate {
 struct AppCommands:Commands {
     let session:Session
     var body:some Commands {
-        CommandGroup(replacing:.appInfo) { Button(L10n.text("Acerca de Naberius")) { session.sheet = .about } }
-        CommandGroup(replacing:.newItem) {
-            Button(L10n.text("Nuevo documento")) { session.new() }.keyboardShortcut("n")
-            Button(L10n.text("Abrir documento…")) { session.openPanel() }.keyboardShortcut("o")
-            Menu(L10n.text("Abrir recientes")) { ForEach(session.recent) { r in Button(r.title) { session.open(URL(fileURLWithPath:r.path)) } } }
-        }
-        CommandGroup(replacing:.saveItem) { Button(L10n.text("Guardar")) { session.save() }.keyboardShortcut("s").disabled(session.document==nil); Button(L10n.text("Guardar copia…")) { session.save(copy:true) }.keyboardShortcut("s",modifiers:[.command,.shift]) }
-        CommandGroup(replacing:.undoRedo) {
-            Button(L10n.text("Deshacer")) { session.undo.undo() }.keyboardShortcut("z").disabled(!session.undo.canUndo)
-            Button(L10n.text("Rehacer")) { session.undo.redo() }.keyboardShortcut("z",modifiers:[.command,.shift]).disabled(!session.undo.canRedo)
-        }
-        CommandGroup(after:.pasteboard) { Button(L10n.text("Buscar y reemplazar…")) { session.showFind.toggle() }.keyboardShortcut("f") }
-        CommandMenu("Formato") {
+        fileCommands
+        CommandMenu(L10n.text("Formato")) {
             Group {
             ForEach(BlockStyle.allCases,id:\.rawValue) { style in Button(style.label) { session.editor?.applyStyle(style) } }
             Divider(); Button(L10n.text("Negrita")) { session.editor?.toggleBold() }.keyboardShortcut("b"); Button(L10n.text("Cursiva")) { session.editor?.toggleItalic() }.keyboardShortcut("i")
@@ -67,6 +56,22 @@ struct AppCommands:Commands {
             #endif
         }
     }
+    // Older macOS SDKs limit CommandsBuilder to ten children per group.
+    @CommandsBuilder private var fileCommands:some Commands {
+        CommandGroup(replacing:.appInfo) { Button(L10n.text("Acerca de Naberius")) { session.sheet = .about } }
+        CommandGroup(replacing:.newItem) {
+            Button(L10n.text("Nuevo documento")) { session.new() }.keyboardShortcut("n")
+            Button(L10n.text("Abrir documento…")) { session.openPanel() }.keyboardShortcut("o")
+            Menu(L10n.text("Abrir recientes")) { ForEach(session.recent) { r in Button(r.title) { session.open(URL(fileURLWithPath:r.path)) } } }
+        }
+        CommandGroup(replacing:.saveItem) { Button(L10n.text("Guardar")) { session.save() }.keyboardShortcut("s").disabled(session.document==nil); Button(L10n.text("Guardar copia…")) { session.save(copy:true) }.keyboardShortcut("s",modifiers:[.command,.shift]) }
+        CommandGroup(replacing:.undoRedo) {
+            Button(L10n.text("Deshacer")) { session.undo.undo() }.keyboardShortcut("z").disabled(!session.undo.canUndo)
+            Button(L10n.text("Rehacer")) { session.undo.redo() }.keyboardShortcut("z",modifiers:[.command,.shift]).disabled(!session.undo.canRedo)
+        }
+        CommandGroup(after:.pasteboard) { Button(L10n.text("Buscar y reemplazar…")) { session.showFind.toggle() }.keyboardShortcut("f") }
+    }
+
 }
 struct InsertMenu:View {
     let session:Session

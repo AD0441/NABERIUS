@@ -29,7 +29,7 @@ Captura de la app instalada. El documento usa Latin Modern y el PDF final se com
 
 ## Comenzar
 
-Descarga la app desde [Releases](https://github.com/AD0441/NABERIUS/releases) o compílala desde el código. Requiere macOS 14 o posterior; la versión se verifica en Apple M1 con 8 GB. El ZIP tiene firma ad hoc y no está notarizado. Tectonic se instala por separado; puedes escribir y exportar el proyecto LaTeX sin tenerlo disponible.
+Descarga la app desde [Releases](https://github.com/AD0441/NABERIUS/releases) o compílala desde el código. El ZIP requiere Apple Silicon y macOS 14 o posterior; se verifica en Apple M1 con 8 GB. El código permite compilación nativa; Intel no está verificado. El ZIP tiene firma ad hoc y no está notarizado. Tectonic se instala por separado; puedes escribir y exportar el proyecto LaTeX sin tenerlo disponible.
 
 Con Xcode y Swift 6.2 o posterior:
 
