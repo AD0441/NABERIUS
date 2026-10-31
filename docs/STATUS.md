@@ -187,3 +187,7 @@ Edición directa de tablas, importación bibliográfica revisable con conservaci
 ## Lote 0.4.0 — paquetes editoriales
 
 El ZIP configura una plantilla con clase y recursos originales, entrada automática y selector de variantes, campos editoriales, bibliografía de la revista, persistencia portable schema 2 y exportación con copia íntegra de originales. Tectonic se ejecuta bajo aislamiento adicional para estos paquetes. Validado con clases sintéticas independientes del nombre de revista y con el ZIP Springer aportado por el usuario. LuaLaTeX/Biber y compatibilidad con cualquier macro o flujo editorial no se declaran resueltos; ver TEMPLATE_PACKAGES.md.
+
+## Cierre gráfico 0.4.1
+
+Importación, campos editoriales, creación directa de documento, escritura del párrafo, PDF real, guardado/reapertura y recomposición sin red comprobados en la app. Se corrigieron los detalles encontrados y pasaron 67 pruebas locales y CI. Ver TESTING.md para el alcance y los límites de esta evidencia.

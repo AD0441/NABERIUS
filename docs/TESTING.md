@@ -128,3 +128,9 @@ La prueba encontró tres ajustes de uso: llevar al frente el documento creado de
 Una composición sin red informó una métrica de fuente todavía no almacenada (`cmbx9`). Se corrigió el diagnóstico para indicar la preparación desde Configuración → Composición. Al activar allí la descarga explícita, el motor generó el PDF. La inspección final del PDF en la ventana y el guardado de la segunda copia quedaron interrumpidos al bloquearse otra vez el Mac; no se declaran completados. La evidencia con recursos editoriales se conserva localmente y no se redistribuye.
 
 La batería completa pasó 67 pruebas con LaTeX real. Incluye regresiones de identidad/estilo del párrafo final y distinción entre una fuente ausente en caché y un error de sintaxis. La muestra del proceso durante los timeouts de control mostró el hilo principal en su bucle de eventos normal; no se atribuyeron esos timeouts a un bloqueo de Naberius.
+
+### Cierre de la prueba visual
+
+Con la pantalla disponible se completó la revisión del visor en 0.4.1. Un documento nuevo con título, resumen, autor acentuado y texto de cuerpo produjo un PDF de una página con la clase editorial, en 0,8 segundos. Se guardó el `.nab` por el panel nativo, se reabrió desde Finder y se confirmaron los mismos datos, plantilla y estado Guardado. La recomposición tras reabrir tardó 0,9 segundos; el registro confirmó uso exclusivo de caché local. El cuerpo permaneció en Párrafo y el esquema solo conservó Introduction. Se comprobaron zoom 125 % y ajuste a ventana. Los documentos y PDF de evidencia siguen siendo locales. Las cifras describen esas dos composiciones Debug y no se presentan como garantía de rendimiento general.
+
+Esto cierra el visor y la reapertura que se habían documentado como interrumpidos. No certifica todas las combinaciones de paquetes editoriales ni la auditoría de accesibilidad aplazada por el usuario.
