@@ -4,13 +4,20 @@ import Foundation
 /// for SwiftUI's native LocalizedStringKey controls. User document content is never looked up.
 public enum L10n {
     static let bundle=catalog(preferences:Locale.preferredLanguages)
-    // Select the package's available language independently of a test/CLI host's locale.
-    // resourceURL works for both Xcode and command-line SwiftPM bundle layouts.
+    // Xcode places localizations under resourceURL; classic SwiftPM may put them
+    // at bundleURL while treating the copied Resources directory as resourceURL.
+    // Resolve a concrete language directory in either layout, independent of the host.
     static func catalog(preferences:[String])->Bundle {
-        let available=Bundle.module.localizations.filter{$0 != "Base"}
-        let language=Bundle.preferredLocalizations(from:available,forPreferences:preferences).first ?? "es"
-        guard let url=Bundle.module.resourceURL?.appendingPathComponent(language+".lproj"),let selected=Bundle(url:url) else{return Bundle.module}
-        return selected
+        let roots=[Bundle.module.resourceURL,Bundle.module.bundleURL].compactMap{$0}
+        let folders=roots.flatMap {root in
+            ((try? FileManager.default.contentsOfDirectory(at:root,includingPropertiesForKeys:nil)) ?? []).filter{$0.pathExtension=="lproj"}
+        }
+        let languages=Array(Set(folders.map{$0.deletingPathExtension().lastPathComponent})).sorted()
+        let language=Bundle.preferredLocalizations(from:languages,forPreferences:preferences).first ?? "es"
+        for folder in folders where folder.deletingPathExtension().lastPathComponent==language {
+            if let selected=Bundle(url:folder) {return selected}
+        }
+        return Bundle.module
     }
     public static func text(_ key:String)->String {
         bundle.localizedString(forKey:key,value:key,table:"Localizable")

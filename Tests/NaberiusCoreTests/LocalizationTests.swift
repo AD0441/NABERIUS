@@ -7,6 +7,7 @@ struct LocalizationTests {
         let root=URL(fileURLWithPath:#filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Sources")
         let enumerator=try #require(FileManager.default.enumerator(at:root,includingPropertiesForKeys:nil))
         let regex=try NSRegularExpression(pattern:#"L10n\.(?:text|format)\("((?:\\.|[^"\\])*)""#)
+        _ = try #require(L10n.bundle.url(forResource:"Localizable",withExtension:"strings"),"The selected language directory must contain the packaged catalog.")
         var count=0
         for case let url as URL in enumerator where url.pathExtension=="swift" {
             let source=try String(contentsOf:url,encoding:.utf8),ns=source as NSString
