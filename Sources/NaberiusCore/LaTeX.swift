@@ -36,6 +36,7 @@ public enum LaTeX {
         return ["\\usepackage{fontspec}", "\\setmainfont{\(DocumentTypography.safeFont(font))}"]
     }
     public static func source(_ d: NabDocument, citations: CitationOutput = CitationOutput()) -> String {
+        if let package=d.template.package {return package.source(d,citations:citations)}
         let t = d.template, m = d.metadata, layout = t.effectiveLayout
         let kind = layout.documentClass
         let paper = ["letterpaper", "legalpaper"].contains(t.paper) ? t.paper : "a4paper"
@@ -67,9 +68,22 @@ public enum LaTeX {
             else { lines += [kind.hasChapters ? "\\chapter*{\(spanish ? "Resumen" : "Abstract")}" : "{\\large\\bfseries \(spanish ? "Resumen" : "Abstract")\\par}", bodyText(m.abstract)] }
         }
         lines.append("\\fontsize{\(t.fontSize)}{\(t.fontSize*1.2)}\\selectfont")
+        lines.append(body(d,citations:citations))
+        if m.bibliography && !citations.bibliography.isEmpty {
+            lines.append(kind.hasChapters ? "\\chapter*{Referencias}" : (kind == .letter ? "{\\large\\bfseries Referencias\\par}" : "\\section*{Referencias}"))
+            lines += citations.bibliography.map { "\\noindent \(bodyText($0))\\par\\medskip" }
+        }
+        if kind == .letter { lines += ["\\closing{\(bodyText(layout.closing))}", "\\end{letter}"] }
+        lines.append("\\end{document}")
+        return lines.joined(separator: "\n")
+    }
+    static func body(_ d:NabDocument,citations:CitationOutput,omitTitle:Bool=false)->String {
+        let kind=d.template.effectiveLayout.documentClass
+        var lines:[String]=[]
         var activeList: String?
         var inAppendices = false
         for block in d.blocks {
+            if omitTitle && (block.style == .title || block.style == .subtitle) {continue}
             let list = block.style == .bullet ? "itemize" : (block.style == .numbered ? "enumerate" : nil)
             if list != activeList {
                 if let activeList { lines.append("\\end{\(activeList)}") }
@@ -109,13 +123,7 @@ public enum LaTeX {
             lines.append(rendered+"\n")
         }
         if let activeList { lines.append("\\end{\(activeList)}") }
-        if m.bibliography && !citations.bibliography.isEmpty {
-            lines.append(kind.hasChapters ? "\\chapter*{Referencias}" : (kind == .letter ? "{\\large\\bfseries Referencias\\par}" : "\\section*{Referencias}"))
-            lines += citations.bibliography.map { "\\noindent \(bodyText($0))\\par\\medskip" }
-        }
-        if kind == .letter { lines += ["\\closing{\(bodyText(layout.closing))}", "\\end{letter}"] }
-        lines.append("\\end{document}")
-        return lines.joined(separator: "\n")
+        return lines.joined(separator:"\n")
     }
     private static func node(_ n: AcademicNode, in d: NabDocument, citations: CitationOutput) -> String {
         let label = "\\label{n\(n.id.uuidString)}"
@@ -135,7 +143,9 @@ public enum LaTeX {
             let eq = equation(n.math)
             if n.inline { return "$\(eq)$" }
             return n.numbered ? "\\begin{equation}\(eq)\(label)\\end{equation}" : "\\[\(eq)\\]"
-        case .citation: return escape(citations.citations[n.id] ?? "[Referencia no encontrada]")
+        case .citation:
+            if let package=d.template.package {return package.citation(n,in:d)}
+            return escape(citations.citations[n.id] ?? "[Referencia no encontrada]")
         case .crossReference:
             guard let target = n.targetID else { return "[Destino no encontrado]" }
             if d.blocks.contains(where:{$0.id==target && $0.style.headingLevel != nil}) { return "\\hyperref[b\(target.uuidString)]{\(escape(d.crossReference(target)))}" }
@@ -172,7 +182,19 @@ public enum LaTeX {
             let head=n.header ? row(n.rows[0],header:true)+middle : ""
             let body=(n.header ? Array(n.rows.dropFirst()) : n.rows).map{row($0,header:false)}.joined(separator:"\n")
             let continuation=d.metadata.language.hasPrefix("es") ? "continuación" : "continued"
-            return "\\begin{longtable}{\(spec)}\n\\caption{\(bodyText(n.caption))}\(label)\\\\\n\(top)\n\(head)\n\\endfirsthead\n\\multicolumn{\(columns)}{l}{\\small \\tablename~\\thetable~(\(continuation))}\\\\\n\(top)\n\(head)\n\\endhead\n\(bottom)\\endfoot\n\(bottom)\\endlastfoot\n\(body)\n\\end{longtable}\n{\\small \(notes)\\par}"
+            let longTable="\\begin{longtable}{\(spec)}\n\\caption{\(bodyText(n.caption))}\(label)\\\\\n\(top)\n\(head)\n\\endfirsthead\n\\multicolumn{\(columns)}{l}{\\small \\tablename~\\thetable~(\(continuation))}\\\\\n\(top)\n\(head)\n\\endhead\n\(bottom)\\endfoot\n\(bottom)\\endlastfoot\n\(body)\n\\end{longtable}\n{\\small \(notes)\\par}"
+            guard d.template.package != nil else{return longTable}
+            // Longtable cannot run in two columns. Preserve the class layout and split
+            // large tables into bounded full-width floats with repeated column headings.
+            let values=n.header ? Array(n.rows.dropFirst()) : n.rows
+            let floatSpec=grid ? "|"+Array(repeating:">{\\raggedright\\arraybackslash}X",count:columns).joined(separator:"|")+"|" : String(repeating:">{\\raggedright\\arraybackslash}X",count:columns)
+            let parts=stride(from:0,to:values.count,by:12).enumerated().map {part,start in
+                let body=values[start..<min(start+12,values.count)].map{row($0,header:false)}.joined(separator:"\n")
+                let caption=bodyText(n.caption)+(part==0 ? "" : " ("+continuation+")")
+                let counter=part==0 ? "" : "\\addtocounter{table}{-1}"
+                return "\\begin{table*}[tp]\\centering\(counter)\\caption{\(caption)}\(part==0 ? label : "")\n\\begin{tabularx}{\\linewidth}{\(floatSpec)}\(top)\n\(head)\n\(body)\n\(bottom)\\end{tabularx}\\par{\\small \(notes)}\\end{table*}"
+            }.joined(separator:"\n")
+            return "\\makeatletter\n\\if@twocolumn\n\(parts)\n\\else\n\(longTable)\n\\fi\n\\makeatother"
         }
         let rows=n.rows.enumerated().map{index,values in row(values,header:n.header && index==0)+(index==0 ? middle : "")}.joined(separator:"\n")
         let content="\\begin{tabularx}{\\linewidth}{\(spec)}\(top)\n\(rows)\n\(bottom)\\end{tabularx}"
@@ -189,17 +211,35 @@ public enum LaTeX {
             try Data(contentsOf: DocumentTypography.fontURL(file)).write(to: target.appendingPathComponent(file), options: .atomic)
         }
     }
-    public static func writeProject(_ d: NabDocument, at url: URL) throws {
+    @discardableResult public static func writeProject(_ d: NabDocument, at url: URL) throws -> URL {
         try NabArchive.validate(d)
         let fm = FileManager.default; try fm.createDirectory(at:url,withIntermediateDirectories:true)
-        let assets = url.appendingPathComponent("assets"); try fm.createDirectory(at:assets,withIntermediateDirectories:true)
-        try writeFonts(at: url)
+        let main=try d.template.package?.materialize(at:url) ?? url.appendingPathComponent("main.tex")
+        let working=main.deletingLastPathComponent()
+        let assets = working.appendingPathComponent("assets"); try fm.createDirectory(at:assets,withIntermediateDirectories:true)
+        if d.template.package==nil {try writeFonts(at:working)}
         let cites = try Bibliography.render(d)
-        try source(d,citations:cites).write(to:url.appendingPathComponent("main.tex"),atomically:true,encoding:.utf8)
+        try source(d,citations:cites).write(to:main,atomically:true,encoding:.utf8)
         try Bibliography.cslJSON(d.references).write(to:url.appendingPathComponent("references.json"),options:.atomic)
         try Bibliography.bibTeX(d.references).write(to:url.appendingPathComponent("references.bib"),atomically:true,encoding:.utf8)
+        if let package=d.template.package {try package.bibliography(d.references).write(to:working.appendingPathComponent("naberius-references.bib"),atomically:true,encoding:.utf8)}
         for a in d.assets { try a.data.write(to:assets.appendingPathComponent(a.id.uuidString+"."+assetExtension(a)),options:.atomic) }
-        try "Compilar main.tex con XeLaTeX o Tectonic. Citas y bibliografía se resuelven con CSL antes de exportar. No se requiere shell-escape.\n".write(to:url.appendingPathComponent("README.txt"),atomically:true,encoding:.utf8)
+        let instructions:String
+        if let package=d.template.package {
+            let relative=String(main.path.dropFirst(url.path.count)).trimmingCharacters(in:CharacterSet(charactersIn:"/"))
+            instructions="""
+            Proyecto editorial generado por Naberius.
+            Entrada generada: \(relative)
+            Entrada original: \(package.plan.mainFile)
+            Clase: \(package.plan.documentClass) [\(package.plan.options.joined(separator:", "))]
+            Bibliografía: \(package.plan.bibliographyBackend). naberius-references.bib contiene los datos del documento.
+            Ejecutar desde la carpeta de la entrada. Tectonic resuelve BibTeX automáticamente; un flujo TeX Live debe ejecutar LaTeX, BibTeX y LaTeX dos veces.
+            Los archivos originales se conservan en \(package.originalDirectoryName)/ y los recursos editoriales mantienen sus rutas. El PDF de referencia no es el PDF generado.
+            La clase controla fuentes, márgenes y estilos. No activar shell-escape. Las licencias del paquete original pertenecen a sus titulares.
+            """
+        } else {instructions="Compilar main.tex con XeLaTeX o Tectonic. Citas y bibliografía se resuelven con CSL antes de exportar. No se requiere shell-escape.\n"}
+        try instructions.write(to:url.appendingPathComponent("README.txt"),atomically:true,encoding:.utf8)
+        return main
     }
 }
 
@@ -224,8 +264,9 @@ public enum Composer {
     @concurrent public static func compile(_ d: NabDocument, engine: URL, allowNetwork: Bool = false) async throws -> Compilation {
         try Task.checkCancellation()
         let work = FileManager.default.temporaryDirectory.appendingPathComponent("Naberius-"+UUID().uuidString)
-        try LaTeX.writeProject(d,at:work)
-        return try await run(engine: engine, work: work, allowNetwork: allowNetwork)
+        let main=try LaTeX.writeProject(d,at:work)
+        if let package=d.template.package,package.plan.requiredEngine != "tectonic" || package.plan.bibliographyBackend=="biber" {throw NabError.invalid(L10n.text("El paquete requiere LuaLaTeX o Biber, que no están disponibles con este motor. Sus archivos y configuración se conservan."))}
+        return try await run(engine:engine,work:main.deletingLastPathComponent(),allowNetwork:allowNetwork,isolationRoot:d.template.package==nil ? nil : work)
     }
     @concurrent public static func compileMath(_ math: MathExpression, engine: URL, allowNetwork: Bool = false) async throws -> Compilation {
         let work = FileManager.default.temporaryDirectory.appendingPathComponent("Naberius-Math-"+UUID().uuidString)
@@ -235,7 +276,7 @@ public enum Composer {
         try source.write(to: work.appendingPathComponent("main.tex"), atomically: true, encoding: .utf8)
         return try await run(engine: engine, work: work, allowNetwork: allowNetwork)
     }
-    @concurrent private static func run(engine: URL, work: URL, allowNetwork: Bool) async throws -> Compilation {
+    @concurrent private static func run(engine: URL, work: URL, allowNetwork: Bool,isolationRoot:URL?=nil) async throws -> Compilation {
         try Task.checkCancellation()
         let started = Date()
         let logURL = work.appendingPathComponent("composition.log")
@@ -243,7 +284,20 @@ public enum Composer {
         let handle = try FileHandle(forWritingTo:logURL); defer { try? handle.close() }
         let p = Process(); p.executableURL = engine; p.currentDirectoryURL = work
         p.arguments = ["-X","compile","--untrusted","--keep-logs","--outdir",work.path] + (allowNetwork ? [] : ["--only-cached"]) + [work.appendingPathComponent("main.tex").path]
-        var env = ProcessInfo.processInfo.environment; env["TECTONIC_UNTRUSTED_MODE"] = "1"; env["openin_any"] = "p"; env["openout_any"] = "p"; p.environment = env
+        if let isolationRoot {
+            guard FileManager.default.isExecutableFile(atPath:"/usr/bin/sandbox-exec") else {throw NabError.invalid(L10n.text("No se pudo aislar el compilador de la plantilla. El paquete se conserva sin ejecutar."))}
+            p.executableURL=URL(fileURLWithPath:"/usr/bin/sandbox-exec")
+            let profile=TemplateSandbox.profile(engine:engine,root:isolationRoot,allowNetwork:allowNetwork)
+            try profile.write(to:isolationRoot.appendingPathComponent("compiler.sb"),atomically:true,encoding:.utf8)
+            p.arguments=["-p",profile,engine.path]+(p.arguments ?? [])
+        }
+        var env = ProcessInfo.processInfo.environment; env["TECTONIC_UNTRUSTED_MODE"] = "1"; env["openin_any"] = "p"; env["openout_any"] = "p"
+        if let isolationRoot {
+            let temporary=isolationRoot.appendingPathComponent("engine-temporary")
+            try FileManager.default.createDirectory(at:temporary,withIntermediateDirectories:true)
+            env["TMPDIR"]=temporary.path+"/"
+        }
+        p.environment = env
         p.standardOutput = handle; p.standardError = handle
         return try await withTaskCancellationHandler {
             try p.run()

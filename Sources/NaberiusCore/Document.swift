@@ -145,8 +145,9 @@ public struct DocumentTemplate: Codable, Equatable, Identifiable, Sendable {
     public var cover=false
     public var numberedHeadings=true
     public var locked=false
+    public var package:LaTeXTemplatePackage?
     public var lockedProperties:[TemplateProperty]?
-    public func allows(_ property:TemplateProperty)->Bool {!locked && !(lockedProperties ?? []).contains(property)}
+    public func allows(_ property:TemplateProperty)->Bool {package == nil && !locked && !(lockedProperties ?? []).contains(property)}
     public var layout:DocumentLayout?
     public var effectiveLayout:DocumentLayout {
         get {layout ?? DocumentLayout(documentClass:["report","thesis"].contains(id) ? .report : (id=="book" ? .book : (id=="letter" ? .letter : .article)))}
@@ -180,6 +181,7 @@ public struct Metadata: Codable, Equatable, Sendable {
     public var citationStyle: CitationStyle = .apa
     public var bibliography = true
     public var spelling = true
+    public var templateFields:[String:String]?
     public var autocorrect = false
     public init() {}
 }
@@ -199,7 +201,7 @@ public struct NabDocument: Codable, Equatable, Identifiable, Sendable {
     public var references: [Reference] = []
     public var cursor = Cursor()
     public var modified = Date()
-    public init(template: DocumentTemplate = DocumentTemplate.builtins[0]) { self.template = template }
+    public init(template: DocumentTemplate = DocumentTemplate.builtins[0]) { self.template = template;schemaVersion=template.package==nil ? 1 : 2 }
     public var wordCount: Int { blocks.map(\.text).joined(separator:" ").split { $0.isWhitespace || $0 == "\u{fffc}" }.count }
     public var orderedNodes: [AcademicNode] { blocks.flatMap(\.runs).compactMap { r in r.nodeID.flatMap { id in nodes.first { $0.id == id } } } }
     public func number(of id: UUID) -> Int? {

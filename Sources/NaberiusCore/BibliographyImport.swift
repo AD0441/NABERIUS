@@ -265,7 +265,7 @@ private struct BibParser {
     }
 }
 
-private enum TeXMetadata {
+enum TeXMetadata {
     static func decode(_ value:String,unknown:inout Set<String>,preserveTilde:Bool=false)->String {
         let chars=Array(value);var i=0
         let replacements=["LaTeX":"LaTeX","TeX":"TeX","textendash":"–","textemdash":"—","textasciitilde":"~","textbackslash":"\\","ae":"æ","AE":"Æ","oe":"œ","OE":"Œ","ss":"ß","o":"ø","O":"Ø","l":"ł","L":"Ł","i":"ı","j":"ȷ"]

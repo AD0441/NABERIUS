@@ -5,6 +5,7 @@ struct InspectorView:View {
     @Bindable var session:Session
     private func meta<T>(_ key:WritableKeyPath<Metadata,T>)->Binding<T> { Binding(get:{session.document?.metadata[keyPath:key] ?? Metadata()[keyPath:key]},set:{ value in session.mutate(L10n.text("Propiedades")){$0.metadata[keyPath:key]=value};if key == \Metadata.citationStyle || key == \Metadata.language {session.refreshCitations()} }) }
     private func design<T>(_ key:WritableKeyPath<DocumentTemplate,T>)->Binding<T> { Binding(get:{session.document?.template[keyPath:key] ?? DocumentTemplate.builtins[0][keyPath:key]},set:{ value in session.mutate(L10n.text("Diseño")){$0.template[keyPath:key]=value} }) }
+    private func supports(_ alias:TemplateFieldAlias)->Bool {session.document?.template.package.map{$0.plan.fields.contains{$0.alias==alias}} ?? true}
     var body:some View {
         ScrollView {
             VStack(alignment:.leading,spacing:20) {
@@ -12,11 +13,22 @@ struct InspectorView:View {
                 if let id=session.selectedNode,let node=session.document?.nodes.first(where:{$0.id==id}) { NodeInspector(session:session,id:id,node:node) }
                 else if session.document != nil {
                     GroupBox(L10n.text("General")) { VStack(alignment:.leading,spacing:10) {
-                        TextField(L10n.text("Título"),text:meta(\.title));TextField(L10n.text("Subtítulo"),text:meta(\.subtitle));TextField(L10n.text("Autor(es)"),text:meta(\.authors));TextField(L10n.text("Institución"),text:meta(\.institution));TextField(L10n.text("Fecha"),text:meta(\.date));TextField(L10n.text("Palabras clave"),text:meta(\.keywords));TextField(L10n.text("Resumen"),text:meta(\.abstract),axis:.vertical).lineLimit(3...6)
+                        TextField(L10n.text("Título"),text:meta(\.title))
+                        if supports(.subtitle) {TextField(L10n.text("Subtítulo"),text:meta(\.subtitle))}
+                        if supports(.authors) && session.document?.template.package?.hasSeparateAuthors != true {TextField(L10n.text("Autor(es)"),text:meta(\.authors))}
+                        if supports(.institution) && session.document?.template.package?.hasSeparateInstitutions != true {TextField(L10n.text("Institución"),text:meta(\.institution))}
+                        if supports(.date) {TextField(L10n.text("Fecha"),text:meta(\.date))}
+                        if supports(.keywords) {TextField(L10n.text("Palabras clave"),text:meta(\.keywords))}
+                        if supports(.abstract) {TextField(L10n.text("Resumen"),text:meta(\.abstract),axis:.vertical).lineLimit(3...6)}
                         Picker(L10n.text("Idioma"),selection:meta(\.language)) { Text(L10n.text("Español")).tag("es-ES");Text(L10n.text("English")).tag("en-US") }
                     }.padding(6) }
+                    if let package=session.document?.template.package {EditorialFieldsView(session:session,package:package)}
                     GroupBox(L10n.text("Diseño")) { VStack(alignment:.leading,spacing:10) {
                         Text(session.document?.template.name ?? "").font(.callout.weight(.medium));Button(L10n.text("Cambiar plantilla…")) {session.sheet = .templates}
+                        if let package=session.document?.template.package {
+                            Text(L10n.format("Clase: %@",package.plan.documentClass)).font(.caption)
+                            Text(L10n.text("La clase del ZIP determina la tipografía, el papel, los márgenes y los encabezados del PDF.")).font(.caption).foregroundStyle(.secondary)
+                        } else {
                         Picker(L10n.text("Papel"),selection:design(\.paper)){Text(L10n.text("A4")).tag("a4paper");Text(L10n.text("Carta")).tag("letterpaper");Text(L10n.text("Legal")).tag("legalpaper")}.disabled(session.document?.template.allows(.paper) == false)
                         Picker(L10n.text("Tipografía"),selection:design(\.font)){ForEach(DocumentTypography.supportedFonts,id:\.self){Text($0)}}.disabled(session.document?.template.allows(.font) == false)
                         if session.document?.template.font != DocumentTypography.defaultFont {Button(L10n.text("Usar tipografía LaTeX")){session.mutate(L10n.text("Tipografía LaTeX")){$0.template.font=DocumentTypography.defaultFont}}.disabled(session.document?.template.allows(.font) == false)}
@@ -25,9 +37,10 @@ struct InspectorView:View {
                         Stepper(value:design(\.lineSpacing),in:1...3,step:0.1){Text(L10n.format("Interlineado: %@",String(format:"%.1f",session.document?.template.lineSpacing ?? 1.4)))}.disabled(session.document?.template.allows(.lineSpacing) == false)
                         Toggle(L10n.text("Portada"),isOn:design(\.cover)).disabled(session.document?.template.allows(.cover) == false);Toggle(L10n.text("Numerar títulos"),isOn:design(\.numberedHeadings)).disabled(session.document?.template.allows(.numberedHeadings) == false)
                         DocumentLayoutControls(template:Binding(get:{session.document?.template ?? DocumentTemplate.builtins[0]},set:{value in session.mutate(L10n.text("Composición")){$0.template=value}})).disabled(session.document?.template.allows(.layout) == false)
+                        }
                         Button(L10n.text("Restaurar formato de plantilla")) {if let t=session.templates.first(where:{$0.id==session.document?.template.id}){session.mutate(L10n.text("Restaurar plantilla")){$0.template=t}}}
                     }.padding(6) }.disabled(session.document?.template.locked == true)
-                    GroupBox(L10n.text("Referencias")) {VStack(alignment:.leading,spacing:10){Picker(L10n.text("Estilo"),selection:meta(\.citationStyle)){ForEach(CitationStyle.allCases,id:\.rawValue){Text($0.label).tag($0)}};Toggle(L10n.text("Bibliografía al final"),isOn:meta(\.bibliography));Button(L10n.text("Biblioteca del documento…")){session.sheet = .library}}.padding(6)}
+                    GroupBox(L10n.text("Referencias")) {VStack(alignment:.leading,spacing:10){Picker(L10n.text("Estilo"),selection:meta(\.citationStyle)){ForEach(CitationStyle.allCases,id:\.rawValue){Text($0.label).tag($0)}}.disabled(session.document?.template.package != nil);if let package=session.document?.template.package {Text(L10n.format("El PDF usa el estilo bibliográfico de %@.",package.plan.documentClass)).font(.caption).foregroundStyle(.secondary)};Toggle(L10n.text("Bibliografía al final"),isOn:meta(\.bibliography));Button(L10n.text("Biblioteca del documento…")){session.sheet = .library}}.padding(6)}
                     GroupBox(L10n.text("Corrección local")) {VStack(alignment:.leading,spacing:10){Toggle(L10n.text("Revisión ortográfica"),isOn:meta(\.spelling));Toggle(L10n.text("Autocorrección"),isOn:meta(\.autocorrect));Text(L10n.text("Las sugerencias, Ignorar y Aprender están en el menú contextual del texto.")).font(.caption).foregroundStyle(.secondary)}.padding(6)}
                 }
             }.textFieldStyle(.roundedBorder).controlSize(.small).padding(16)

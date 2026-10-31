@@ -13,7 +13,7 @@
 
 Editor académico nativo para macOS, de la familia METATRON, RAZIEL y PAIMON. Escribe con estilos y objetos semánticos; Tectonic compone el PDF final mediante LaTeX. Texto, imágenes, plantilla y referencias viajan juntos en un archivo `.nab`.
 
-**Creado por Sebastián Pastén F.** · **Versión 0.3.0**
+**Creado por Sebastián Pastén F.** · **Versión 0.4.0**
 
 ![Naberius 0.3.0: edición de tablas en el documento](docs/screenshots/table-light.png)
 
@@ -26,6 +26,8 @@ Captura de la app instalada. El documento usa Latin Modern y el PDF final se com
 ![Revisión de importación y campos conservados](docs/screenshots/bibliography-light.png)
 
 </details>
+
+El ZIP de una revista puede instalarse directamente desde **Configuración → Plantillas → Importar plantilla**. Naberius detecta la entrada, conserva la clase y los recursos, y genera el PDF con ese formato editorial. No requiere un adaptador por revista. Consulta el [formato de paquetes y sus límites](docs/TEMPLATE_PACKAGES.md).
 
 ## Comenzar
 

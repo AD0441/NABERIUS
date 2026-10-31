@@ -90,7 +90,15 @@ struct Recent: Codable, Identifiable {
     func new(template: DocumentTemplate? = nil, example: Bool = false) {
         editor?.finishTableEditing();flushRecovery();documentOperation=UUID();cancelCompile();previewURL=nil;compilation=nil;showProof=false;proofPage=0;proofPageCount=0
         let chosen=template ?? templates.first(where:{$0.id == UserDefaults.standard.string(forKey:"defaultTemplateID")}) ?? DocumentTemplate.builtins[0]
-        if example {var demo=NabDocument.example;if let template {demo.template=template};document=demo} else {document=NabDocument(template:chosen)}; currentURL = nil; expected = nil; selectedNode = nil; selectedBlock = nil; undo.removeAllActions(); status = L10n.text("Sin guardar · recuperación local"); revision += 1; if let d=document{queueJournal(d)}; refreshCitations(); changed()
+        if let package=chosen.package {
+            var draft=NabDocument(template:chosen);draft.metadata=package.initialMetadata()
+            draft.blocks=[Block(draft.metadata.title,style:.title),Block(package.plan.firstHeading.isEmpty ? L10n.text("Introducción") : package.plan.firstHeading,style:.heading1),Block()]
+            document=draft
+        } else if example {var demo=NabDocument.example;if let template {demo.template=template};document=demo} else {document=NabDocument(template:chosen)}; currentURL = nil; expected = nil; selectedNode = nil; selectedBlock = nil; undo.removeAllActions(); status = L10n.text("Sin guardar · recuperación local"); revision += 1; if let d=document{queueJournal(d)}; refreshCitations(); changed()
+    }
+    @discardableResult func installTemplate(_ template:DocumentTemplate)->String {
+        if let package=template.package,let existing=templates.first(where:{$0.package?.files==package.files}) {return existing.id}
+        templates.append(template);persistLocal();return template.id
     }
     func reveal(blockID:UUID) {
         if showProof {showProof=false}
@@ -132,7 +140,16 @@ struct Recent: Codable, Identifiable {
         } catch { self.error = error.localizedDescription } }
     }
     func mutate(_ title: String = L10n.text("Editar documento"), registerUndo:Bool = true, _ body: (inout NabDocument)->Void) {
-        guard var d = document else { return }; let old = d; body(&d); guard d != old else { return }
+        guard var d = document else { return }; let old = d; body(&d)
+        if d.template.package != nil {
+            d.schemaVersion=2
+            for (key,style) in [(\Metadata.title,BlockStyle.title),(\Metadata.subtitle,BlockStyle.subtitle)] {
+                if d.metadata[keyPath:key] != old.metadata[keyPath:key],let index=d.blocks.firstIndex(where:{$0.style==style}) {
+                    d.blocks[index].runs=[TextRun(d.metadata[keyPath:key])]
+                } else if let block=d.blocks.first(where:{$0.style==style}) {d.metadata[keyPath:key]=block.text}
+            }
+        }
+        guard d != old else { return }
         if registerUndo{undo.registerUndo(withTarget:self) { target in target.restore(old,title:title) }; undo.setActionName(title)}
         if title != "Escribir"{lastTypingBlock=nil}
         d.modified = Date(); document = d; revision += 1; queueJournal(d); changed()

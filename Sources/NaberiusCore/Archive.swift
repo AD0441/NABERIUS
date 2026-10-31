@@ -7,9 +7,11 @@ public enum NabArchive {
     public static let maxSize = 128 * 1024 * 1024
     private static let magic = Data("NABERIUS\u{0}1\n".utf8)
     public static func encode(_ document: NabDocument) throws -> Data {
-        try validate(document)
+        var stored=document
+        if stored.template.package != nil {stored.schemaVersion=2}
+        try validate(stored)
         let e = JSONEncoder(); e.outputFormatting = [.sortedKeys]; e.dateEncodingStrategy = .iso8601
-        let json = try e.encode(document)
+        let json = try e.encode(stored)
         guard json.count <= maxSize else { throw NabError.invalid(L10n.text("El documento supera el límite de 128 MB.")) }
         var compressed = Data(count: json.count + 65536)
         let size = compressed.withUnsafeMutableBytes { output in json.withUnsafeBytes { input in
@@ -39,11 +41,12 @@ public enum NabArchive {
         let document = try d.decode(NabDocument.self,from:json); try validate(document); return document
     }
     public static func validate(_ d: NabDocument) throws {
-        guard d.schemaVersion == 1 else { throw NabError.invalid(L10n.text("Esta versión de documento requiere una versión más reciente de Naberius.")) }
+        guard [1,2].contains(d.schemaVersion) else { throw NabError.invalid(L10n.text("Esta versión de documento requiere una versión más reciente de Naberius.")) }
         guard d.blocks.count <= 100_000, d.assets.count <= 2000, d.nodes.count <= 50_000 else { throw NabError.invalid(L10n.text("El documento contiene demasiados elementos.")) }
         guard Set(d.blocks.map(\.id)).count == d.blocks.count, Set(d.nodes.map(\.id)).count == d.nodes.count, Set(d.assets.map(\.id)).count == d.assets.count, Set(d.references.map(\.id)).count == d.references.count else { throw NabError.invalid(L10n.text("El documento contiene identificadores duplicados.")) }
         guard d.assets.allSatisfy({ $0.data.count <= 32*1024*1024 && ($0.originalData?.count ?? 0) <= 32*1024*1024 }), d.assets.reduce(0, { $0 + $1.data.count + ($1.originalData?.count ?? 0) }) <= 80*1024*1024 else { throw NabError.invalid(L10n.text("Los recursos superan el tamaño admitido (32 MB por imagen; 80 MB en total).")) }
         guard d.template.fontSize.isFinite, (8...36).contains(d.template.fontSize), d.template.marginMM.isFinite, (10...50).contains(d.template.marginMM), d.template.lineSpacing.isFinite, (1...3).contains(d.template.lineSpacing), d.template.font.count <= 100 else { throw NabError.invalid(L10n.text("La plantilla contiene valores fuera de rango.")) }
+        try d.template.package?.validate()
         let layout = d.template.effectiveLayout
         guard layout.paragraphIndentMM.isFinite, (0...20).contains(layout.paragraphIndentMM), layout.paragraphSpacingPT.isFinite, (0...30).contains(layout.paragraphSpacingPT), [layout.header, layout.footer, layout.recipient, layout.opening, layout.closing].allSatisfy({ $0.count <= 4000 }) else { throw NabError.invalid(L10n.text("El diseño documental contiene valores fuera de rango.")) }
         for n in d.nodes {

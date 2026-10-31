@@ -183,3 +183,7 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 ## Lote 0.3.0
 
 Edición directa de tablas, importación bibliográfica revisable con conservación de originales, sello simplificado y catálogo español externo. Publicación AGPL-3.0-or-later autorizada por el autor. Accesibilidad integral y demás pendientes se mantienen para una fase posterior por decisión del usuario. El alcance no certifica todo P0.
+
+## Lote 0.4.0 — paquetes editoriales
+
+El ZIP configura una plantilla con clase y recursos originales, entrada automática y selector de variantes, campos editoriales, bibliografía de la revista, persistencia portable schema 2 y exportación con copia íntegra de originales. Tectonic se ejecuta bajo aislamiento adicional para estos paquetes. Validado con clases sintéticas independientes del nombre de revista y con el ZIP Springer aportado por el usuario. LuaLaTeX/Biber y compatibilidad con cualquier macro o flujo editorial no se declaran resueltos; ver TEMPLATE_PACKAGES.md.

@@ -110,3 +110,11 @@ La importación de BibLaTeX mostró dos registros, cuatro advertencias, preámbu
 La apertura externa de .nab conserva la ventana `main` única. Se verificaron 534 claves de catálogo español incluidas en el recurso empaquetado y los formatos dinámicos. El catálogo antiguo se retiró. El icono exportado se inspeccionó a 256 y 1024; `screenshots/system-app-icon.png` procede de NSWorkspace.icon(forFile:) sobre el bundle instalado, que comprueba el recurso que resuelve macOS. El intento de captura directa del Dock agotó el tiempo de la herramienta; no se presenta como una captura visual del Dock.
 
 El ZIP y la app llevan licencia, copyright, avisos y ruta al código fuente. Firma ad hoc y verificación estricta del bundle, incluida extracción del ZIP; sin notarización. Esta validación no certifica todo P0 ni accesibilidad completa.
+
+## Validación 0.4.0 — 31 de octubre de 2026
+
+La batería completa con SwiftPM clásico y `NABERIUS_COMPOSE=1` pasó 65 pruebas en 26 suites, incluyendo el ZIP Springer recibido mediante `NABERIUS_TEMPLATE_FIXTURE`. Se comprobaron clases de nombres arbitrarios, ZIP con recursos binarios, selección de otra entrada, conservación en `.nab`, copia original en la exportación, edición escapada de metadatos estructurados, título/propiedades/deshacer y tablas de 90 filas en una clase de dos columnas. Se rechazaron rutas ascendentes, absolutas, ambiguas, symlinks, expansión excesiva e índice truncado; el perfil permitió leer un archivo propio del área de trabajo y bloqueó un archivo de prueba situado fuera de ella.
+
+El PDF real de `sn-jnl` incluyó título nuevo, autores/afiliaciones de muestra del paquete, cita numérica resuelta, referencia sintética, fracción y tabla. Su primera página se inspeccionó renderizada. Esta evidencia acredita ese paquete y las clases sintéticas probadas, no compatibilidad con todos los paquetes TeX. Los archivos originales del editor científico permanecen locales y no se redistribuyen en el repositorio.
+
+La revisión de interfaz de 0.4.0 queda diferida por el usuario hasta disponer de la pantalla. Se instalaron y verificaron los bundles locales y el paquete adjunto; el ejemplo español guardado/reabierto y su PDF también se compusieron sin conexión tras preparar la caché de fuentes. No se presenta como verificación del flujo gráfico.

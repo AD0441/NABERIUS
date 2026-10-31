@@ -7,26 +7,19 @@ public struct TemplateAnalysis: Sendable {
 }
 public enum TemplateImporter {
     public static func analyze(_ url: URL) throws -> TemplateAnalysis {
+        guard (try url.resourceValues(forKeys:[.fileSizeKey]).fileSize ?? 0)<=TemplateZIP.maximumArchive else {throw NabError.invalid(L10n.text("La plantilla supera 16 MB."))}
         let data = try Data(contentsOf:url,options:.mappedIfSafe)
-        guard data.count <= 10*1024*1024 else { throw NabError.invalid(L10n.text("La plantilla supera 10 MB.")) }
+        guard data.count <= TemplateZIP.maximumArchive else { throw NabError.invalid(L10n.text("La plantilla supera 16 MB.")) }
         var source = ""; var notes: [String] = []
         if url.pathExtension.lowercased() == "zip" {
-            let entries = try safeZIPEntries(data)
-            notes.append(L10n.format("ZIP inspeccionado sin extraer archivos. %@ entradas.",entries.count))
-            let textFiles = entries.filter { ["tex","cls","sty"].contains(($0 as NSString).pathExtension.lowercased()) }
-            for name in textFiles {
-                let p = Process(); p.executableURL = URL(fileURLWithPath:"/usr/bin/unzip"); p.arguments = ["-p",url.path,name]
-                let pipe = Pipe(); p.standardOutput = pipe; p.standardError = FileHandle.nullDevice; try p.run()
-                var content=Data()
-                while let chunk=try pipe.fileHandleForReading.read(upToCount:65536),!chunk.isEmpty {
-                    content.append(chunk)
-                    if content.count>2*1024*1024 {p.terminate();p.waitUntilExit();throw NabError.invalid(L10n.text("La entrada del ZIP excede el límite de expansión."))}
-                }
-                p.waitUntilExit()
-                guard p.terminationStatus == 0, content.count <= 2*1024*1024 else { throw NabError.invalid(L10n.text("No se pudo leer una entrada del ZIP.")) }
-                source += String(data:content,encoding:.utf8) ?? ""
-            }
-            guard !source.isEmpty else { throw NabError.invalid(L10n.text("No se encontró una plantilla .tex, .cls o .sty legible en el ZIP.")) }
+            let files=try TemplateZIP.read(url)
+            let package=try LaTeXTemplatePackage.analyze(files:files,sourceName:url.lastPathComponent)
+            var template=DocumentTemplate(id:UUID().uuidString,name:(["sn-jnl":"Springer Nature","elsarticle":"Elsevier","IEEEtran":"IEEE","acmart":"ACM"][package.plan.documentClass] ?? package.plan.documentClass),detail:L10n.text("Paquete editorial completo. El PDF conserva su clase y recursos originales."))
+            template.category="Paquetes LaTeX";template.package=package;template.fontSize=10;template.lineSpacing=1.2
+            template.lockedProperties=TemplateProperty.allCases
+            if let kind=DocumentClass(rawValue:package.plan.documentClass) {template.effectiveLayout=DocumentLayout(documentClass:kind)}
+            let messages=[L10n.format("Archivo principal: %@",package.plan.mainFile),L10n.format("Clase: %@ · Opciones: %@",package.plan.documentClass,package.plan.options.joined(separator:", ")),L10n.format("%@ archivos conservados · %@ estilos bibliográficos",files.count,package.plan.bibliographyStyles.count),L10n.format("Motor detectado: %@ · Bibliografía: %@",package.plan.requiredEngine,package.plan.bibliographyBackend),L10n.text("El análisis no compila el ZIP ni ejecuta programas del paquete. La composición utiliza un directorio aislado y el modo restringido del motor.")]
+            return TemplateAnalysis(compatible:true,partial:package.plan.requiredEngine != "tectonic" || package.plan.bibliographyBackend=="biber",messages:messages,template:template)
         } else {
             guard ["tex","cls","sty"].contains(url.pathExtension.lowercased()), let s = String(data:data,encoding:.utf8) else { throw NabError.invalid(L10n.text("Selecciona .tex, .cls, .sty o .zip UTF-8.")) }; source = s
         }
@@ -63,24 +56,5 @@ public enum TemplateImporter {
 
         notes.append(L10n.text("La importación nunca instala ejecutables ni compila el archivo recibido."))
         return TemplateAnalysis(compatible:compatible,partial:macros || notes.contains(where:{$0.contains(L10n.text("no incorporada")) || $0.contains(L10n.text("no incluida"))}),messages:notes,template:t)
-    }
-    private static func safeZIPEntries(_ data: Data) throws -> [String] {
-        let b = [UInt8](data)
-        func u16(_ i:Int) -> Int { Int(b[i]) | Int(b[i+1])<<8 }
-        func u32(_ i:Int) -> Int { u16(i) | u16(i+2)<<16 }
-        var i = 0; var entries:[String] = []; var total = 0
-        while i+46 <= b.count {
-            guard u32(i) == 0x02014b50 else { i += 1; continue }
-            guard u16(i+8) & 1 == 0,[0,8].contains(u16(i+10)) else{throw NabError.invalid(L10n.text("ZIP cifrado o compresión no admitida."))}
-            let size = u32(i+24), nameLen = u16(i+28), extra = u16(i+30), comment = u16(i+32)
-            guard i+46+nameLen+extra+comment <= b.count, size <= 2*1024*1024, entries.count < 100 else { throw NabError.invalid(L10n.text("ZIP inseguro o demasiado grande.")) }
-            let name = String(decoding:b[(i+46)..<(i+46+nameLen)],as:UTF8.self)
-            guard !name.hasPrefix("/"), !name.contains("\\"), !name.split(separator:"/").contains(".."), !name.contains(":"), !name.contains("\u{0}") else { throw NabError.invalid(L10n.text("El ZIP contiene rutas peligrosas.")) }
-            let mode = u32(i+38)>>16
-            guard mode & 0xf000 != 0xa000 else { throw NabError.invalid(L10n.text("El ZIP contiene enlaces simbólicos.")) }
-            total += size; guard total <= 10*1024*1024 else { throw NabError.invalid(L10n.text("La expansión del ZIP supera 10 MB.")) }
-            entries.append(name); i += 46+nameLen+extra+comment
-        }
-        guard !entries.isEmpty else { throw NabError.invalid(L10n.text("ZIP dañado o ZIP64 no compatible.")) }; return entries
     }
 }

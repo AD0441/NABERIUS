@@ -10,3 +10,6 @@ dist/
 /docs/test-results*.txt
 /docs/typing-development-*.txt
 /docs/typesetting/*/main.log
+
+# User-provided journal packages and local review documents
+.local-template-review/

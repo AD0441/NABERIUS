@@ -1,4 +1,4 @@
-# Límites de la versión 0.3.0
+# Límites de la versión 0.4.0
 
 Esta entrega es una primera versión local funcional. No se declara terminado todo el alcance P0 de la especificación.
 
@@ -7,7 +7,7 @@ Esta entrega es una primera versión local funcional. No se declara terminado to
 - Las tablas se editan directamente con doble clic y navegación Tab/⇧Tab/Intro. Hay desplazamiento y vista abreviada de ocho filas, sin eliminar datos. El PDF usa longtable para tablas extensas. No hay celdas combinadas; una celda individual más alta que una página no se divide automáticamente por longtable. Las pruebas cubren 90 filas en cuatro clases, sin equivaler a cualquier combinación posible de contenido.
 - Las ecuaciones ofrecen estructuras básicas mediante campos y símbolos. No hay composición anidada arbitraria, matrices ni alineaciones complejas. La vista de estructura se identifica como aproximada hasta pulsar Componer con LaTeX; entonces el inspector y el lienzo usan la salida matemática real. El PDF completo siempre compone con LaTeX.
 - Las seis plantillas usan clases reales article/report/book/letter, con cabeceras, pies y anexos. Los ejemplos no acreditan conformidad con una norma universitaria/editorial; faltan márgenes asimétricos y opciones avanzadas de índices.
-- Las plantillas externas se convierten en variantes semánticas seguras. Las macros/clases originales no se ejecutan ni se reconstruyen universalmente.
+- Los paquetes ZIP conservan y componen sus clases/recursos reales bajo aislamiento. No son compatibles con todo programa TeX: LuaLaTeX/Biber se detectan pero no están integrados; macros editoriales inusuales, shell-escape y herramientas externas pueden impedir componer. Los archivos individuales mantienen el mapeo semántico anterior. Ver TEMPLATE_PACKAGES.md.
 - El pegado RTF conserva énfasis compatible normalizado; HTML/Markdown puede degradarse a texto. Los fragmentos entre documentos Naberius sí llevan objetos, imágenes y referencias; un destino externo no copiado queda advertido como ausente. No es importación semántica completa desde Word.
 - La importación bibliográfica ofrece revisión previa y conserva datos originales/adicionales. Admite @string, concatenación y herencia compatibles; no interpreta todas las extensiones BibLaTeX. Omite preámbulos con aviso. BibTeX desde RIS/CSL exporta los campos del formulario; .nab y CSL-JSON conservan los datos adicionales. Ver BIBLIOGRAPHY.md.
 - Tectonic se detecta en el sistema o se selecciona manualmente. No se incluye un motor autónomo con todos sus paquetes. La primera preparación necesita red explícita; después puede componerse sin conexión con dependencias en caché.
