@@ -399,6 +399,7 @@ struct NativeEditor: NSViewRepresentable {
             if let visible,c.documentID == d.id { text.enclosingScrollView?.contentView.scroll(to:visible) }
             text.typingAttributes=RichText.attributes(style:session.selectedStyle,template:d.template)
             c.lastRevision=session.revision; c.lastScheme=colorScheme; c.documentID=d.id; c.updating=false
+            c.textViewDidChangeSelection(Notification(name:NSTextView.didChangeSelectionNotification,object:text))
         }
         text.backgroundColor = .textBackgroundColor; text.insertionPointColor = .labelColor
         let width=max(160,(text.enclosingScrollView?.contentSize.width ?? 740)-2*inset)
@@ -462,7 +463,12 @@ struct NativeEditor: NSViewRepresentable {
         func textViewDidChangeSelection(_ notification:Notification) {
             guard !updating,let t=notification.object as? NativeTextView else { return }
             let range=t.selectedRange(),length=t.string.utf16.count
-            if length > 0 {
+            if range.length==0,range.location==length,let document=session.document,let last=document.blocks.last,last.text.isEmpty,(length==0 || t.string.hasSuffix("\n")) {
+                session.selectedStyle=last.style;session.selectedBlock=last.id;session.selectedNode=nil
+                if t.typingAttributes[.nabBlock] as? String != last.id.uuidString {
+                    var attrs=RichText.attributes(style:last.style,template:document.template);attrs[.nabBlock]=last.id.uuidString;t.typingAttributes=attrs
+                }
+            } else if length > 0 {
                 let a=t.attributedString().attributes(at:min(range.location,length-1),effectiveRange:nil)
                 session.selectedStyle=(a[.nabStyle] as? String).flatMap(BlockStyle.init(rawValue:)) ?? .paragraph
                 session.selectedBlock=(a[.nabBlock] as? String).flatMap(UUID.init(uuidString:)); session.selectedNode=(a[.nabNode] as? String).flatMap(UUID.init(uuidString:))

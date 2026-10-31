@@ -276,6 +276,10 @@ public enum Composer {
         try source.write(to: work.appendingPathComponent("main.tex"), atomically: true, encoding: .utf8)
         return try await run(engine: engine, work: work, allowNetwork: allowNetwork)
     }
+    static func failureSummary(log:String,allowNetwork:Bool)->String {
+        let missingCache=log.lowercased().contains("not in cache") || log.contains("only-cached") || (!allowNetwork && (log.contains("not loadable: Metric") || log.contains("not found") && log.contains("LaTeX Error: File")))
+        return missingCache ? L10n.text("Faltan paquetes o fuentes de LaTeX en la caché local. Prepáralos desde Configuración → Composición con «Componer y permitir descarga de paquetes». Puedes seguir escribiendo y guardando.") : L10n.text("LaTeX no pudo componer este PDF. Puedes seguir escribiendo y guardando; revisa los detalles de composición.")
+    }
     @concurrent private static func run(engine: URL, work: URL, allowNetwork: Bool,isolationRoot:URL?=nil) async throws -> Compilation {
         try Task.checkCancellation()
         let started = Date()
@@ -308,7 +312,7 @@ public enum Composer {
             }
             let log = (try? String(contentsOf:logURL,encoding:.utf8)) ?? ""
             let pdf = work.appendingPathComponent("main.pdf")
-            guard p.terminationStatus == 0, FileManager.default.fileExists(atPath:pdf.path) else { throw CompositionFailure(summary:log.lowercased().contains("not in cache") || log.contains("only-cached") ? "Faltan paquetes de LaTeX en la caché local. Prepáralos desde Configuración → Composición. Puedes seguir escribiendo y guardando." : "LaTeX no pudo componer este PDF. Puedes seguir escribiendo y guardando; revisa los detalles de composición.",log:String(log.suffix(40000)),engine:engine) }
+            guard p.terminationStatus == 0, FileManager.default.fileExists(atPath:pdf.path) else { throw CompositionFailure(summary:failureSummary(log:log,allowNetwork:allowNetwork),log:String(log.suffix(40000)),engine:engine) }
             return Compilation(pdf:pdf,log:log,engine:engine,completedAt:Date(),elapsed:Date().timeIntervalSince(started))
         } onCancel: { if p.isRunning { p.terminate() } }
     }

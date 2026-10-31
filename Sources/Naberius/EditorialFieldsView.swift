@@ -10,13 +10,16 @@ struct EditorialFieldsView:View {
                 VStack(alignment:.leading,spacing:10) {
                     Text(L10n.text("Detectados en el paquete. Conservan la estructura editorial al editar sus valores.")).font(.caption).foregroundStyle(.secondary)
                     ForEach(package.customFields) {field in
-                        TextField(field.label,text:Binding(get:{session.document?.metadata.templateFields?[field.id] ?? field.plainValue},set:{value in
-                            session.mutate(L10n.text("Editar dato editorial")) {document in
-                                if document.metadata.templateFields==nil {document.metadata.templateFields=[:]}
-                                document.metadata.templateFields?[field.id]=value
-                                document.metadata.authors=package.authors(metadata:document.metadata)
-                            }
-                        }),axis:.vertical).lineLimit(1...3)
+                        VStack(alignment:.leading,spacing:3) {
+                            Text(field.label).font(.caption).foregroundStyle(.secondary)
+                            TextField(field.label,text:Binding(get:{session.document?.metadata.templateFields?[field.id] ?? field.plainValue},set:{value in
+                                session.mutate(L10n.text("Editar dato editorial")) {document in
+                                    if document.metadata.templateFields==nil {document.metadata.templateFields=[:]}
+                                    document.metadata.templateFields?[field.id]=value
+                                    document.metadata.authors=package.authors(metadata:document.metadata)
+                                }
+                            }),axis:.vertical).lineLimit(1...3).accessibilityLabel(field.label)
+                        }
                     }
                 }.padding(6)
             }

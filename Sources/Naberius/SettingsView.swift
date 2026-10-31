@@ -17,6 +17,7 @@ struct SettingsView:View {
 }
 struct TemplateSettings:View {
     let session:Session
+    @Environment(\.openWindow) private var openWindow
     @AppStorage("defaultTemplateID") private var defaultTemplateID="blank"
     @State private var selected:String?
     @State private var analysis:TemplateAnalysis?
@@ -86,7 +87,7 @@ struct TemplateSettings:View {
                 Button(L10n.text("Personalizar…")){edit=template}
             }
             Button(defaultTemplateID==template.id ? L10n.text("Plantilla predeterminada") : L10n.text("Usar al crear documentos")){defaultTemplateID=template.id}.disabled(defaultTemplateID==template.id)
-            Button(L10n.text("Documento de prueba")){session.new(template:template,example:true)}
+            Button(L10n.text("Documento de prueba")){session.new(template:template,example:true);openWindow(id:"main")}
             if template.category != "Integradas" {
                 Button(L10n.text("Desinstalar"),role:.destructive){session.templates.removeAll{$0.id==template.id};if defaultTemplateID==template.id{defaultTemplateID="blank"};session.persistLocal()}
             } else {

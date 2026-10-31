@@ -29,3 +29,26 @@ import NaberiusCore
         #expect(session.document?.blocks.first?.text=="Property title")
     }
 }
+
+@MainActor struct EditorialCaretTests {
+    @Test func `typing in the final empty paragraph does not inherit the preceding heading`()throws {
+        _=NSApplication.shared
+        let support=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let session=Session(supportDirectory:support);session.new()
+        defer{session.autosaveForTestingCleanup();try? FileManager.default.removeItem(at:support)}
+        session.mutate {$0.blocks=[Block("Heading",style:.heading1),Block()]}
+        let document=try #require(session.document),last=try #require(document.blocks.last)
+        let text=NativeTextView(frame:NSRect(x:0,y:0,width:700,height:800));text.session=session
+        let coordinator=NativeEditor.Coordinator(session);text.delegate=coordinator
+        text.textStorage?.setAttributedString(RichText.attributed(document,citations:CitationOutput()))
+        text.typingAttributes=RichText.attributes(style:.heading1,template:document.template)
+        text.setSelectedRange(NSRange(location:text.string.utf16.count,length:0))
+        coordinator.textViewDidChangeSelection(Notification(name:NSTextView.didChangeSelectionNotification,object:text))
+        #expect(session.selectedStyle == .paragraph)
+        #expect(session.selectedBlock==last.id)
+        text.insertText("Cuerpo de prueba",replacementRange:text.selectedRange())
+        #expect(session.document?.blocks.last?.style == .paragraph)
+        #expect(session.document?.blocks.last?.text=="Cuerpo de prueba")
+        #expect(session.document?.blocks.last?.id==last.id)
+    }
+}

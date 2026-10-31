@@ -13,7 +13,7 @@
 
 Editor académico nativo para macOS, de la familia METATRON, RAZIEL y PAIMON. Escribe con estilos y objetos semánticos; Tectonic compone el PDF final mediante LaTeX. Texto, imágenes, plantilla y referencias viajan juntos en un archivo `.nab`.
 
-**Creado por Sebastián Pastén F.** · **Versión 0.4.0**
+**Creado por Sebastián Pastén F.** · **Versión 0.4.1**
 
 ![Naberius 0.3.0: edición de tablas en el documento](docs/screenshots/table-light.png)
 

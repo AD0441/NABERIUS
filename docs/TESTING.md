@@ -118,3 +118,13 @@ La batería completa con SwiftPM clásico y `NABERIUS_COMPOSE=1` pasó 65 prueba
 El PDF real de `sn-jnl` incluyó título nuevo, autores/afiliaciones de muestra del paquete, cita numérica resuelta, referencia sintética, fracción y tabla. Su primera página se inspeccionó renderizada. Esta evidencia acredita ese paquete y las clases sintéticas probadas, no compatibilidad con todos los paquetes TeX. Los archivos originales del editor científico permanecen locales y no se redistribuyen en el repositorio.
 
 La revisión de interfaz de 0.4.0 queda diferida por el usuario hasta disponer de la pantalla. Se instalaron y verificaron los bundles locales y el paquete adjunto; el ejemplo español guardado/reabierto y su PDF también se compusieron sin conexión tras preparar la caché de fuentes. No se presenta como verificación del flujo gráfico.
+
+## Revisión de interfaz 0.4.1 — 31 de octubre de 2026
+
+Se importó el ZIP desde el panel de archivos de la app. El catálogo confirmó `sn-jnl`, sus opciones, 16 archivos y nueve BST, sin duplicar la plantilla existente. Se creó un documento y se editaron título, autor y resumen; el documento y las propiedades conservaron los valores Unicode. La primera copia se guardó mediante el panel nativo.
+
+La prueba encontró tres ajustes de uso: llevar al frente el documento creado desde Configuración, mantener visibles las etiquetas de los campos editoriales y conservar Párrafo en la línea vacía posterior a un título. Las correcciones se comprobaron en la app instalada: el documento aparece directamente, las etiquetas se ven junto a sus valores y el texto nuevo no se incorpora al esquema como título.
+
+Una composición sin red informó una métrica de fuente todavía no almacenada (`cmbx9`). Se corrigió el diagnóstico para indicar la preparación desde Configuración → Composición. Al activar allí la descarga explícita, el motor generó el PDF. La inspección final del PDF en la ventana y el guardado de la segunda copia quedaron interrumpidos al bloquearse otra vez el Mac; no se declaran completados. La evidencia con recursos editoriales se conserva localmente y no se redistribuye.
+
+La batería completa pasó 67 pruebas con LaTeX real. Incluye regresiones de identidad/estilo del párrafo final y distinción entre una fuente ausente en caché y un error de sintaxis. La muestra del proceso durante los timeouts de control mostró el hilo principal en su bucle de eventos normal; no se atribuyeron esos timeouts a un bloqueo de Naberius.

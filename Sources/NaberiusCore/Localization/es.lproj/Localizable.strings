@@ -265,6 +265,7 @@
 "Falta el título; no se completó automáticamente." = "Falta el título; no se completó automáticamente.";
 "Falta el título; no se inventó." = "Falta el título; no se inventó.";
 "Faltan objetos o recursos dentro del documento." = "Faltan objetos o recursos dentro del documento.";
+"Faltan paquetes o fuentes de LaTeX en la caché local. Prepáralos desde Configuración → Composición con «Componer y permitir descarga de paquetes». Puedes seguir escribiendo y guardando." = "Faltan paquetes o fuentes de LaTeX en la caché local. Prepáralos desde Configuración → Composición con «Componer y permitir descarga de paquetes». Puedes seguir escribiendo y guardando.";
 "Fecha" = "Fecha";
 "Fecha no interpretada como año-mes-día; se conserva el valor original." = "Fecha no interpretada como año-mes-día; se conserva el valor original.";
 "Figura" = "Figura";
@@ -338,6 +339,7 @@
 "La plantilla supera 16 MB." = "La plantilla supera 16 MB.";
 "La primera composición puede necesitar descargar paquetes de TeX. Esta acción requiere conexión y solo se ejecuta al pulsar el botón." = "La primera composición puede necesitar descargar paquetes de TeX. Esta acción requiere conexión y solo se ejecuta al pulsar el botón.";
 "La tabla tiene filas incompatibles." = "La tabla tiene filas incompatibles.";
+"LaTeX no pudo componer este PDF. Puedes seguir escribiendo y guardando; revisa los detalles de composición." = "LaTeX no pudo componer este PDF. Puedes seguir escribiendo y guardando; revisa los detalles de composición.";
 "Las abreviaturas bibliográficas expanden más de 20 MB. Divide el archivo antes de importar." = "Las abreviaturas bibliográficas expanden más de 20 MB. Divide el archivo antes de importar.";
 "Las fuentes de tus ideas" = "Las fuentes de tus ideas";
 "Las sugerencias, Ignorar y Aprender están en el menú contextual del texto." = "Las sugerencias, Ignorar y Aprender están en el menú contextual del texto.";

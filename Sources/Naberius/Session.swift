@@ -93,6 +93,8 @@ struct Recent: Codable, Identifiable {
         if let package=chosen.package {
             var draft=NabDocument(template:chosen);draft.metadata=package.initialMetadata()
             draft.blocks=[Block(draft.metadata.title,style:.title),Block(package.plan.firstHeading.isEmpty ? L10n.text("Introducción") : package.plan.firstHeading,style:.heading1),Block()]
+            draft.cursor=Cursor(location:draft.blocks.map(\.text).joined(separator:"\n").utf16.count,length:0)
+            selectedStyle = .paragraph
             document=draft
         } else if example {var demo=NabDocument.example;if let template {demo.template=template};document=demo} else {document=NabDocument(template:chosen)}; currentURL = nil; expected = nil; selectedNode = nil; selectedBlock = nil; undo.removeAllActions(); status = L10n.text("Sin guardar · recuperación local"); revision += 1; if let d=document{queueJournal(d)}; refreshCitations(); changed()
     }

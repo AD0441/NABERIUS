@@ -1,4 +1,4 @@
-# Límites de la versión 0.4.0
+# Límites de la versión 0.4.1
 
 Esta entrega es una primera versión local funcional. No se declara terminado todo el alcance P0 de la especificación.
 
