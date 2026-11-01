@@ -367,7 +367,6 @@ final class EditorScrollView:NSScrollView {
 }
 struct NativeEditor: NSViewRepresentable {
     let session: Session
-    var mode:EditorMode?=nil
     @Environment(\.colorScheme) private var colorScheme
     func makeCoordinator()->Coordinator { Coordinator(session) }
     func makeNSView(context: Context)->NSScrollView {
@@ -398,7 +397,6 @@ struct NativeEditor: NSViewRepresentable {
         let insets=NSSize(width:inset,height:top)
         if text.textContainerInset != insets {text.textContainerInset=insets}
         let c=context.coordinator
-        c.updateComparisonLayout(from:text,combined:(mode ?? session.editorMode) == .combined)
         if c.lastRevision != session.revision || c.lastScheme != colorScheme {
             c.updating=true
             let range = c.documentID == d.id && !session.restoreSelection ? text.selectedRange() : NSRange(location:d.cursor.location,length:d.cursor.length);session.restoreSelection=false
@@ -423,38 +421,6 @@ struct NativeEditor: NSViewRepresentable {
     }
     final class Coordinator: NSObject,NSTextViewDelegate {
         let session:Session; var updating=false; var lastRevision = -1; var lastScheme:ColorScheme?; var documentID:UUID?
-        private var comparisonActive=false
-        private weak var comparisonSplit:NSSplitView?
-        private var comparisonFraction=0.5
-        var splitBalanceTask:Task<Void,Never>?
-        func updateComparisonLayout(from origin:NSView,combined:Bool) {
-            guard combined != comparisonActive else{return}
-            comparisonActive=combined;splitBalanceTask?.cancel()
-            if let split=comparisonSplit {NotificationCenter.default.removeObserver(self,name:NSSplitView.didResizeSubviewsNotification,object:split)}
-            guard combined else{return}
-            splitBalanceTask=Task { [weak self,weak origin] in
-                // Run after SwiftUI has inserted both hosting panes, without recreating TextKit.
-                await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
-                guard let self,let origin,!Task.isCancelled,comparisonActive else{return}
-                var ancestor=origin.superview
-                while let view=ancestor {
-                    if let split=view as? NSSplitView,split.isVertical,split.subviews.count==2 {
-                        comparisonSplit=split
-                        split.layoutSubtreeIfNeeded()
-                        split.setPosition((split.bounds.width-split.dividerThickness)*comparisonFraction,ofDividerAt:0)
-                        NotificationCenter.default.addObserver(self,selector:#selector(comparisonResized(_:)),name:NSSplitView.didResizeSubviewsNotification,object:split)
-                        return
-                    }
-                    ancestor=view.superview
-                }
-            }
-        }
-        @objc private func comparisonResized(_ notification:Notification) {
-            guard comparisonActive,session.editorMode == .combined,let split=notification.object as? NSSplitView,split.subviews.count==2 else{return}
-            let width=split.bounds.width-split.dividerThickness
-            if width>0 {comparisonFraction=min(0.95,max(0.05,split.subviews[0].frame.width/width))}
-        }
-        deinit {NotificationCenter.default.removeObserver(self)}
         private var simpleEditBlock: UUID?
         private var simpleEditStart = 0
         init(_ session:Session) { self.session=session }

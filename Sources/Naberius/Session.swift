@@ -54,7 +54,7 @@ struct Recent: Codable, Identifiable {
     var equationImages: [MathExpression:NSImage] = [:]
     var renderingEquation = false
     private var previewVersion = -1
-    var proofNeedsUpdate: Bool { previewVersion != editVersion }
+    var proofNeedsUpdate: Bool { previewURL == nil || previewVersion != editVersion }
     private var equationTask: Task<Void,Never>?
     var compiling = false
     var selectedStyle: BlockStyle = .paragraph

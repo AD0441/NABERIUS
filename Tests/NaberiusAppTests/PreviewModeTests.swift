@@ -89,4 +89,14 @@ import Testing
         #expect(compiler.requests.count==1)
     }
 
+    @Test func `reopening without a cached PDF schedules a new proof even at the same revision`()async {
+        let compiler=PreviewCompiler(),session=session(compiler);defer{cleanup(session)}
+        session.setEditorMode(.combined);await session.waitForPreviewForTesting()
+        #expect(!session.proofNeedsUpdate)
+        session.previewURL=nil
+        #expect(session.proofNeedsUpdate)
+        session.setEditorMode(.combined);await session.waitForPreviewForTesting()
+        #expect(compiler.requests.count==2);#expect(!session.proofNeedsUpdate)
+    }
+
 }

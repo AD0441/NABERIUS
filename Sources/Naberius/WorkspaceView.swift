@@ -119,10 +119,8 @@ struct EditorWorkspace:View {
             } else { HStack { Spacer();Button(L10n.text("Salir de concentración")) { session.focusMode=false }.keyboardShortcut(.escape,modifiers:[]) }.padding(8) }
             HStack(spacing:0) {
                 ZStack { Color(nsColor:.underPageBackgroundColor)
-                    HSplitView {
-                        NativeEditor(session:session,mode:session.editorMode).frame(maxWidth:session.pageMode ? (editorColumnWidth && session.document?.template.effectiveLayout.columnCount==2 ? 450 : 780) : .infinity).padding(.horizontal,session.pageMode ? 12 : 0).frame(minWidth:320,maxWidth:.infinity)
-                        if session.editorMode == .combined {CombinedProofView(session:session).frame(minWidth:320,maxWidth:.infinity)}
-                    }.opacity(session.showProof ? 0 : 1).allowsHitTesting(!session.showProof).accessibilityHidden(session.showProof)
+                    ComparisonWorkspace(session:session,mode:session.editorMode,columnWidth:editorColumnWidth)
+                        .opacity(session.showProof ? 0 : 1).allowsHitTesting(!session.showProof).accessibilityHidden(session.showProof)
                     if session.showProof {TypesetProofView(session:session)}
                 }
                 if session.inspector && !session.focusMode { Divider(); InspectorView(session:session).frame(width:270) }
