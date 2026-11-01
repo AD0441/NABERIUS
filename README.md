@@ -12,7 +12,7 @@
   <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0">Descargar</a> · <a href="#qué-hacemos-y-qué-hacemos-mejor">Capacidades</a> · <a href="#en-uso">En uso</a> · <a href="#tres-formas-de-trabajar">Vistas</a> · <a href="#empezar">Empezar</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![Naberius — escritura visual, composición precisa e identidad geométrica original](docs/assets/brand/cover.png)
+![Naberius — portada editorial en azul petróleo, tipografía académica y sello en relieve](docs/assets/brand/cover.jpg)
 
 **NABERIUS** reúne escritura estructurada, ecuaciones, tablas y bibliografía en un espacio de trabajo para artículos, tesis e informes. Escribe visualmente y revisa el PDF que compone **LaTeX mediante Tectonic**. Contenido, imágenes, plantilla y referencias viajan juntos en un archivo portable `.nab`.
 
@@ -146,7 +146,7 @@ Los aportes voluntarios ayudan a mantener el desarrollo y las pruebas de Naberiu
 
 ## Identidad y licencia
 
-El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS y los generadores reproducibles de [iconos](script/make_brand.swift) y [portada](script/make_cover.swift). [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
+El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS, el [generador de iconos](script/make_brand.swift), la [base geométrica de la portada](script/make_cover_reference.swift) y su [dirección artística](docs/assets/brand/cover-prompt.txt). [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
 
 Código propio: **AGPL-3.0-or-later**, copyright 2026 Sebastián Pastén F. Los componentes de terceros conservan sus licencias: [avisos](THIRD_PARTY_NOTICES.md), [licencia](LICENSE) y [autoría](COPYRIGHT). citeproc-js se utiliza bajo su opción AGPL; las fuentes Latin Modern conservan GUST y los estilos/locales CSL, CC BY-SA.
 

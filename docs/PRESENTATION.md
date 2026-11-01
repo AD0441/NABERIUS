@@ -18,13 +18,17 @@ La composición del PDF requiere Tectonic instalado por separado. La versión en
 
 ## Portada gráfica del repositorio
 
-![Naberius — portada geométrica](assets/brand/cover.png)
+![Naberius — portada editorial con sello en relieve](assets/brand/cover.jpg)
 
-La portada principal del README sigue la referencia de METATRON aportada por el autor: formato 2:1, fondo navy, nombre y lema a la izquierda, sello original de Naberius a la derecha, divisor y pie con plataforma y autoría. Usa las tintas de la familia y conserva la geometría simplificada del sello.
+La portada principal conserva el formato 2:1 y la identidad de METATRON: nombre y lema a la izquierda, sello de Naberius a la derecha, divisor y pie con plataforma y autoría. El fondo petróleo tiene iluminación suave y una textura discreta; el sello se presenta en marfil con relieve, acompañado por líneas geométricas tenues. El nombre conserva la voz sans serif de la familia y el lema adopta una serif académica. El icono de la aplicación permanece intacto.
 
-- [PNG de portada](assets/brand/cover.png): 1600 × 800.
-- [Generador nativo reproducible](../script/make_cover.swift): ejecutar `xcrun swift script/make_cover.swift` desde la raíz del repositorio.
-- Renderizado con AppKit, tipografía del sistema y geometría original. La referencia de METATRON se consulta sin copiar su símbolo ni modificar su proyecto.
+- [JPEG de portada](assets/brand/cover.jpg): 1774 × 887, proporción 2:1, versión ligera utilizada en el README.
+- [PNG original](assets/brand/cover.png): imagen de generación con las mismas dimensiones. La conversión a JPEG usa calidad 95 y conserva la composición.
+- [Prompt y referencias](assets/brand/cover-prompt.txt): dirección artística completa de la imagen generada con image_gen.
+- [Base geométrica](assets/brand/cover-reference.png): referencia de 1600 × 800 con la geometría original.
+- [Generador nativo de la referencia](../script/make_cover_reference.swift): ejecutar `xcrun swift script/make_cover_reference.swift` desde la raíz del repositorio. Produce solo la referencia plana; la portada final procede de la generación artística documentada.
+
+La nueva imagen se generó tomando como referencias la base nativa, la portada de METATRON y el icono existente. La referencia de METATRON se consulta sin redistribuirla ni modificar su proyecto. El prompt se incorpora también como procedencia en el PNG final.
 
 ## Fotografía para la web y la sección de capacidades
 
