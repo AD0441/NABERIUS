@@ -1,24 +1,39 @@
 <div align="center">
-  <img src="Resources/Brand/icon-256.png" width="112" alt="Icono de Naberius">
+  <img src="Resources/Brand/icon-256.png" width="112" alt="Icono de NABERIUS">
   <h1>NABERIUS</h1>
   <p><strong>Escritura visual. Composición precisa.</strong></p>
-  <p>Da forma a tus ideas y compón documentos con LaTeX desde una aplicación nativa para macOS.</p>
+  <p>Da forma a tus ideas y compón documentos con LaTeX en tu Mac.</p>
   <p>
-    <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-183B4A?logo=apple&logoColor=white">
-    <img alt="Swift 6.2 o posterior" src="https://img.shields.io/badge/Swift-6.2%2B-365D72?logo=swift&logoColor=white">
-    <img alt="Verificado en Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-verificado-476957">
-    <a href="LICENSE"><img alt="Licencia AGPL-3.0-or-later" src="https://img.shields.io/badge/license-AGPL--3.0--or--later-58616B"></a>
+    <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
+    <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
+    <img alt="Versión 0.5.0" src="https://img.shields.io/badge/versi%C3%B3n-0.5.0-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0">Descargar</a> · <a href="#qué-hacemos-y-qué-hacemos-mejor">Capacidades</a> · <a href="#en-uso">En uso</a> · <a href="#tres-formas-de-trabajar">Vistas</a> · <a href="#empezar">Empezar</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0">Descargar 0.5.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![Naberius — portada editorial en azul petróleo, tipografía académica y sello en relieve](docs/assets/brand/cover.jpg)
+![NABERIUS · Simplicidad con impacto. Escritura visual. Composición precisa. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
 
 **NABERIUS** reúne escritura estructurada, ecuaciones, tablas y bibliografía en un espacio de trabajo para artículos, tesis e informes. Escribe visualmente y revisa el PDF que compone **LaTeX mediante Tectonic**. Contenido, imágenes, plantilla y referencias viajan juntos en un archivo portable `.nab`.
 
-**Creado por Sebastián Pastén F.** Pertenece a la familia de [METATRON](https://github.com/AD0441/METATRON), [RAZIEL](https://github.com/AD0441/RadioWorkbench) y [PAIMON](https://github.com/AD0441/PAIMON): herramientas nativas, procesamiento local y apoyo voluntario.
+**Creado por Sebastián Pastén F.** Pertenece a la familia de [METATRON](https://github.com/AD0441/METATRON), [RAZIEL](https://github.com/AD0441/RAZIEL) y [PAIMON](https://github.com/AD0441/PAIMON): herramientas nativas, procesamiento local y apoyo voluntario.
 
 **Versión actual: [Naberius 0.5.0 — versión preliminar para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0).** Incluye tres vistas de trabajo, plantillas editoriales en ZIP y diseños de una o dos columnas. [Descargar la app](https://github.com/AD0441/NABERIUS/releases/download/v0.5.0/Naberius.zip) · [Historial de cambios](CHANGELOG.md).
+
+## Simplicidad con impacto
+
+**Concéntrate en lo que vale la pena.** Creamos herramientas nativas para Mac que reúnen lo necesario en un flujo claro: menos pasos repetidos, decisiones visibles y control sobre tu trabajo. En NABERIUS, eso significa dedicar tu atención a las ideas, con escritura estructurada y el PDF real a la vista.
+
+Compartimos una filosofía y una [identidad visual](docs/FAMILY.md); cada aplicación conserva su propósito, su sello y sus límites.
+
+## Qué nos diferencia
+
+| Lo que necesitas | Nuestra ventaja práctica | Alcance que debes conocer |
+| --- | --- | --- |
+| Escribir y componer sin separar el trabajo | Editor visual, tablas, ecuaciones y bibliografía junto al PDF compuesto por LaTeX. | La página editable es orientativa; el PDF determina la composición final. |
+| Conservar el formato editorial y tus recursos | Plantillas ZIP y un archivo portable `.nab` con texto, imágenes y referencias; exportación del proyecto LaTeX. | Tectonic se instala por separado y la preparación inicial de paquetes puede requerir Internet. |
+| Elegir un espacio propio para escribir | Aplicación nativa, documentos locales, sin cuenta ni telemetría. | La compatibilidad con macros y clases depende del paquete; revisa los avisos. |
+
+Si valoras la colaboración simultánea desde el navegador, [Overleaf](https://www.overleaf.com/about/features-overview) está orientado a ese trabajo y también ofrece edición visual. NABERIUS se centra en la escritura individual nativa y el proyecto local portable; no incluye coedición en tiempo real. La edición visual y LaTeX no son funciones exclusivas: la ventaja está en cómo se reúnen aquí. [Alcance real](docs/STATUS.md) · [Privacidad](docs/PRIVACY.md).
 
 ## Qué hacemos y qué hacemos mejor
 
@@ -146,12 +161,13 @@ Los aportes voluntarios ayudan a mantener el desarrollo y las pruebas de Naberiu
 
 ## Identidad y licencia
 
-El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS, el [generador de iconos](script/make_brand.swift), la [base geométrica de la portada](script/make_cover_reference.swift) y su [dirección artística](docs/assets/brand/cover-prompt.txt). [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
+El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS y el [generador de iconos](script/make_brand.swift). La portada actual adopta la [identidad común de la familia](docs/FAMILY.md); la [base geométrica anterior](script/make_cover_reference.swift) y su [dirección artística](docs/assets/brand/cover-prompt.txt) se conservan como antecedentes. [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
 
 Código propio: **AGPL-3.0-or-later**, copyright 2026 Sebastián Pastén F. Los componentes de terceros conservan sus licencias: [avisos](THIRD_PARTY_NOTICES.md), [licencia](LICENSE) y [autoría](COPYRIGHT). citeproc-js se utiliza bajo su opción AGPL; las fuentes Latin Modern conservan GUST y los estilos/locales CSL, CC BY-SA.
 
 <div align="center">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="Resources/Brand/symbol-dark.svg"><img src="Resources/Brand/symbol-light.svg" width="70" alt="Símbolo de Naberius"></picture>
+  <p><strong>Simplicidad con impacto.</strong><br>Concéntrate en lo que vale la pena.</p>
+  <p><a href="https://github.com/AD0441/NABERIUS">NABERIUS</a> · <a href="https://github.com/AD0441/RAZIEL">RAZIEL</a> · <a href="https://github.com/AD0441/METATRON">METATRON</a> · <a href="https://github.com/AD0441/PAIMON">PAIMON</a> · <a href="https://github.com/AD0441/VAPULA">VAPULA</a></p>
   <p><strong>Creado por Sebastián Pastén F.</strong></p>
-  <p><a href="https://www.sebastianpasten.com/desarrollos-aplicaciones-para-mac-software-sdr">Más aplicaciones para Mac</a></p>
+  <p><a href="https://www.sebastianpasten.com/desarrollos-aplicaciones-para-mac-software-sdr">Más aplicaciones para Mac</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar en Ko-fi</a></p>
 </div>

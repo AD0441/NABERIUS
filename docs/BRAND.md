@@ -69,3 +69,12 @@ La interfaz conserva los roles de sistema de la familia. El documento usa Latin 
 ## Terminación 0.3.0
 
 Se inspeccionaron las exportaciones de 256/1024 y la resolución del icono instalado mediante NSWorkspace, guardada en screenshots/system-app-icon.png. Las capturas de tablas claras/oscuras muestran el sello simplificado en el pie junto a autoría y Ko-fi. El control directo del Dock agotó el tiempo; no se afirma disponer de una captura de su baldosa en pantalla. El recurso ICNS y la clave CFBundleIconFile del bundle corresponden a la marca nueva.
+
+
+## Portada y mensaje de familia · noviembre de 2026
+
+La cabecera pública actual del README es `docs/assets/brand/family-cover.png`. Adopta el sistema común de [NABERIUS, RAZIEL, METATRON, PAIMON y VAPULA](FAMILY.md): azul petróleo, marfil, acento azul apagado, mensaje a la izquierda y sello propio a la derecha.
+
+**Simplicidad con impacto. Concéntrate en lo que vale la pena.** El eslogan específico de NABERIUS es **Escritura visual. Composición precisa.**
+
+Es una ilustración promocional generada con imagegen sobre los recursos de marca existentes. El [prompt y la procedencia](assets/brand/family-cover-prompt.md) documentan su elaboración. Los iconos de aplicación, la geometría vectorial original, las capturas reales y los recursos anteriores se conservan. Los generadores históricos siguen produciendo sus archivos originales; la nueva portada se mantiene como recurso independiente.
