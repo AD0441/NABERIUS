@@ -9,18 +9,45 @@
     <img alt="Verificado en Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-verificado-476957">
     <a href="LICENSE"><img alt="Licencia AGPL-3.0-or-later" src="https://img.shields.io/badge/license-AGPL--3.0--or--later-58616B"></a>
   </p>
-  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0">Descargar</a> · <a href="#en-uso">En uso</a> · <a href="#tres-formas-de-trabajar">Vistas</a> · <a href="#empezar">Empezar</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0">Descargar</a> · <a href="#qué-hacemos-y-qué-hacemos-mejor">Capacidades</a> · <a href="#en-uso">En uso</a> · <a href="#tres-formas-de-trabajar">Vistas</a> · <a href="#empezar">Empezar</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![Naberius: escritura académica y composición LaTeX en tu Mac](docs/assets/marketing/naberius-cover.jpg)
-
-*Portada promocional generada con IA a partir de la aplicación real. Las capturas de «En uso» muestran la app instalada.*
+![Naberius — escritura visual, composición precisa e identidad geométrica original](docs/assets/brand/cover.png)
 
 **NABERIUS** reúne escritura estructurada, ecuaciones, tablas y bibliografía en un espacio de trabajo para artículos, tesis e informes. Escribe visualmente y revisa el PDF que compone **LaTeX mediante Tectonic**. Contenido, imágenes, plantilla y referencias viajan juntos en un archivo portable `.nab`.
 
 **Creado por Sebastián Pastén F.** Pertenece a la familia de [METATRON](https://github.com/AD0441/METATRON), [RAZIEL](https://github.com/AD0441/RadioWorkbench) y [PAIMON](https://github.com/AD0441/PAIMON): herramientas nativas, procesamiento local y apoyo voluntario.
 
 **Versión actual: [Naberius 0.5.0 — versión preliminar para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0).** Incluye tres vistas de trabajo, plantillas editoriales en ZIP y diseños de una o dos columnas. [Descargar la app](https://github.com/AD0441/NABERIUS/releases/download/v0.5.0/Naberius.zip) · [Historial de cambios](CHANGELOG.md).
+
+## Qué hacemos y qué hacemos mejor
+
+Naberius acompaña el recorrido del borrador al documento compuesto: escribir con estructura, reunir las fuentes y comprobar cómo quedará cada página.
+
+![Naberius: escritura académica y composición LaTeX en tu Mac](docs/assets/marketing/naberius-cover.jpg)
+
+*Imagen promocional generada con IA a partir de la aplicación real. Las capturas de «En uso» muestran la app instalada.*
+
+- **Escribir con estructura:** títulos, esquema, énfasis, listas, enlaces, búsqueda y reemplazo. Fuentes Latin Modern incluidas y apariencia clara, oscura o del sistema.
+- **Trabajar con objetos académicos:** tablas editables dentro del documento, figuras, ecuaciones, notas, índice y referencias cruzadas.
+- **Revisar el PDF real:** composición LaTeX, navegación, zoom y guardado. Actualización manual o después de una pausa configurable.
+- **Usar tu formato editorial:** importar un ZIP con su clase, macros y recursos; revisar los campos detectados y escribir en una plantilla de revista.
+- **Configurar el diseño:** artículo, informe, tesis, libro o carta; una o dos columnas, separación, márgenes por lado, sangría, cabeceras y pies.
+- **Organizar fuentes:** APA 7, IEEE, Vancouver y Chicago autor-fecha mediante citeproc-js local. Importar BibTeX/BibLaTeX, RIS o CSL-JSON con revisión previa.
+- **Conservar el trabajo:** un archivo `.nab`, guardado atómico, detección de conflictos y recuperación local. Exportar el proyecto LaTeX con sus recursos.
+
+La [matriz de requisitos](docs/STATUS.md) y los [límites conocidos](docs/LIMITATIONS.md) describen el alcance real de la versión.
+
+### Qué mejoramos en tu flujo de trabajo
+
+| Tarea | Cómo ayuda Naberius |
+| --- | --- |
+| **Escribir y revisar la composición** | Editor y PDF real en la misma ventana, con actualización tras una pausa configurable. |
+| **Preparar el formato de una revista** | Importación de ZIP que conserva la clase y los recursos originales; revisión de los campos detectados y aviso si faltan archivos. |
+| **Revisar referencias antes de incorporarlas** | Selección de registros, campos conservados y advertencias de importación en una misma revisión. |
+| **Llevar el trabajo a otro Mac** | Un archivo `.nab` reúne texto, imágenes, bibliografía y plantilla. También puedes exportar el proyecto LaTeX. |
+
+La escritura aproxima el formato; el PDF confirma las columnas, los saltos y la composición final.
 
 ## En uso
 
@@ -33,18 +60,6 @@ Las capturas siguientes documentan la edición de tablas y la revisión bibliogr
 | Tablas dentro del documento | Revisión de la importación bibliográfica |
 | --- | --- |
 | ![Tabla en apariencia oscura](docs/screenshots/table-dark.png) | ![Registros, campos y advertencias antes de importar](docs/screenshots/bibliography-light.png) |
-
-## Qué puedes hacer
-
-- **Escribir con estructura:** títulos, esquema, énfasis, listas, enlaces, búsqueda y reemplazo. Fuentes Latin Modern incluidas y apariencia clara, oscura o del sistema.
-- **Trabajar con objetos académicos:** tablas editables dentro del documento, figuras, ecuaciones, notas, índice y referencias cruzadas.
-- **Revisar el PDF real:** composición LaTeX, navegación, zoom y guardado. Actualización manual o después de una pausa configurable.
-- **Usar tu formato editorial:** importar un ZIP con su clase, macros y recursos; revisar los campos detectados y escribir en una plantilla de revista.
-- **Configurar el diseño:** artículo, informe, tesis, libro o carta; una o dos columnas, separación, márgenes por lado, sangría, cabeceras y pies.
-- **Organizar fuentes:** APA 7, IEEE, Vancouver y Chicago autor-fecha mediante citeproc-js local. Importar BibTeX/BibLaTeX, RIS o CSL-JSON con revisión previa.
-- **Conservar el trabajo:** un archivo `.nab`, guardado atómico, detección de conflictos y recuperación local. Exportar el proyecto LaTeX con sus recursos.
-
-La [matriz de requisitos](docs/STATUS.md) y los [límites conocidos](docs/LIMITATIONS.md) describen el alcance real de la versión.
 
 ## Tres formas de trabajar
 
@@ -131,7 +146,7 @@ Los aportes voluntarios ayudan a mantener el desarrollo y las pruebas de Naberiu
 
 ## Identidad y licencia
 
-El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS y el [generador reproducible](script/make_brand.swift). [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
+El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS y los generadores reproducibles de [iconos](script/make_brand.swift) y [portada](script/make_cover.swift). [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
 
 Código propio: **AGPL-3.0-or-later**, copyright 2026 Sebastián Pastén F. Los componentes de terceros conservan sus licencias: [avisos](THIRD_PARTY_NOTICES.md), [licencia](LICENSE) y [autoría](COPYRIGHT). citeproc-js se utiliza bajo su opción AGPL; las fuentes Latin Modern conservan GUST y los estilos/locales CSL, CC BY-SA.
 
