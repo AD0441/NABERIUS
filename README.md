@@ -1,39 +1,93 @@
-<p align="center">
-  <img src="Resources/Brand/icon-256.png" width="112" alt="Sello simplificado de Naberius">
-</p>
-<h1 align="center">NABERIUS</h1>
-<p align="center">Escritura visual. Composición precisa.</p>
-<p align="center">
-  <img src="https://img.shields.io/badge/macOS-14%2B-234A60" alt="macOS 14 o posterior">
-  <img src="https://img.shields.io/badge/Swift-6.2%2B-F05138" alt="Swift 6.2 o posterior">
-  <img src="https://img.shields.io/badge/Apple_Silicon-verificado-234A60" alt="Verificado en Apple Silicon">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0--or--later-234A60" alt="AGPL-3.0-or-later"></a>
-</p>
-<p align="center"><a href="#comenzar">Comenzar</a> · <a href="#capacidades">Capacidades</a> · <a href="#validación">Validación</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar en Ko-fi</a></p>
+<div align="center">
+  <img src="Resources/Brand/icon-256.png" width="112" alt="Icono de Naberius">
+  <h1>NABERIUS</h1>
+  <p><strong>Escritura visual. Composición precisa.</strong></p>
+  <p>Da forma a tus ideas y compón documentos con LaTeX desde una aplicación nativa para macOS.</p>
+  <p>
+    <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-183B4A?logo=apple&logoColor=white">
+    <img alt="Swift 6.2 o posterior" src="https://img.shields.io/badge/Swift-6.2%2B-365D72?logo=swift&logoColor=white">
+    <img alt="Verificado en Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-verificado-476957">
+    <a href="LICENSE"><img alt="Licencia AGPL-3.0-or-later" src="https://img.shields.io/badge/license-AGPL--3.0--or--later-58616B"></a>
+  </p>
+  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0">Descargar</a> · <a href="#en-uso">En uso</a> · <a href="#tres-formas-de-trabajar">Vistas</a> · <a href="#empezar">Empezar</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+</div>
 
-Editor académico nativo para macOS, de la familia METATRON, RAZIEL y PAIMON. Escribe con estilos y objetos semánticos; Tectonic compone el PDF final mediante LaTeX. Texto, imágenes, plantilla y referencias viajan juntos en un archivo `.nab`.
+![Naberius: escritura académica y composición LaTeX en tu Mac](docs/assets/marketing/naberius-cover.jpg)
 
-**Creado por Sebastián Pastén F.** · **Versión 0.5.0**
+*Portada promocional generada con IA a partir de la aplicación real. Las capturas de «En uso» muestran la app instalada.*
 
-![Naberius 0.3.0: edición de tablas en el documento](docs/screenshots/table-light.png)
+**NABERIUS** reúne escritura estructurada, ecuaciones, tablas y bibliografía en un espacio de trabajo para artículos, tesis e informes. Escribe visualmente y revisa el PDF que compone **LaTeX mediante Tectonic**. Contenido, imágenes, plantilla y referencias viajan juntos en un archivo portable `.nab`.
 
-Captura de la app instalada. El documento usa Latin Modern y el PDF final se compone con Tectonic. [Página de PDF real](docs/typesetting/article-page-1.png) · [Tipografía y composición](docs/TYPESETTING.md).
+**Creado por Sebastián Pastén F.** Pertenece a la familia de [METATRON](https://github.com/AD0441/METATRON), [RAZIEL](https://github.com/AD0441/RadioWorkbench) y [PAIMON](https://github.com/AD0441/PAIMON): herramientas nativas, procesamiento local y apoyo voluntario.
 
-<details>
-<summary>Apariencia oscura e importación bibliográfica</summary>
+**Versión actual: [Naberius 0.5.0 — versión preliminar para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0).** Incluye tres vistas de trabajo, plantillas editoriales en ZIP y diseños de una o dos columnas. [Descargar la app](https://github.com/AD0441/NABERIUS/releases/download/v0.5.0/Naberius.zip) · [Historial de cambios](CHANGELOG.md).
 
-![Tabla en apariencia oscura](docs/screenshots/table-dark.png)
-![Revisión de importación y campos conservados](docs/screenshots/bibliography-light.png)
+## En uso
 
-</details>
+Vista **Editor + PDF** de Naberius 0.5.0 con el documento original de demostración [Ideas que toman forma](docs/examples/Ideas-que-toman-forma.nab). A la izquierda se escribe; a la derecha se comprueba la composición real de LaTeX.
 
-El ZIP de una revista puede instalarse directamente desde **Configuración → Plantillas → Importar plantilla**. Naberius detecta la entrada, conserva la clase y los recursos, y genera el PDF con ese formato editorial. No requiere un adaptador por revista. Consulta el [formato de paquetes y sus límites](docs/TEMPLATE_PACKAGES.md).
+![Naberius 0.5.0: editor y PDF real, con títulos, ecuación y tabla](docs/screenshots/editor-pdf-0.5.jpg)
 
-## Comenzar
+Las capturas siguientes documentan la edición de tablas y la revisión bibliográfica introducidas en 0.3.0.
 
-Descarga la app desde [Releases](https://github.com/AD0441/NABERIUS/releases) o compílala desde el código. El ZIP requiere Apple Silicon y macOS 14 o posterior; se verifica en Apple M1 con 8 GB. El código permite compilación nativa; Intel no está verificado. El ZIP tiene firma ad hoc y no está notarizado. Tectonic se instala por separado; puedes escribir y exportar el proyecto LaTeX sin tenerlo disponible.
+| Tablas dentro del documento | Revisión de la importación bibliográfica |
+| --- | --- |
+| ![Tabla en apariencia oscura](docs/screenshots/table-dark.png) | ![Registros, campos y advertencias antes de importar](docs/screenshots/bibliography-light.png) |
 
-Con Xcode y Swift 6.2 o posterior:
+## Qué puedes hacer
+
+- **Escribir con estructura:** títulos, esquema, énfasis, listas, enlaces, búsqueda y reemplazo. Fuentes Latin Modern incluidas y apariencia clara, oscura o del sistema.
+- **Trabajar con objetos académicos:** tablas editables dentro del documento, figuras, ecuaciones, notas, índice y referencias cruzadas.
+- **Revisar el PDF real:** composición LaTeX, navegación, zoom y guardado. Actualización manual o después de una pausa configurable.
+- **Usar tu formato editorial:** importar un ZIP con su clase, macros y recursos; revisar los campos detectados y escribir en una plantilla de revista.
+- **Configurar el diseño:** artículo, informe, tesis, libro o carta; una o dos columnas, separación, márgenes por lado, sangría, cabeceras y pies.
+- **Organizar fuentes:** APA 7, IEEE, Vancouver y Chicago autor-fecha mediante citeproc-js local. Importar BibTeX/BibLaTeX, RIS o CSL-JSON con revisión previa.
+- **Conservar el trabajo:** un archivo `.nab`, guardado atómico, detección de conflictos y recuperación local. Exportar el proyecto LaTeX con sus recursos.
+
+La [matriz de requisitos](docs/STATUS.md) y los [límites conocidos](docs/LIMITATIONS.md) describen el alcance real de la versión.
+
+## Tres formas de trabajar
+
+Elige la vista sobre el documento y configura la predeterminada en **Configuración → General → Escritura y PDF**.
+
+| Vista | Para qué sirve |
+| --- | --- |
+| **Escritura** | Una página editable orientativa o un lienzo continuo para desarrollar el texto. Puedes ajustar el ancho de escritura. |
+| **Editor + PDF** | Escribir y comprobar el PDF real al mismo tiempo. El divisor permite repartir el espacio entre ambas vistas. |
+| **PDF** | Revisar la composición final a todo el ancho, navegar, ampliar y guardar el resultado. |
+
+La página editable aproxima el formato; los saltos, las columnas y la paginación definitiva se comprueban en el PDF. Cambiar de vista conserva el contenido, la selección y el historial.
+
+La actualización automática espera **2, 4 u 8 segundos** después de escribir y solo se programa en la vista dividida con la ventana activa. Puedes desactivar **Automático** y actualizar con **⇧⌘R**. El motor no se ejecuta por cada pulsación. [Guía de vistas y composición](docs/EDITOR_MODES.md).
+
+## Del ZIP de una revista al documento
+
+En **Configuración → Plantillas → Importar plantilla**, selecciona el ZIP editorial. Naberius detecta el documento principal, conserva la clase y los recursos originales, y ofrece los campos de metadata reconocidos. La composición usa ese paquete; no exige crear un adaptador específico para cada revista.
+
+Si faltan clases o estilos, puedes **Completar recursos…**. **Crear diseño libre** permite partir del contenido con un diseño configurable. La compatibilidad depende de los archivos y macros del paquete; una variante libre no certifica el formato de una revista.
+
+Se han probado paquetes IEEE, JIMIS y MECS. El ZIP CJS ensayado carecía de su clase requerida; la app informa el recurso ausente. Los paquetes aportados para pruebas no se redistribuyen en este repositorio. [Funcionamiento, formatos probados y límites](docs/TEMPLATE_PACKAGES.md).
+
+## Bibliografía y tablas
+
+En **Biblioteca → Importar**, revisa registros, campos y advertencias antes de añadir las fuentes. La importación reconoce abreviaturas `@string`, concatenación `#`, `crossref`, `xdata`, nombres institucionales, acentos y fechas. Los campos adicionales y los datos originales se conservan; las limitaciones se muestran durante la revisión. No se promete compatibilidad universal con todas las extensiones BibLaTeX. [Bibliografía](docs/BIBLIOGRAPHY.md).
+
+Haz doble clic en una tabla para editar sus celdas dentro del documento. **Tab / ⇧Tab** cambian de celda, **Intro** avanza de fila y **Esc** termina la edición. Tab en la última celda añade una fila hasta el límite de 200. La vista puede abreviar tablas largas; el PDF conserva sus filas. [Tipografía y composición](docs/TYPESETTING.md).
+
+## Empezar
+
+[Descargar Naberius 0.5.0 para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0) · [Comprobar SHA-256](https://github.com/AD0441/NABERIUS/releases/download/v0.5.0/Naberius.zip.sha256)
+
+Requiere **macOS 14 o posterior**. La app se ha verificado en un Apple M1 con 8 GB; Intel no está verificado. El ZIP tiene firma local ad hoc y no está notarizado.
+
+1. Descomprime el ZIP y coloca **Naberius.app** en Aplicaciones.
+2. Crea un documento en blanco, elige una plantilla o abre el ejemplo incluido en este repositorio.
+3. Aplica estilos y añade tablas, figuras, ecuaciones o referencias desde los menús.
+4. Guarda con **⌘S** y elige **Editor + PDF** para revisar la composición.
+
+**Tectonic se instala por separado.** Puedes escribir y exportar el proyecto LaTeX sin el motor. Para producir el PDF, selecciona Tectonic en **Configuración → Composición** si no se detecta. La preparación inicial de paquetes puede requerir conexión y se inicia expresamente desde allí; después se utiliza la caché local.
+
+Para compilar desde el código, usa Xcode con Swift 6.2 o posterior:
 
 ```sh
 git clone https://github.com/AD0441/NABERIUS.git
@@ -41,30 +95,17 @@ cd NABERIUS
 ./script/build_and_run.sh
 ```
 
-El script crea y verifica el bundle, produce `dist/Naberius.zip` e instala `~/Applications/Naberius.app`. La copia instalada evita que la sincronización del Escritorio añada metadatos que invaliden la firma. `--build-only` solo genera el ZIP; `NABERIUS_APP_DIR` permite elegir el destino de instalación. Otras opciones: `--verify`, `--demo`, `--debug`, `--logs`.
+El script crea y verifica el bundle, produce `dist/Naberius.zip` e instala `~/Applications/Naberius.app`. `--build-only` solo genera el ZIP; `NABERIUS_APP_DIR` permite elegir el destino de instalación.
 
-1. Crea un documento en blanco o selecciona una plantilla.
-2. Aplica estilos: título, apartados, párrafo, cita extensa o listas. El esquema sigue los títulos.
-3. Inserta tablas, figuras, ecuaciones, notas, índice y referencias cruzadas desde **Insertar**.
-4. En una tabla, haz doble clic para editar dentro del documento. **Tab / ⇧Tab** cambian de celda, **Intro** avanza de fila y **Esc** termina. Tab en la última celda añade una fila hasta el límite de 200.
-5. En **Biblioteca → Importar**, revisa registros, campos y advertencias antes de añadir las fuentes seleccionadas.
-6. Guarda con **⌘S**. Elige **Escritura**, **Editor + PDF** o **PDF** sobre el documento. La vista dividida actualiza el PDF real tras una pausa configurable; puedes desactivar **Automático** y actualizar con **⇧⌘R**. Consulta [las opciones de escritura](docs/EDITOR_MODES.md).
+## Local por decisión
 
-Selecciona Tectonic en **Configuración → Composición** si no se detecta. La preparación inicial de paquetes puede necesitar conexión y se activa expresamente desde allí; después se usa la caché local. El motor no se ejecuta por cada pulsación.
+Naberius funciona sin cuenta y guarda los documentos en tu Mac. No incorpora telemetría ni exige una nube. La descarga de paquetes de composición y la apertura de enlaces, incluido Ko-fi, requieren una acción explícita. [Privacidad](docs/PRIVACY.md).
 
-## Capacidades
-
-- SwiftUI y AppKit, fuentes Latin Modern incluidas y apariencias nativas clara/oscura. Sello de Naberius simplificado y exportado por tamaño para Finder y Dock.
-- Editor semántico, títulos, esquema, énfasis, listas, enlaces, búsqueda y reemplazo. Páginas orientativas y lienzo continuo comparten contenido e historial.
-- Tablas con edición directa, celdas ajustables y desplazamiento. La vista abrevia tablas largas; el PDF conserva todas las filas mediante `longtable`, con encabezados repetidos.
-- Ecuaciones visuales; vista previa de fórmulas producida por TeX bajo demanda. Prueba PDF con navegación y zoom propio.
-- Artículo, informe/tesis, libro y carta; una o dos columnas, separación, márgenes por lado, sangría y cabeceras. Paquetes editoriales con recursos originales y variantes libres.
-- citeproc-js local con APA 7, IEEE, Vancouver y Chicago autor-fecha. Importación BibTeX/BibLaTeX, RIS y CSL-JSON con revisión previa.
-- Abreviaturas `@string`, concatenación `#`, `crossref`, `xdata`, nombres institucionales, sufijos, acentos y fechas bibliográficas. Los campos adicionales se conservan y los límites se informan; no se ejecutan macros importadas.
-- Archivo `.nab` comprimido, guardado atómico, detección de conflictos, recuperación local y fragmentos portables con recursos y referencias.
-- Catálogo español compartido para interfaz, mensajes y formatos. Los identificadores persistentes y el contenido del usuario permanecen separados de la traducción.
+La interfaz usa SwiftUI, AppKit/TextKit y PDFKit. La composición y el trabajo de disco se realizan fuera de la escritura interactiva. La verificación en Apple Silicon no se presenta como garantía general de memoria, batería o latencia.
 
 ## Validación
+
+La versión 0.5.0 pasó **86 pruebas** localmente, incluidas integraciones con Tectonic real; también se verificó la ruta SwiftPM nativa. [CI de la versión](https://github.com/AD0441/NABERIUS/actions/runs/41265658069) · [Pruebas y evidencias](docs/TESTING.md).
 
 ```sh
 python3 script/sync_localization.py --check
@@ -74,14 +115,28 @@ python3 script/sync_localization.py --check
 NABERIUS_COMPOSE=1 ./script/test.sh
 ```
 
-La validación de 0.3.0 incluye conservación bibliográfica a través de `.nab`, CSL-JSON y BibTeX; navegación y deshacer por celda; catálogo empaquetado; y tablas de 90 filas compuestas realmente en las cuatro clases documentales. Las pruebas ordinarias de CI omiten el motor externo. Consulta [TESTING](docs/TESTING.md), la [matriz de requisitos](docs/STATUS.md) y los [límites conocidos](docs/LIMITATIONS.md).
+Las pruebas ordinarias de CI omiten el motor externo. Esta versión mantiene requisitos pendientes; la auditoría integral de accesibilidad queda para una fase posterior.
 
-Esta versión es funcional y mantiene requisitos pendientes. La accesibilidad integral queda para una fase posterior; las pruebas parciales de interfaz no la certifican. No se afirma compatibilidad universal con toda extensión BibLaTeX ni reproducción byte a byte del archivo importado. Los preámbulos se omiten con aviso. La paginación definitiva corresponde al PDF.
+## Contribuir
 
-## Documentación y licencia
+Los aportes son bienvenidos: [errores y propuestas](https://github.com/AD0441/NABERIUS/issues), pruebas con documentos anonimizados, compatibilidad editorial y traducciones. Consulta [CONTRIBUTING.md](CONTRIBUTING.md).
 
-[Arquitectura](docs/ARCHITECTURE.md) · [Bibliografía](docs/BIBLIOGRAPHY.md) · [Marca](docs/BRAND.md) · [Formato `.nab`](docs/DOCUMENT_FORMAT.md) · [Privacidad](docs/PRIVACY.md) · [Cambios](CHANGELOG.md)
+[Arquitectura](docs/ARCHITECTURE.md) · [Formato `.nab`](docs/DOCUMENT_FORMAT.md) · [Plantillas ZIP](docs/TEMPLATE_PACKAGES.md) · [Material para la web](docs/PRESENTATION.md)
 
-Código propio y marca original: **AGPL-3.0-or-later**, copyright 2026 Sebastián Pastén F. Los componentes de terceros conservan sus licencias: [avisos](THIRD_PARTY_NOTICES.md), [licencia](LICENSE) y [autoría](COPYRIGHT). citeproc-js se utiliza bajo su opción AGPL; las fuentes Latin Modern conservan GUST y los estilos/locales CSL, CC BY-SA.
+## Apoyar el proyecto
 
-Si Naberius te resulta útil, puedes [apoyar el desarrollo en Ko-fi](https://ko-fi.com/C0C51WQ1T0). El apoyo es voluntario y abre el navegador solo al pulsarlo.
+Los aportes voluntarios ayudan a mantener el desarrollo y las pruebas de Naberius.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C51WQ1T0)
+
+## Identidad y licencia
+
+El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS y el [generador reproducible](script/make_brand.swift). [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
+
+Código propio: **AGPL-3.0-or-later**, copyright 2026 Sebastián Pastén F. Los componentes de terceros conservan sus licencias: [avisos](THIRD_PARTY_NOTICES.md), [licencia](LICENSE) y [autoría](COPYRIGHT). citeproc-js se utiliza bajo su opción AGPL; las fuentes Latin Modern conservan GUST y los estilos/locales CSL, CC BY-SA.
+
+<div align="center">
+  <picture><source media="(prefers-color-scheme: dark)" srcset="Resources/Brand/symbol-dark.svg"><img src="Resources/Brand/symbol-light.svg" width="70" alt="Símbolo de Naberius"></picture>
+  <p><strong>Creado por Sebastián Pastén F.</strong></p>
+  <p><a href="https://www.sebastianpasten.com/desarrollos-aplicaciones-para-mac-software-sdr">Más aplicaciones para Mac</a></p>
+</div>
