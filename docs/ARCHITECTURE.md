@@ -23,7 +23,7 @@ flowchart LR
 - **Semántica por valor:** bloques, marcas y nodos con UUID. La representación visual no es el formato maestro. Las referencias cruzadas se resuelven según el orden real de los adjuntos.
 - **DocumentDisk actor:** lectura, compresión, checksum, snapshots y diario fuera del actor principal. La UI captura transacciones de modelo. El diario guarda bloques cambiados y arrays solo cuando cambian; el snapshot se consolida tras unos 2 s.
 - **Deshacer:** UndoManager compartido para texto, propiedades y objetos. Límite de 100 operaciones. La instancia de editor se mantiene al alternar vistas.
-- **Composición:** una tarea por operación, cancelación y límite de ejecución. No se compila por pulsación. LaTeX se genera exclusivamente desde datos escapados, fórmulas visuales y plantillas semánticas; no se ejecuta el código importado.
+- **Composición:** una tarea por operación, cancelación y límite de ejecución. No se compila por pulsación. El contenido generado se escapa. Las plantillas semánticas usan clases integradas; los paquetes ZIP conservan y compilan sus clases TeX dentro del límite de procesos y archivos descrito en TEMPLATE_PACKAGES.md. El análisis no ejecuta código de los paquetes.
 - **Citas:** citeproc-js en JavaScriptCore, sin WebView ni red, con estilos y locales incluidos. Se crea un contexto por operación para aislar estado entre documentos.
 - **Sin servidor:** no hay cuenta, autenticación, backend, telemetría ni sincronización de documentos.
 
@@ -42,3 +42,8 @@ DocumentTypography expone las fuentes originales incluidas. CoreText las registr
 TypesetProofView muestra el PDF del proceso real en el espacio de trabajo; el editor permanece montado al cambiar de vista. Session conserva la versión de edición de la composición y advierte si el PDF está desactualizado. Compilation registra motor, duración y fecha; CompositionFailure separa explicación de registro técnico. EquationTypesetter recorta una salida PDF matemática real y mantiene una caché transitoria acotada.
 
 DocumentFragment copia dependencias y remapea identidades al pegar. Los cambios de recursos y texto comparten un grupo de UndoManager. Las tablas siguen siendo objetos editados por campos de inspector; los tres estilos ya se exportan de forma distinta con tabularx/booktabs.
+
+
+## Vistas y composición 0.5.0
+
+EditorMode separa Escritura, Editor + PDF y PDF; el NSTextView permanece montado. Session programa una única espera cancelable después de una edición en modo combinado activo, y solo permite caché local para actualización automática. Un token de operación y la identidad del documento rechazan resultados cancelados u obsoletos. DocumentCompiling permite verificar esta coordinación sin lanzar procesos en tests unitarios. Los errores automáticos permanecen en la vista y no abren alertas. Se retienen como máximo las dos composiciones más recientes; Composer elimina solo sus directorios temporales propios.

@@ -98,14 +98,19 @@ struct EditorToolbar:View {
 }
 struct EditorWorkspace:View {
     @Bindable var session:Session
+    @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("editorColumnWidth") private var editorColumnWidth=false
     var body:some View {
         VStack(spacing:0) {
             if session.showFind { FindBar(session:session) }
             if !session.focusMode {
                 HStack {
-                    Picker(L10n.text("Vista"),selection:$session.pageMode) { Label(L10n.text("Páginas"),systemImage:"doc").tag(true);Label(L10n.text("Continuo"),systemImage:"rectangle").tag(false) }.pickerStyle(.segmented).frame(width:205).disabled(session.showProof)
-                    Text(session.document?.template.name ?? "").font(.caption).foregroundStyle(.secondary)
-                    Button { session.showProof ? (session.showProof=false) : session.openProof() } label: { Label(session.showProof ? "Escritura" : L10n.text("PDF LaTeX"),systemImage:session.showProof ? "square.and.pencil" : "doc.richtext") }.font(.caption)
+                    Picker(L10n.text("Modo"),selection:Binding(get:{session.editorMode},set:{session.setEditorMode($0)})){ForEach(EditorMode.allCases){Text($0.label).tag($0)}}.pickerStyle(.segmented).frame(width:290)
+                    if !session.showProof {Menu {
+                        Button(session.pageMode ? L10n.text("Usar lienzo continuo") : L10n.text("Usar página orientativa")){session.pageMode.toggle()}
+                        Toggle(L10n.text("Editar al ancho de una columna"),isOn:$editorColumnWidth)
+                    } label:{Image(systemName:"textformat.size")}.fixedSize().help(L10n.text("Apariencia de escritura"))}
+                    Text(session.document?.template.name ?? "").font(.caption).foregroundStyle(.secondary).lineLimit(1)
                     Spacer()
                     if session.compiling { ProgressView().controlSize(.small);Text(L10n.text("Componiendo PDF…")).font(.caption);Button(L10n.text("Cancelar")) { session.cancelCompile() } }
                     Button { session.focusMode.toggle() } label:{ Label(L10n.text("Concentración"),systemImage:"arrow.up.left.and.arrow.down.right") }.buttonStyle(.plain).font(.caption).help(L10n.text("⇧⌘F"))
@@ -114,9 +119,11 @@ struct EditorWorkspace:View {
             } else { HStack { Spacer();Button(L10n.text("Salir de concentración")) { session.focusMode=false }.keyboardShortcut(.escape,modifiers:[]) }.padding(8) }
             HStack(spacing:0) {
                 ZStack { Color(nsColor:.underPageBackgroundColor)
-                    NativeEditor(session:session).frame(maxWidth:session.pageMode ? 780 : .infinity).padding(.horizontal,session.pageMode ? 20 : 0)
-                        .opacity(session.showProof ? 0 : 1).allowsHitTesting(!session.showProof).accessibilityHidden(session.showProof)
-                    if session.showProof { TypesetProofView(session:session) }
+                    HSplitView {
+                        NativeEditor(session:session,mode:session.editorMode).frame(maxWidth:session.pageMode ? (editorColumnWidth && session.document?.template.effectiveLayout.columnCount==2 ? 450 : 780) : .infinity).padding(.horizontal,session.pageMode ? 12 : 0).frame(minWidth:320,maxWidth:.infinity)
+                        if session.editorMode == .combined {CombinedProofView(session:session).frame(minWidth:320,maxWidth:.infinity)}
+                    }.opacity(session.showProof ? 0 : 1).allowsHitTesting(!session.showProof).accessibilityHidden(session.showProof)
+                    if session.showProof {TypesetProofView(session:session)}
                 }
                 if session.inspector && !session.focusMode { Divider(); InspectorView(session:session).frame(width:270) }
             }
@@ -131,8 +138,11 @@ struct EditorWorkspace:View {
                 Text(session.showProof ? L10n.text("PDF LaTeX") : (session.pageMode ? L10n.text("Paginación orientativa") : L10n.text("Lienzo continuo")))
             }.font(.system(size:11)).foregroundStyle(.secondary).padding(.horizontal,20).padding(.vertical,8)
         }
-        .onChange(of:session.showProof) {_,proof in
-            if proof {session.editor?.window?.makeFirstResponder(nil)}
+        .onAppear {session.setPreviewActive(scenePhase == .active)}
+        .onDisappear {session.setPreviewActive(false)}
+        .onChange(of:scenePhase) {_,phase in session.setPreviewActive(phase == .active)}
+        .onChange(of:session.editorMode) {_,mode in
+            if mode == .pdf {session.editor?.window?.makeFirstResponder(nil)}
             else if let editor=session.editor {editor.window?.makeFirstResponder(editor)}
         }
     }

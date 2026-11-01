@@ -1,5 +1,14 @@
 # Cambios
 
+## 0.5.0 — 2026-10-31
+
+- Vistas configurables Escritura, Editor + PDF y PDF. Actualización automática tras una pausa, cancelable, sin red implícita y con errores en línea.
+- Tipografía orientativa inferida de la clase; controles del editor separados del formato editorial y opción de ancho de columna.
+- Artículo libre de dos columnas, separación y márgenes por lado, conservados en schema 3.
+- Compatibilidad T1 para clases clásicas que seleccionan Times: evita sustitución tipográfica bajo Tectonic conservando los recursos originales.
+- Importación de IEEEkeywords, resúmenes bilingües, financiación y metadatos de publicación. El estilo bibliográfico declarado después del cuerpo tiene prioridad sobre el BST incluido.
+- Completar recursos de paquetes y crear diseños libres sin sustituir los originales. IEEE, JIMIS e IJISA/MECS compuestos con los ZIP aportados; CJS identificado como incompleto por falta de clase.
+
 ## 0.3.0 — 2026-10-30
 
 - Sello minimalista: un asta, dos barras y una curva abierta; recursos con ajuste óptico por tamaño.

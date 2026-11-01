@@ -191,3 +191,10 @@ El ZIP configura una plantilla con clase y recursos originales, entrada automát
 ## Cierre gráfico 0.4.1
 
 Importación, campos editoriales, creación directa de documento, escritura del párrafo, PDF real, guardado/reapertura y recomposición sin red comprobados en la app. Se corrigieron los detalles encontrados y pasaron 67 pruebas locales y CI. Ver TESTING.md para el alcance y los límites de esta evidencia.
+
+
+## Lote 0.5.0 — formatos y vistas configurables
+
+Escritura orientativa y Editor + PDF real disponibles junto a la vista PDF completa. Actualización automática opcional tras una pausa, con cancelación y sin red implícita. Columnas, separación y márgenes por lado en diseños libres; pistas tipográficas de la clase para edición. Tres ZIP adicionales compuestos y CJS diagnosticado como incompleto. Ver EDITOR_MODES.md y TEMPLATE_PACKAGES.md. La edición directa del PDF y la compatibilidad universal con clases editoriales no se declaran implementadas.
+
+Prueba nativa de 0.5.0: las tres vistas, apariencia clara/oscura, importación de los cuatro ZIP y actualización automática/manual verificadas. 85 pruebas pasan con motor real y backend nativo. La revisión señaló el reparto inicial del modo combinado; está corregido y probado con AppKit, con recaptura final pendiente por bloqueo de pantalla.

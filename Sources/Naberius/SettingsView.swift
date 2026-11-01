@@ -6,10 +6,18 @@ struct SettingsView:View {
     let session:Session
     @AppStorage("appearance") private var appearance=Appearance.system.rawValue
     @AppStorage("enginePath") private var enginePath=""
+    @AppStorage("preferredEditorMode") private var preferredEditorMode=EditorMode.writing.rawValue
+    @AppStorage("editorColumnWidth") private var editorColumnWidth=false
     @AppStorage("reopenLast") private var reopenLast=false
     var body:some View{
         TabView{
-            Form{Picker(L10n.text("Apariencia"),selection:$appearance){ForEach(Appearance.allCases,id:\.rawValue){Text($0.label).tag($0.rawValue)}};Toggle(L10n.text("Reabrir el último documento al iniciar"),isOn:$reopenLast);Text(L10n.text("Tus documentos y referencias permanecen en este Mac. No hay telemetría ni cuenta de usuario.")).font(.callout).foregroundStyle(.secondary);AboutView()}.formStyle(.grouped).tabItem{Label(L10n.text("General"),systemImage:"gearshape")}
+            Form{Picker(L10n.text("Apariencia"),selection:$appearance){ForEach(Appearance.allCases,id:\.rawValue){Text($0.label).tag($0.rawValue)}};Toggle(L10n.text("Reabrir el último documento al iniciar"),isOn:$reopenLast);Section(L10n.text("Escritura y PDF")) {
+                Picker(L10n.text("Vista al abrir"),selection:$preferredEditorMode){ForEach(EditorMode.allCases){Text($0.label).tag($0.rawValue)}}
+                Toggle(L10n.text("Actualizar PDF tras una pausa"),isOn:Binding(get:{session.automaticPreview},set:{session.setAutomaticPreview($0)}))
+                Picker(L10n.text("Pausa antes de componer"),selection:Binding(get:{session.previewDelay},set:{session.setPreviewDelay($0)})){Text(L10n.text("2 segundos")).tag(2.0);Text(L10n.text("4 segundos")).tag(4.0);Text(L10n.text("8 segundos")).tag(8.0)}
+                Toggle(L10n.text("Editar al ancho de una columna"),isOn:$editorColumnWidth)
+                Text(L10n.text("La escritura aproxima el diseño. Editor + PDF muestra las páginas reales de LaTeX y permite seguir escribiendo. La actualización automática funciona con la ventana activa y los paquetes locales.")).font(.caption).foregroundStyle(.secondary)
+            };Text(L10n.text("Tus documentos y referencias permanecen en este Mac. No hay telemetría ni cuenta de usuario.")).font(.callout).foregroundStyle(.secondary);AboutView()}.formStyle(.grouped).tabItem{Label(L10n.text("General"),systemImage:"gearshape")}
             TemplateSettings(session:session).tabItem{Label(L10n.text("Plantillas"),systemImage:"doc.on.doc")}
             Form{Text(L10n.text("Motor LaTeX")).font(.headline);Text(L10n.text("Tectonic compone el PDF bajo demanda. Por defecto usa solo paquetes ya disponibles en la caché local.")).foregroundStyle(.secondary);TextField(L10n.text("Ruta a Tectonic"),text:$enginePath);Button(L10n.text("Seleccionar motor…")){let p=NSOpenPanel();p.canChooseDirectories=false;if p.runModal() == .OK,let u=p.url{enginePath=u.path}};if let engine=Composer.detectedEngine(custom:enginePath){Label(L10n.text("Disponible: ")+engine.path,systemImage:"checkmark.circle").font(.caption).textSelection(.enabled)}else{Label(L10n.text("Motor no encontrado"),systemImage:"exclamationmark.triangle")};Divider();Text(L10n.text("La primera composición puede necesitar descargar paquetes de TeX. Esta acción requiere conexión y solo se ejecuta al pulsar el botón.")).font(.callout).foregroundStyle(.secondary);Button(L10n.text("Componer y permitir descarga de paquetes")){session.compile(allowNetwork:true)}.disabled(session.document==nil || session.compiling);Text(L10n.text("Los registros técnicos se muestran si ocurre un error. El documento maestro nunca se modifica durante la composición.")).font(.caption).foregroundStyle(.secondary)}.formStyle(.grouped).tabItem{Label(L10n.text("Composición"),systemImage:"doc.richtext")}
         }.padding(14).frame(width:760,height:660)
@@ -24,6 +32,8 @@ struct TemplateSettings:View {
     @State private var edit:DocumentTemplate?
     @State private var notice=""
     @State private var importing=false
+    @State private var importPanel:NSOpenPanel?
+    @State private var importFilter=TemplateFilePanelFilter()
     var body:some View {
         VStack(alignment:.leading,spacing:14) {
             HStack {
@@ -77,6 +87,13 @@ struct TemplateSettings:View {
                 } else {Text(L10n.format("Archivo principal: %@",package.plan.mainFile)).font(.caption)}
                 Text(L10n.format("%@ archivos conservados · %@ estilos bibliográficos",package.files.count,package.plan.bibliographyStyles.count)).font(.caption)
                 Text(L10n.format("Motor detectado: %@ · Bibliografía: %@",package.plan.requiredEngine,package.plan.bibliographyBackend)).font(.caption)
+                if package.hasExternalClass {
+                    Label(L10n.format("El ZIP no incluye %@.cls. Añade los recursos de la revista o crea un diseño libre.",package.plan.documentClass),systemImage:"exclamationmark.triangle").font(.caption)
+                }
+                HStack {
+                    Button(L10n.text("Completar recursos…")){completeResources(template)}.disabled(importing)
+                    Button(L10n.text("Crear diseño libre")){let copy=template.freeVariant();selected=session.installTemplate(copy)}
+                }
                 if package.plan.requiredEngine != "tectonic" || package.plan.bibliographyBackend=="biber" {
                     Label(L10n.text("Este paquete requiere LuaLaTeX o Biber. Puedes conservarlo y exportarlo; la composición integrada todavía no admite esas dependencias."),systemImage:"exclamationmark.triangle").font(.caption)
                 }
@@ -95,6 +112,21 @@ struct TemplateSettings:View {
             }
         }.padding(15).frame(maxWidth:.infinity,alignment:.leading)
     }
+    private func completeResources(_ template:DocumentTemplate) {
+        guard let package=template.package else{return}
+        TemplateResourcePanel.choose {urls in
+            importing=true
+            Task {
+                defer{importing=false}
+                do {
+                    let updated=try await TemplateResourcePanel.complete(package,urls:urls)
+                    guard let index=session.templates.firstIndex(where:{$0.id==template.id}) else{return}
+                    session.templates[index].package=updated;session.templates[index].version += 1;session.persistLocal()
+                    notice=L10n.text("Recursos incorporados. Los documentos existentes conservan su copia; puedes completarlos desde sus propiedades.")
+                } catch {notice=error.localizedDescription}
+            }
+        }
+    }
     private func selectMain(_ main:String,template:DocumentTemplate) {
         guard let package=template.package else{return}
         importing=true
@@ -109,17 +141,24 @@ struct TemplateSettings:View {
         }
     }
     private func importTemplate() {
-        let panel=NSOpenPanel();panel.allowedContentTypes=[.plainText,.zip];panel.allowsOtherFileTypes=true
+        guard importPanel==nil else{return}
+        let panel=NSOpenPanel();panel.allowedContentTypes=[.data];panel.allowsOtherFileTypes=true
+        panel.canChooseDirectories=false;panel.delegate=importFilter;importPanel=panel
         let completion:(NSApplication.ModalResponse)->Void={response in
-            guard response == .OK,let url=panel.url else{return}
+            let url=response == .OK ? panel.url : nil
+            importPanel=nil
+            guard let url else{return}
             importing=true;notice=""
             Task {
                 defer{importing=false}
                 do {
                     let result=try await Self.analyze(url);analysis=result
                     if result.compatible,result.template.package != nil {
-                        let id=session.installTemplate(result.template);selected=id;defaultTemplateID=id
-                        notice=L10n.text("ZIP configurado como plantilla predeterminada. Crea un documento y usa PDF LaTeX para comprobar la composición.")
+                        let id=session.installTemplate(result.template);selected=id
+                        if let package=result.template.package,!package.hasExternalClass,package.plan.requiredEngine=="tectonic",package.plan.bibliographyBackend != "biber" {
+                            defaultTemplateID=id
+                            notice=L10n.text("ZIP configurado como plantilla predeterminada. Crea un documento y usa PDF LaTeX para comprobar la composición.")
+                        } else {notice=L10n.text("Paquete conservado en el catálogo. Revisa los recursos y el motor necesarios antes de usarlo como plantilla predeterminada.")}
                     }
                 } catch {notice=error.localizedDescription}
             }
@@ -134,4 +173,12 @@ struct TemplateEditor:View {
     let save:(DocumentTemplate)->Void
     @Environment(\.dismiss)private var dismiss
     var body:some View{VStack{HStack{Text(L10n.text("Personalizar plantilla")).font(.title2);Spacer();Button(L10n.text("Cancelar")){dismiss()};Button(L10n.text("Guardar variante")){save(template)}}.padding();Form{TextField(L10n.text("Nombre"),text:$template.name);if let package=template.package {Text(L10n.format("Clase: %@ · Archivo principal: %@",package.plan.documentClass,package.plan.mainFile)).font(.caption);Text(L10n.text("El diseño procede de la clase editorial del ZIP.")).foregroundStyle(.secondary)} else {Picker(L10n.text("Tipografía"),selection:$template.font){ForEach(DocumentTypography.supportedFonts,id:\.self){Text($0)}};Stepper(L10n.format("Cuerpo: %@ pt",Int(template.fontSize)),value:$template.fontSize,in:8...24);Stepper(L10n.format("Márgenes: %@ mm",Int(template.marginMM)),value:$template.marginMM,in:10...50);Stepper(L10n.format("Interlineado: %@",String(format:"%.1f",template.lineSpacing)),value:$template.lineSpacing,in:1...3,step:0.1);Toggle(L10n.text("Portada"),isOn:$template.cover);Toggle(L10n.text("Numerar títulos"),isOn:$template.numberedHeadings);DocumentLayoutControls(template:$template);Toggle(L10n.text("Bloquear todo el diseño"),isOn:$template.locked);Section(L10n.text("Propiedades protegidas en los documentos")){ForEach(TemplateProperty.allCases,id:\.rawValue){property in Toggle(property.label,isOn:Binding(get:{(template.lockedProperties ?? []).contains(property)},set:{locked in var properties=template.lockedProperties ?? [];properties.removeAll{$0==property};if locked{properties.append(property)};template.lockedProperties=properties}))}}}}.formStyle(.grouped)}.frame(width:600,height:680)}
+}
+
+/// Select by extension while Launch Services resolves downloaded or moved archives.
+final class TemplateFilePanelFilter:NSObject,NSOpenSavePanelDelegate {
+    func panel(_ sender:Any,shouldEnable url:URL)->Bool {
+        if url.hasDirectoryPath || (try? url.resourceValues(forKeys:[.isDirectoryKey]).isDirectory)==true {return true}
+        return ["zip","tex","cls","sty"].contains(url.pathExtension.lowercased())
+    }
 }

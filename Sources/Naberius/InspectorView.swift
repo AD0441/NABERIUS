@@ -28,6 +28,14 @@ struct InspectorView:View {
                         if let package=session.document?.template.package {
                             Text(L10n.format("Clase: %@",package.plan.documentClass)).font(.caption)
                             Text(L10n.text("La clase del ZIP determina la tipografía, el papel, los márgenes y los encabezados del PDF.")).font(.caption).foregroundStyle(.secondary)
+                            if package.hasExternalClass {Label(L10n.format("Falta %@.cls en el ZIP.",package.plan.documentClass),systemImage:"exclamationmark.triangle").font(.caption)}
+                            Button(L10n.text("Completar recursos…")){session.completeDocumentResources()}
+                            DisclosureGroup(L10n.text("Apariencia de escritura")) {
+                                Picker(L10n.text("Tipografía"),selection:design(\.font)){ForEach(DocumentTypography.supportedFonts,id:\.self){Text($0)}}
+                                Stepper(L10n.format("Cuerpo: %@ pt",Int(session.document?.template.fontSize ?? 10)),value:design(\.fontSize),in:8...24)
+                                Text(L10n.text("Estos ajustes cambian el editor. La clase editorial conserva el diseño del PDF.")).font(.caption).foregroundStyle(.secondary)
+                            }
+                            Button(L10n.text("Usar diseño libre")){session.mutate(L10n.text("Diseño libre")){$0.template=$0.template.freeVariant()}}
                         } else {
                         Picker(L10n.text("Papel"),selection:design(\.paper)){Text(L10n.text("A4")).tag("a4paper");Text(L10n.text("Carta")).tag("letterpaper");Text(L10n.text("Legal")).tag("legalpaper")}.disabled(session.document?.template.allows(.paper) == false)
                         Picker(L10n.text("Tipografía"),selection:design(\.font)){ForEach(DocumentTypography.supportedFonts,id:\.self){Text($0)}}.disabled(session.document?.template.allows(.font) == false)

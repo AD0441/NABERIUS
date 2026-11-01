@@ -19,7 +19,7 @@ struct SheetRouter:View {
             case .about:AboutView()
             case .export:ExportView(session:session)
             case .recovery:RecoveryView(session:session)
-            case .diagnostic:ScrollView{if let failure=session.failedComposition {VStack(alignment:.leading,spacing:14){Text(failure.summary).font(.callout);Text(L10n.text("Motor: ")+failure.engine.path).font(.caption);Text(failure.log.isEmpty ? L10n.text("El proceso terminó sin generar un registro.") : failure.log).font(.system(size:11,design:.monospaced))}.frame(maxWidth:.infinity,alignment:.leading).padding(22).textSelection(.enabled)}}
+            case .diagnostic:ScrollView{if let failure=session.failedComposition {VStack(alignment:.leading,spacing:14){Text(failure.summary).font(.callout);Text(L10n.text("Motor: ")+failure.engine.path).font(.caption);Text(failure.log.isEmpty ? L10n.text("El proceso terminó sin generar un registro.") : failure.log).font(.system(size:11,design:.monospaced))}.frame(maxWidth:.infinity,alignment:.leading).padding(22).textSelection(.enabled)} else {Text(session.previewIssue ?? L10n.text("No hay un registro de composición disponible.")).padding(22).textSelection(.enabled)}}
             }}.frame(maxWidth:.infinity,maxHeight:.infinity)
         }.frame(width:sheet == .export ? 900 : 700,height:sheet == .export ? 720 : 570).tint(Brand.accent)
     }

@@ -20,7 +20,7 @@ struct TypesetProofView: View {
                     ProgressView().controlSize(.small)
                     Button(L10n.text("Cancelar")) { session.cancelCompile() }
                 } else {
-                    Button(L10n.text("Actualizar PDF")) { session.compile() }.keyboardShortcut("r", modifiers: [.command, .shift])
+                    Button(L10n.text("Actualizar PDF")) { session.compile() }
                 }
                 Button { session.showProof = false } label: { Label(L10n.text("Escribir"), systemImage: "square.and.pencil") }
             }.padding(16)
@@ -68,22 +68,21 @@ struct ProofPDFView: NSViewRepresentable {
     let url: URL
     let session: Session
     func makeCoordinator() -> Coordinator { Coordinator(session:session) }
-    func makeNSView(context:Context) -> PDFView {
-        let view=PDFView()
-        view.autoScales=true;view.displayMode = .singlePageContinuous;view.displaysPageBreaks=true
+    func makeNSView(context:Context) -> FittingPDFView {
+        let view=FittingPDFView()
+        view.autoScales=false;view.displayMode = .singlePageContinuous;view.displaysPageBreaks=true
         view.setAccessibilityLabel(L10n.text("PDF compuesto por el motor LaTeX"))
         NotificationCenter.default.addObserver(context.coordinator,selector:#selector(Coordinator.pageChanged(_:)),name:.PDFViewPageChanged,object:view)
         return view
     }
-    func updateNSView(_ view:PDFView,context:Context) {
+    func updateNSView(_ view:FittingPDFView,context:Context) {
         context.coordinator.updating=true
         defer {context.coordinator.updating=false}
-        if view.document?.documentURL != url {view.document=PDFDocument(url:url)}
+        if view.document?.documentURL != url {view.document=PDFDocument(url:url);view.revealPageAfterLayout=true}
         if let document=view.document,let page=document.page(at:session.proofPage),view.currentPage != page {view.go(to:page)}
-        if let zoom=session.proofZoom {
-            view.autoScales=false
-            if abs(view.scaleFactor-zoom)>0.001 {view.scaleFactor=zoom}
-        } else if !view.autoScales {view.autoScales=true}
+        view.fitsPage=session.proofZoom==nil
+        if let zoom=session.proofZoom,abs(view.scaleFactor-zoom)>0.001 {view.scaleFactor=zoom}
+        view.needsLayout=true
     }
     final class Coordinator:NSObject {
         let session:Session
@@ -94,5 +93,25 @@ struct ProofPDFView: NSViewRepresentable {
             session.proofPage=document.index(for:page)
         }
         deinit {NotificationCenter.default.removeObserver(self)}
+    }
+}
+
+/// PDFKit's continuous auto-scale fills the width. Fit the whole page explicitly.
+final class FittingPDFView:PDFView {
+    var fitsPage=true
+    var revealPageAfterLayout=false
+    override func layout() {
+        super.layout()
+        guard let page=currentPage ?? document?.page(at:0),bounds.width>24,bounds.height>24 else{return}
+        if fitsPage {
+            let pageSize=page.bounds(for:displayBox).size
+            let scale=min((bounds.width-20)/max(1,pageSize.width),(bounds.height-20)/max(1,pageSize.height))
+            if abs(scaleFactor-scale)>0.001 {scaleFactor=scale}
+        }
+        if revealPageAfterLayout {
+            revealPageAfterLayout=false
+            let rectangle=page.bounds(for:displayBox)
+            go(to:PDFDestination(page:page,at:NSPoint(x:rectangle.minX,y:rectangle.maxY)))
+        }
     }
 }

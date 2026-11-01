@@ -17,7 +17,10 @@ extension LaTeXTemplatePackage {
         let edits=plan.fields.compactMap {field->(NSRange,String)? in
             let value=fieldValue(field,metadata:metadata)
             guard value != field.plainValue else{return nil}
-            return (field.range,LaTeX.bodyText(value))
+            if field.macro=="thanks",value.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
+               let call=TeXTemplate.calls(plan.prefix).first(where:{$0.name=="thanks" && $0.arguments.first==field.range}) {return (call.range,"")}
+            let replacement=field.id.hasSuffix(".environment") && field.macro.lowercased().contains("keywords") && field.original.contains("\\item") ? "\n"+value.components(separatedBy:CharacterSet(charactersIn:",;")).map{$0.trimmingCharacters(in:.whitespacesAndNewlines)}.filter{!$0.isEmpty}.map{"\\item "+LaTeX.bodyText($0)}.joined(separator:"\n")+"\n" : LaTeX.bodyText(value)
+            return (field.range,replacement)
         }
         return TeXTemplate.replacing(plan.prefix,edits)
     }
@@ -30,6 +33,7 @@ extension LaTeXTemplatePackage {
         if let title=document.blocks.first(where:{$0.style == .title}) {effective.metadata.title=title.text}
         if let subtitle=document.blocks.first(where:{$0.style == .subtitle}) {effective.metadata.subtitle=subtitle.text}
         var header=prefix(metadata:effective.metadata)
+        if needsLegacyFontEncoding {header="\\RequirePackage[T1]{fontenc}\n"+header}
         guard let begin=TeXTemplate.calls(header).first(where:{$0.name=="begin" && TeXTemplate.value($0,in:header)=="document"}) else{return header}
         let packages=["graphicx","amsmath","amssymb","tabularx","booktabs","longtable","hyperref"]
         let additions="\n% Naberius semantic objects; the editorial class retains page and font settings.\n\\makeatletter\n"+packages.map{"\\@ifpackageloaded{\($0)}{}{\\RequirePackage{\($0)}}"}.joined(separator:"\n")+"\n\\makeatother\n"

@@ -11,9 +11,12 @@ private extension NSAttributedString.Key {
 enum RichText {
     static func attributes(style: BlockStyle, template: DocumentTemplate, dark: Bool = false) -> [NSAttributedString.Key:Any] {
         let base = template.fontSize * 1.25
-        let size: Double = switch style { case .title: base*2.05; case .subtitle: base*1.1; case .heading1: base*1.5; case .heading2: base*1.25; case .heading3,.heading4: base*1.1; case .caption: base*0.85; default: base }
-        let font = DocumentFonts.font(family:template.font,size:size,bold:style.headingLevel != nil || style == .title)
+        var size: Double = switch style { case .title: base*2.05; case .subtitle: base*1.1; case .heading1: base*1.5; case .heading2: base*1.25; case .heading3,.heading4: base*1.1; case .caption: base*0.85; default: base }
+        if template.package != nil,style == .title {size=24*1.25}
+        let font = DocumentFonts.font(family:template.font,size:size,bold:style.headingLevel != nil || (style == .title && template.package == nil))
         let p = NSMutableParagraphStyle(); p.alignment = .justified; p.firstLineHeadIndent = template.effectiveLayout.paragraphIndentMM*72/25.4*1.25; p.paragraphSpacing = template.effectiveLayout.paragraphSpacingPT*1.25; p.lineSpacing = max(0,(template.lineSpacing-1)*base*0.65)
+        if style.headingLevel != nil {p.alignment = .left;p.firstLineHeadIndent=0}
+        if template.package != nil,[.title,.subtitle].contains(style) {p.alignment = .center;p.firstLineHeadIndent=0}
         if style.headingLevel != nil { p.paragraphSpacingBefore = 20; p.paragraphSpacing = 10 }
         if style == .title { p.paragraphSpacing = 16 }; if style == .subtitle { p.paragraphSpacing = 24 }
         if [.quote,.bullet,.numbered].contains(style) { p.headIndent = 25; p.firstLineHeadIndent = style == .quote ? 25 : 5 }
@@ -364,6 +367,7 @@ final class EditorScrollView:NSScrollView {
 }
 struct NativeEditor: NSViewRepresentable {
     let session: Session
+    var mode:EditorMode?=nil
     @Environment(\.colorScheme) private var colorScheme
     func makeCoordinator()->Coordinator { Coordinator(session) }
     func makeNSView(context: Context)->NSScrollView {
@@ -385,9 +389,16 @@ struct NativeEditor: NSViewRepresentable {
         if let scroll=text.enclosingScrollView,abs(scroll.magnification-session.zoom)>0.01{scroll.magnification=session.zoom}
         text.pageMode=session.pageMode;text.pageHeight=(d.template.paper == "letterpaper" ? 792 : (d.template.paper == "legalpaper" ? 1008 : 841.89))*1.25; text.isContinuousSpellCheckingEnabled=d.metadata.spelling; text.isAutomaticSpellingCorrectionEnabled=d.metadata.autocorrect
         NSSpellChecker.shared.setLanguage(d.metadata.language)
-        let inset: CGFloat = session.pageMode ? CGFloat(d.template.marginMM*72/25.4*1.25) : 40
-        if text.textContainerInset.width != inset { text.textContainerInset=NSSize(width:inset,height:50) }
+        let layout=d.template.effectiveLayout
+        let margin=((layout.marginLeftMM ?? d.template.marginMM)+(layout.marginRightMM ?? d.template.marginMM))/2
+        let available=text.enclosingScrollView?.contentSize.width ?? 740
+        let desired=session.pageMode ? CGFloat(margin*72/25.4*1.25) : 40
+        let inset=max(16,min(desired,(available-240)/2))
+        let top=session.pageMode ? min(80,max(24,(layout.marginTopMM ?? d.template.marginMM)*72/25.4)) : 40
+        let insets=NSSize(width:inset,height:top)
+        if text.textContainerInset != insets {text.textContainerInset=insets}
         let c=context.coordinator
+        c.updateComparisonLayout(from:text,combined:(mode ?? session.editorMode) == .combined)
         if c.lastRevision != session.revision || c.lastScheme != colorScheme {
             c.updating=true
             let range = c.documentID == d.id && !session.restoreSelection ? text.selectedRange() : NSRange(location:d.cursor.location,length:d.cursor.length);session.restoreSelection=false
@@ -412,6 +423,38 @@ struct NativeEditor: NSViewRepresentable {
     }
     final class Coordinator: NSObject,NSTextViewDelegate {
         let session:Session; var updating=false; var lastRevision = -1; var lastScheme:ColorScheme?; var documentID:UUID?
+        private var comparisonActive=false
+        private weak var comparisonSplit:NSSplitView?
+        private var comparisonFraction=0.5
+        var splitBalanceTask:Task<Void,Never>?
+        func updateComparisonLayout(from origin:NSView,combined:Bool) {
+            guard combined != comparisonActive else{return}
+            comparisonActive=combined;splitBalanceTask?.cancel()
+            if let split=comparisonSplit {NotificationCenter.default.removeObserver(self,name:NSSplitView.didResizeSubviewsNotification,object:split)}
+            guard combined else{return}
+            splitBalanceTask=Task { [weak self,weak origin] in
+                // Run after SwiftUI has inserted both hosting panes, without recreating TextKit.
+                await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+                guard let self,let origin,!Task.isCancelled,comparisonActive else{return}
+                var ancestor=origin.superview
+                while let view=ancestor {
+                    if let split=view as? NSSplitView,split.isVertical,split.subviews.count==2 {
+                        comparisonSplit=split
+                        split.layoutSubtreeIfNeeded()
+                        split.setPosition((split.bounds.width-split.dividerThickness)*comparisonFraction,ofDividerAt:0)
+                        NotificationCenter.default.addObserver(self,selector:#selector(comparisonResized(_:)),name:NSSplitView.didResizeSubviewsNotification,object:split)
+                        return
+                    }
+                    ancestor=view.superview
+                }
+            }
+        }
+        @objc private func comparisonResized(_ notification:Notification) {
+            guard comparisonActive,session.editorMode == .combined,let split=notification.object as? NSSplitView,split.subviews.count==2 else{return}
+            let width=split.bounds.width-split.dividerThickness
+            if width>0 {comparisonFraction=min(0.95,max(0.05,split.subviews[0].frame.width/width))}
+        }
+        deinit {NotificationCenter.default.removeObserver(self)}
         private var simpleEditBlock: UUID?
         private var simpleEditStart = 0
         init(_ session:Session) { self.session=session }

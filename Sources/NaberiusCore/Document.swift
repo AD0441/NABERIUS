@@ -160,11 +160,13 @@ public struct DocumentTemplate: Codable, Equatable, Identifiable, Sendable {
          DocumentTemplate(id:"article",name:L10n.text("Artículo científico"),detail:L10n.text("Resumen, secciones y bibliografía.")),
          DocumentTemplate(id:"thesis",name:L10n.text("Tesis"),detail:L10n.text("Capítulos, portada y referencias.")),
          DocumentTemplate(id:"book",name:L10n.text("Libro"),detail:L10n.text("Escritura extensa organizada en capítulos.")),
-         DocumentTemplate(id:"letter",name:L10n.text("Carta"),detail:L10n.text("Correspondencia formal y sobria."))].map {template in
+         DocumentTemplate(id:"letter",name:L10n.text("Carta"),detail:L10n.text("Correspondencia formal y sobria.")),
+         DocumentTemplate(id:"article-two-columns",name:L10n.text("Artículo en dos columnas"),detail:L10n.text("Artículo libre con columnas, separación y márgenes configurables."))].map {template in
             var t=template;t.cover=["thesis","book"].contains(t.id)
             t.lineSpacing=t.id=="thesis" ? 1.5 : (t.id=="report" ? 1.4 : 1.15)
             var layout=t.effectiveLayout
             if t.id=="book" {layout.paragraphIndentMM=5;layout.paragraphSpacingPT=0}
+            if t.id=="article-two-columns" {layout.columnCount=2;layout.paragraphSpacingPT=0;t.fontSize=10;t.font="Times New Roman";t.marginMM=20}
             t.layout=layout;return t
         }
     }
@@ -201,7 +203,8 @@ public struct NabDocument: Codable, Equatable, Identifiable, Sendable {
     public var references: [Reference] = []
     public var cursor = Cursor()
     public var modified = Date()
-    public init(template: DocumentTemplate = DocumentTemplate.builtins[0]) { self.template = template;schemaVersion=template.package==nil ? 1 : 2 }
+    public init(template: DocumentTemplate = DocumentTemplate.builtins[0]) { self.template = template;schemaVersion=minimumSchemaVersion }
+    public var minimumSchemaVersion:Int {template.effectiveLayout.needsSchemaThree ? 3 : (template.package==nil ? 1 : 2)}
     public var wordCount: Int { blocks.map(\.text).joined(separator:" ").split { $0.isWhitespace || $0 == "\u{fffc}" }.count }
     public var orderedNodes: [AcademicNode] { blocks.flatMap(\.runs).compactMap { r in r.nodeID.flatMap { id in nodes.first { $0.id == id } } } }
     public func number(of id: UUID) -> Int? {

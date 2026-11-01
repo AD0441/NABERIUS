@@ -30,7 +30,7 @@ struct TypesettingTests {
     func `builtins export their actual class with safe portable font setup`(_ template:DocumentTemplate) throws {
         let d=NabDocument(template:template),source=LaTeX.source(d)
         #expect(source.contains("{\(template.effectiveLayout.documentClass.rawValue)}"))
-        #expect(source.contains("Path=fonts/"))
+        #expect(source.contains("Path=fonts/") == (template.font == DocumentTypography.defaultFont))
         for file in DocumentTypography.fontFiles {#expect(try Data(contentsOf:DocumentTypography.fontURL(file)).count>100_000)}
         let folder=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer {try? FileManager.default.removeItem(at:folder)}

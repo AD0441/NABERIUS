@@ -13,7 +13,7 @@
 
 Editor académico nativo para macOS, de la familia METATRON, RAZIEL y PAIMON. Escribe con estilos y objetos semánticos; Tectonic compone el PDF final mediante LaTeX. Texto, imágenes, plantilla y referencias viajan juntos en un archivo `.nab`.
 
-**Creado por Sebastián Pastén F.** · **Versión 0.4.1**
+**Creado por Sebastián Pastén F.** · **Versión 0.5.0**
 
 ![Naberius 0.3.0: edición de tablas en el documento](docs/screenshots/table-light.png)
 
@@ -48,7 +48,7 @@ El script crea y verifica el bundle, produce `dist/Naberius.zip` e instala `~/Ap
 3. Inserta tablas, figuras, ecuaciones, notas, índice y referencias cruzadas desde **Insertar**.
 4. En una tabla, haz doble clic para editar dentro del documento. **Tab / ⇧Tab** cambian de celda, **Intro** avanza de fila y **Esc** termina. Tab en la última celda añade una fila hasta el límite de 200.
 5. En **Biblioteca → Importar**, revisa registros, campos y advertencias antes de añadir las fuentes seleccionadas.
-6. Guarda con **⌘S**. Abre **PDF LaTeX** y pulsa **Actualizar PDF** para ver la composición final. Si editas después, la prueba indica que necesita actualizarse.
+6. Guarda con **⌘S**. Elige **Escritura**, **Editor + PDF** o **PDF** sobre el documento. La vista dividida actualiza el PDF real tras una pausa configurable; puedes desactivar **Automático** y actualizar con **⇧⌘R**. Consulta [las opciones de escritura](docs/EDITOR_MODES.md).
 
 Selecciona Tectonic en **Configuración → Composición** si no se detecta. La preparación inicial de paquetes puede necesitar conexión y se activa expresamente desde allí; después se usa la caché local. El motor no se ejecuta por cada pulsación.
 
@@ -58,7 +58,7 @@ Selecciona Tectonic en **Configuración → Composición** si no se detecta. La 
 - Editor semántico, títulos, esquema, énfasis, listas, enlaces, búsqueda y reemplazo. Páginas orientativas y lienzo continuo comparten contenido e historial.
 - Tablas con edición directa, celdas ajustables y desplazamiento. La vista abrevia tablas largas; el PDF conserva todas las filas mediante `longtable`, con encabezados repetidos.
 - Ecuaciones visuales; vista previa de fórmulas producida por TeX bajo demanda. Prueba PDF con navegación y zoom propio.
-- Artículo, informe/tesis, libro y carta, con sangría, márgenes, cabeceras y plantillas semánticas.
+- Artículo, informe/tesis, libro y carta; una o dos columnas, separación, márgenes por lado, sangría y cabeceras. Paquetes editoriales con recursos originales y variantes libres.
 - citeproc-js local con APA 7, IEEE, Vancouver y Chicago autor-fecha. Importación BibTeX/BibLaTeX, RIS y CSL-JSON con revisión previa.
 - Abreviaturas `@string`, concatenación `#`, `crossref`, `xdata`, nombres institucionales, sufijos, acentos y fechas bibliográficas. Los campos adicionales se conservan y los límites se informan; no se ejecutan macros importadas.
 - Archivo `.nab` comprimido, guardado atómico, detección de conflictos, recuperación local y fragmentos portables con recursos y referencias.

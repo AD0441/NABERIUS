@@ -20,7 +20,7 @@ Se conserva el preámbulo y la cabecera editorial hasta la primera sección/cap�
 
 Naberius añade paquetes para sus objetos cuando no están cargados; no impone `fontspec`, fuentes ni `geometry` sobre la clase editorial. Las citas del PDF usan los comandos y BST del paquete, con una bibliografía generada a partir de los datos del documento. La vista de escritura sigue siendo semántica; la composición final se verifica en PDF. Las tablas extensas usan `longtable` en una columna y partes flotantes de ancho completo con cabeceras repetidas en dos columnas. Una celda o parte individual excesivamente alta sigue requiriendo revisión.
 
-La exportación contiene una entrada `main.tex` generada junto a los recursos de la entrada seleccionada, bibliografía y assets. Además conserva todos los archivos originales en `original-template/` (con sufijo si ese nombre estaba ocupado). Su README identifica la entrada y el flujo de compilación. Los documentos con paquete usan schemaVersion 2: versiones antiguas rechazan el documento en lugar de abrirlo y descartar sus recursos.
+La exportación contiene una entrada `main.tex` generada junto a los recursos de la entrada seleccionada, bibliografía y assets. Además conserva todos los archivos originales en `original-template/` (con sufijo si ese nombre estaba ocupado). Su README identifica la entrada y el flujo de compilación. Los documentos con paquete usan schemaVersion 2, o 3 cuando guardan columnas o márgenes por lado: versiones antiguas rechazan el documento en lugar de abrirlo y descartar sus recursos.
 
 ## Límites concretos
 
@@ -39,3 +39,19 @@ El análisis lee los miembros como datos, sin extraer rutas del ZIP ni lanzar ej
 Se analizó el paquete Springer Nature de diciembre de 2024: entrada `sn-article.tex`, clase `sn-jnl`, opciones activas `pdflatex,sn-mathphys-num`, nueve archivos BST, recursos EPS, bibliografía y PDF/manual de referencia. Se compuso su clase real con texto nuevo, cita numérica, bibliografía, fracción y tabla; se inspeccionó la primera página renderizada, con tipografía y estructura editorial definidas por la clase. Los bytes de la clase y sus recursos no se modifican.
 
 El paquete de terceros es un recurso local del usuario y no se incluye en el repositorio ni en el ZIP de la aplicación. Sus licencias siguen perteneciendo a sus titulares. Las pruebas ordinarias usan clases y ZIP sintéticos propios, con nombres de revistas arbitrarios. La prueba del ejemplo adjunto se activa con `NABERIUS_TEMPLATE_FIXTURE=/ruta/al/paquete.zip` y `NABERIUS_COMPOSE=1`.
+
+
+## Paquetes adicionales comprobados en 0.5.0
+
+| ZIP del usuario | Resultado local con Tectonic | Observación |
+| --- | --- | --- |
+| IEEE-conference-template-062824 | Compila | Clase IEEEtran original, palabras clave IEEE, autores y afiliaciones separados; financiación conservada. Se prepara T1 antes de cargar clases clásicas que seleccionan familias PostScript, evitando la sustitución de Times por Latin Modern bajo Tectonic. |
+| jimis-article | Compila | Base article, A4, dos columnas y francés. Es un punto de partida; esta prueba no certifica cumplimiento oficial de JIMIS. |
+| IJISA / MECS | Compila | Clase ijisa original, campos de publicación y BibTeX con el `unsrt` declarado en el documento. Se corrigió la elección errónea del BST incluido. |
+| cjs-rcs-article | Incompleto | El ZIP aporta main.tex y bibliografía, pero no cjs-rcs-article.cls. Se informa el recurso ausente; puede completarse o convertirse a un diseño libre. |
+
+Las tres composiciones incluyen cuerpo nativo nuevo, cita, bibliografía, ecuación y tabla; se comprueba texto extraíble y PDF real. No se modificaron los bytes de las clases originales. Los ZIP, clases, ejemplos y PDF del usuario permanecen locales y no se publican con el proyecto.
+
+**Completar recursos…** admite un ZIP adicional o archivos individuales, conserva la entrada principal y vuelve a analizar la configuración. En el catálogo afecta a documentos nuevos; desde Propiedades afecta al documento actual. Completar la clase no garantiza que el motor integrado disponga de todas sus dependencias. **Crear diseño libre** conserva una variante editable con las pistas tipográficas y de columnas detectadas, sin prometer reproducción del formato editorial.
+
+Los paquetes con clase ausente o motor no admitido se conservan en el catálogo sin reemplazar automáticamente la plantilla predeterminada.

@@ -80,10 +80,15 @@ public struct TemplateField:Codable,Equatable,Identifiable,Sendable {
     public var length:Int
     public var original:String
     public var alias:TemplateFieldAlias
-    public var plainValue:String {TeXTemplate.plain(original)}
+    public var plainValue:String {
+        if id.hasSuffix(".environment"),macro.lowercased().contains("keywords"),original.contains("\\item") {
+            return original.components(separatedBy:"\\item").map(TeXTemplate.plain).filter{!$0.isEmpty}.joined(separator:"; ")
+        }
+        return TeXTemplate.plain(original)
+    }
     var range:NSRange {NSRange(location:location,length:length)}
     public var label:String {
-        let names=["fnm":L10n.text("Nombre"),"sur":L10n.text("Apellido"),"spfx":L10n.text("Prefijo del apellido"),"sfx":L10n.text("Sufijo del nombre"),"email":L10n.text("Correo"),"orgdiv":L10n.text("Departamento"),"orgname":L10n.text("Organización"),"street":L10n.text("Dirección"),"city":L10n.text("Ciudad"),"postcode":L10n.text("Código postal"),"state":L10n.text("Región"),"country":L10n.text("País"),"IEEEauthorblockN":L10n.text("Autor"),"IEEEauthorblockA":L10n.text("Afiliación")]
+        let names=["fnm":L10n.text("Nombre"),"sur":L10n.text("Apellido"),"spfx":L10n.text("Prefijo del apellido"),"sfx":L10n.text("Sufijo del nombre"),"email":L10n.text("Correo"),"orgdiv":L10n.text("Departamento"),"orgname":L10n.text("Organización"),"street":L10n.text("Dirección"),"city":L10n.text("Ciudad"),"postcode":L10n.text("Código postal"),"state":L10n.text("Región"),"country":L10n.text("País"),"IEEEauthorblockN":L10n.text("Autor"),"IEEEauthorblockA":L10n.text("Afiliación"),"thanks":L10n.text("Financiación / nota del título"),"thisvolume":L10n.text("Volumen"),"thismonth":L10n.text("Mes de publicación"),"thisyear":L10n.text("Año de publicación"),"thisdoi":L10n.text("DOI editorial"),"thisstartpage":L10n.text("Página inicial"),"thisendpage":L10n.text("Página final"),"frenchabstract":L10n.text("Resumen en francés"),"englishabstract":L10n.text("Resumen en inglés")]
         return L10n.format("%@ · %@",names[macro] ?? macro,ordinal+1)
     }
 }
@@ -145,7 +150,9 @@ public struct LaTeXTemplatePackage:Codable,Equatable,Sendable {
         let affiliations=TeXTemplate.calls(plan.prefix).filter{["affil","affiliation","institute"].contains($0.name)}
         if hasSeparateInstitutions {metadata.institution=affiliations.map{TeXTemplate.plain(TeXTemplate.value($0,in:plan.prefix))}.joined(separator:"; ")}
         metadata.templateFields=[:]
-        metadata.language=plan.options.contains("spanish") || plan.prefix.contains("{spanish}") ? "es-ES" : "en-US"
+        let languages=TeXTemplate.calls(plan.prefix).filter{["usepackage","PassOptionsToPackage"].contains($0.name) && TeXTemplate.value($0,in:plan.prefix).contains("babel")}
+        let french=plan.prefix.contains("[french]") || plan.options.contains("french") || languages.last?.optional.contains(where:{(plan.prefix as NSString).substring(with:$0)=="french"}) == true
+        metadata.language=plan.options.contains("spanish") || plan.prefix.contains("{spanish}") ? "es-ES" : (french ? "fr-FR" : "en-US")
         return metadata
     }
     public static func analyze(files:[TemplateFile],sourceName:String,selectedMain:String?=nil)throws->LaTeXTemplatePackage {
@@ -167,18 +174,24 @@ public struct LaTeXTemplatePackage:Codable,Equatable,Sendable {
         let headings=calls.filter{["section","chapter","part"].contains($0.name) && $0.range.location>NSMaxRange(begin.range) && $0.range.location<end.range.location}
         let titleEnd=calls.first(where:{$0.name=="maketitle" && $0.range.location>begin.range.location}).map{NSMaxRange($0.range)} ?? NSMaxRange(begin.range)
         let boundary=headings.first?.range.location ?? titleEnd
-        let prefix=ns.substring(to:boundary)
+        var prefix=ns.substring(to:boundary)
+        if !TeXTemplate.calls(prefix).contains(where:{$0.name=="bibliographystyle"}),let style=calls.last(where:{$0.name=="bibliographystyle"}) {
+            prefix += "\n"+ns.substring(with:style.range)+"\n"
+        }
         let prefixCalls=TeXTemplate.calls(prefix)
         let definitions=prefixCalls.filter{["newcommand","renewcommand","providecommand","DeclareRobustCommand"].contains($0.name)}
         let aliases:[String:TemplateFieldAlias]=["title":.title,"Title":.title,"subtitle":.subtitle,"author":.authors,"Author":.authors,"affil":.institution,"affiliation":.institution,"institute":.institution,"address":.institution,"abstract":.abstract,"keywords":.keywords,"keyword":.keywords,"Keywords":.keywords,"date":.date]
-        let custom:Set<String>=["fnm","sur","spfx","sfx","email","orgdiv","orgname","street","city","postcode","state","country","institution","department","organization","authorrunning","titlerunning","shorttitle","shortauthors","IEEEauthorblockN","IEEEauthorblockA"]
+        let custom:Set<String>=["fnm","sur","spfx","sfx","email","orgdiv","orgname","street","city","postcode","state","country","institution","department","organization","authorrunning","titlerunning","shorttitle","shortauthors","IEEEauthorblockN","IEEEauthorblockA","thanks","thisvolume","thismonth","thisyear","thisdoi","thisstartpage","thisendpage"]
         let editable=prefixCalls.filter{call in
             (aliases[call.name] != nil || custom.contains(call.name)) && !call.arguments.isEmpty && !definitions.contains(where:{$0.range.location<call.range.location && NSMaxRange($0.range)>=NSMaxRange(call.range)})
         }
         var fields:[TemplateField]=[],counts:[String:Int]=[:]
         for call in editable {
-            let range=call.arguments[0]
-            if editable.contains(where:{$0.range.location>range.location && NSMaxRange($0.range)<=NSMaxRange(range)}) {continue}
+            var range=call.arguments[0]
+            let nested=editable.filter{$0.range.location>range.location && NSMaxRange($0.range)<=NSMaxRange(range)}
+            if ["title","Title"].contains(call.name),let note=nested.first(where:{$0.name=="thanks"}) {
+                range.length=note.range.location-range.location
+            } else if !nested.isEmpty {continue}
             let ordinal=counts[call.name,default:0];counts[call.name]=ordinal+1
             let repeated=["author","affil","affiliation","institute"].contains(call.name) && editable.filter{$0.name==call.name}.count>1
             let alias=ordinal==0 && !repeated ? aliases[call.name] ?? .custom : .custom
@@ -188,9 +201,13 @@ public struct LaTeXTemplatePackage:Codable,Equatable,Sendable {
                 fields.append(TemplateField(id:"title.short",macro:"title",ordinal:0,location:short.location,length:short.length,original:raw,alias:.title))
             }
         }
-        if let abstractBegin=prefixCalls.first(where:{$0.name=="begin" && TeXTemplate.value($0,in:prefix)=="abstract"}),let abstractEnd=prefixCalls.first(where:{$0.name=="end" && TeXTemplate.value($0,in:prefix)=="abstract"}),abstractEnd.range.location>NSMaxRange(abstractBegin.range) {
-            let range=NSRange(location:NSMaxRange(abstractBegin.range),length:abstractEnd.range.location-NSMaxRange(abstractBegin.range))
-            fields.append(TemplateField(id:"abstract.environment",macro:"abstract",ordinal:0,location:range.location,length:range.length,original:(prefix as NSString).substring(with:range),alias:.abstract))
+        for environment in ["abstract","englishabstract","frenchabstract","IEEEkeywords","keywords"] {
+            guard let opening=prefixCalls.first(where:{$0.name=="begin" && TeXTemplate.value($0,in:prefix)==environment}),
+                  let closing=prefixCalls.first(where:{$0.name=="end" && TeXTemplate.value($0,in:prefix)==environment && $0.range.location>NSMaxRange(opening.range)}) else{continue}
+            let range=NSRange(location:NSMaxRange(opening.range),length:closing.range.location-NSMaxRange(opening.range))
+            let keywords=environment.lowercased().contains("keywords")
+            let alias:TemplateFieldAlias=keywords ? .keywords : (environment=="frenchabstract" || fields.contains(where:{$0.alias == .abstract}) ? .custom : .abstract)
+            fields.append(TemplateField(id:environment+".environment",macro:environment,ordinal:0,location:range.location,length:range.length,original:(prefix as NSString).substring(with:range),alias:alias))
         }
         let classSource=files.first(where:{($0.path as NSString).lastPathComponent==className+".cls"}).flatMap{TeXTemplate.text($0.data)} ?? ""
         let dependencies=Array(Set(TeXTemplate.calls(prefix+"\n"+classSource).filter{["usepackage","RequirePackage"].contains($0.name)}.flatMap{TeXTemplate.value($0,in:prefix+"\n"+classSource).split(separator:",").map{$0.trimmingCharacters(in:.whitespaces)}})).sorted()

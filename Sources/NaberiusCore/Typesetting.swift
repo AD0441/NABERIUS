@@ -9,6 +9,15 @@ public enum DocumentClass: String, Codable, CaseIterable, Sendable {
 /// Optional in version-one templates so existing .nab files remain readable.
 public struct DocumentLayout: Codable, Equatable, Sendable {
     public var documentClass: DocumentClass = .article
+    public var columns:Int?
+    public var columnGapMM:Double?
+    public var marginTopMM:Double?
+    public var marginBottomMM:Double?
+    public var marginLeftMM:Double?
+    public var marginRightMM:Double?
+    public var columnCount:Int {get{columns ?? 1} set{columns=newValue==1 ? nil : newValue}}
+    public var columnSeparationMM:Double {get{columnGapMM ?? 6} set{columnGapMM=newValue}}
+    public var needsSchemaThree:Bool {columns != nil || columnGapMM != nil || [marginTopMM,marginBottomMM,marginLeftMM,marginRightMM].contains{$0 != nil}}
     public var paragraphIndentMM = 0.0
     public var paragraphSpacingPT = 7.0
     public var header = ""

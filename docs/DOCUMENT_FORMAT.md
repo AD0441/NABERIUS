@@ -28,3 +28,8 @@ El proyecto LaTeX exportado incluye main.tex, references.bib, references.json y 
 La plantilla admite layout y lockedProperties opcionales; los archivos antiguos sin esos campos siguen siendo legibles. layout registra clase LaTeX, sangría, espacio entre párrafos, encabezado/pie, numeración de página y correspondencia. El estilo appendix y el nodo separator son semánticos. Las versiones antiguas de la aplicación no conocen esos valores y deben actualizarse antes de abrir documentos que los usen.
 
 El portapapeles propio utiliza un contenedor .nab con la selección y solo sus objetos, imágenes y referencias necesarios. Al pegar se clonan UUID y se reconectan destinos internos; los recursos idénticos se reutilizan. Un destino no copiado entre documentos se marca como ausente. No se incluyen rutas de imágenes ni una dependencia de la biblioteca personal.
+
+
+## Schema 3
+
+Columnas, separación y márgenes por lado son opcionales en `DocumentLayout`. Los documentos que los usan se guardan como schemaVersion 3; los demás conservan 1 o 2 según sus recursos. Se validan una o dos columnas, separación de 3 a 20 mm y márgenes finitos de 10 a 60 mm. Versiones anteriores rechazan schema 3 para evitar descartar estos ajustes.

@@ -24,7 +24,7 @@ struct CompositionTests {
 @Suite(.serialized)
 struct TemplateCompositionTests {
     @Test(.enabled(if:ProcessInfo.processInfo.environment["NABERIUS_COMPOSE"] == "1"),arguments:DocumentTemplate.builtins)
-    func `all six templates compose actual LaTeX including letter and chapters`(_ template:DocumentTemplate) async throws {
+    func `all builtin templates compose actual LaTeX including letter chapters and two columns`(_ template:DocumentTemplate) async throws {
         var d=NabDocument.example;d.template=template
         d.metadata.abstract="Prueba tipográfica de LaTeX: español, áéíóú y referencias."
         d.blocks.append(Block("LaTeX y TeX conservan su composición tipográfica."))

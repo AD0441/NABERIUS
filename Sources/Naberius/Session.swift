@@ -31,7 +31,21 @@ struct Recent: Codable, Identifiable {
     var sheet: Sheet?
     var citations = CitationOutput()
     var previewURL: URL?
-    var showProof = false
+    var editorMode:EditorMode = .writing
+    var showProof:Bool {
+        get {editorMode == .pdf}
+        set {setEditorMode(newValue ? .pdf : .writing,persist:false)}
+    }
+    var automaticPreview=true
+    var previewDelay=4.0
+    var previewIssue:String?
+    var previewActive=true
+    private var automaticTask:Task<Void,Never>?
+    private var failedPreviewVersion:Int?
+    private var compileToken=UUID()
+    private var automaticCompilation=false
+    private let compilationService:any DocumentCompiling
+    private let preferences:UserDefaults
     var compilation: Compilation?
     var failedComposition:CompositionFailure?
     var proofZoom:Double?
@@ -65,6 +79,7 @@ struct Recent: Codable, Identifiable {
     private var autosave: Task<Void,Never>?
     private var citationTask: Task<Void,Never>?
     private var compileTask: Task<Void,Never>?
+    private var retainedProofs:[Compilation]=[]
     private var diskTask: Task<Void,Never>?
     private var journalTask:Task<Void,Never>?
     private var editVersion = 0
@@ -76,7 +91,11 @@ struct Recent: Codable, Identifiable {
     private let logger = Logger(subsystem:"cl.sebastianpasten.Naberius",category:"Document")
     let support: URL
     enum Sheet: String, Identifiable { case templates, library, insert, citation, link, reference, about, export, recovery, diagnostic; var id: String { rawValue } }
-    init(supportDirectory:URL? = nil) {
+    init(supportDirectory:URL? = nil,compilationService:(any DocumentCompiling)? = nil,preferences:UserDefaults? = nil) {
+        self.compilationService=compilationService ?? SystemDocumentCompiler()
+        self.preferences=preferences ?? .standard
+        automaticPreview=self.preferences.object(forKey:"automaticPreview") as? Bool ?? true
+        previewDelay=self.preferences.object(forKey:"previewDelay") as? Double ?? 4.0
         support = supportDirectory ?? FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Naberius")
         try? FileManager.default.createDirectory(at:support,withIntermediateDirectories:true)
         recent = (try? JSONDecoder().decode([Recent].self,from:Data(contentsOf:support.appendingPathComponent("recent.json")))) ?? []
@@ -88,7 +107,7 @@ struct Recent: Codable, Identifiable {
         else if UserDefaults.standard.bool(forKey:"reopenLast"),let last=recent.first,FileManager.default.fileExists(atPath:last.path){open(URL(fileURLWithPath:last.path))}
     }
     func new(template: DocumentTemplate? = nil, example: Bool = false) {
-        editor?.finishTableEditing();flushRecovery();documentOperation=UUID();cancelCompile();previewURL=nil;compilation=nil;showProof=false;proofPage=0;proofPageCount=0
+        editor?.finishTableEditing();flushRecovery();documentOperation=UUID();cancelCompile();discardProofs();previewURL=nil;compilation=nil;previewIssue=nil;failedComposition=nil;failedPreviewVersion=nil;showProof=false;proofPage=0;proofPageCount=0
         let chosen=template ?? templates.first(where:{$0.id == UserDefaults.standard.string(forKey:"defaultTemplateID")}) ?? DocumentTemplate.builtins[0]
         if let package=chosen.package {
             var draft=NabDocument(template:chosen);draft.metadata=package.initialMetadata()
@@ -96,7 +115,7 @@ struct Recent: Codable, Identifiable {
             draft.cursor=Cursor(location:draft.blocks.map(\.text).joined(separator:"\n").utf16.count,length:0)
             selectedStyle = .paragraph
             document=draft
-        } else if example {var demo=NabDocument.example;if let template {demo.template=template};document=demo} else {document=NabDocument(template:chosen)}; currentURL = nil; expected = nil; selectedNode = nil; selectedBlock = nil; undo.removeAllActions(); status = L10n.text("Sin guardar · recuperación local"); revision += 1; if let d=document{queueJournal(d)}; refreshCitations(); changed()
+        } else if example {var demo=NabDocument.example;if let template {demo.template=template};document=demo} else {document=NabDocument(template:chosen)}; currentURL = nil; expected = nil; selectedNode = nil; selectedBlock = nil; undo.removeAllActions(); status = L10n.text("Sin guardar · recuperación local"); revision += 1; if let d=document{queueJournal(d)}; refreshCitations(); changed();restorePreferredEditorMode()
     }
     @discardableResult func installTemplate(_ template:DocumentTemplate)->String {
         if let package=template.package,let existing=templates.first(where:{$0.package?.files==package.files}) {return existing.id}
@@ -109,7 +128,7 @@ struct Recent: Codable, Identifiable {
             if value as? String == blockID.uuidString {editor.setSelectedRange(NSRange(location:range.location,length:0));editor.scrollRangeToVisible(editor.selectedRange());editor.window?.makeFirstResponder(editor);stop.pointee=true}
         }
     }
-    func goHome(){editor?.finishTableEditing();flushRecovery();documentOperation=UUID();document=nil;cancelCompile()}
+    func goHome(){editor?.finishTableEditing();flushRecovery();documentOperation=UUID();document=nil;cancelCompile();discardProofs()}
     func openPanel() {
         guard openFilePanel == nil else { return }
         let panel = NSOpenPanel()
@@ -137,14 +156,14 @@ struct Recent: Codable, Identifiable {
             let (stored, hash) = try await disk.read(url)
             let d = recovered ? try await disk.readRecovery(url) : stored
             guard documentOperation==operation else{return}
-            self.previewURL=nil;self.compilation=nil;self.showProof=false;self.proofPage=0;self.proofPageCount=0;self.document = d; self.currentURL = recovered ? nil : url; self.expected = recovered ? nil : hash; self.undo.removeAllActions(); self.revision += 1; self.status = recovered ? L10n.text("Version recuperada · guarda una copia") : "Guardado"; self.selectedNode = nil
-            if !recovered { self.recordRecent(url,title:d.metadata.title) }; self.refreshCitations()
+            self.discardProofs();self.previewURL=nil;self.compilation=nil;self.previewIssue=nil;self.failedComposition=nil;self.failedPreviewVersion=nil;self.showProof=false;self.proofPage=0;self.proofPageCount=0;self.document = d; self.currentURL = recovered ? nil : url; self.expected = recovered ? nil : hash; self.undo.removeAllActions(); self.revision += 1; self.status = recovered ? L10n.text("Version recuperada · guarda una copia") : "Guardado"; self.selectedNode = nil
+            if !recovered { self.recordRecent(url,title:d.metadata.title) }; self.refreshCitations();self.restorePreferredEditorMode()
         } catch { self.error = error.localizedDescription } }
     }
     func mutate(_ title: String = L10n.text("Editar documento"), registerUndo:Bool = true, _ body: (inout NabDocument)->Void) {
         guard var d = document else { return }; let old = d; body(&d)
         if d.template.package != nil {
-            d.schemaVersion=2
+            d.schemaVersion=max(d.schemaVersion,d.minimumSchemaVersion)
             for (key,style) in [(\Metadata.title,BlockStyle.title),(\Metadata.subtitle,BlockStyle.subtitle)] {
                 if d.metadata[keyPath:key] != old.metadata[keyPath:key],let index=d.blocks.firstIndex(where:{$0.style==style}) {
                     d.blocks[index].runs=[TextRun(d.metadata[keyPath:key])]
@@ -154,6 +173,7 @@ struct Recent: Codable, Identifiable {
         guard d != old else { return }
         if registerUndo{undo.registerUndo(withTarget:self) { target in target.restore(old,title:title) }; undo.setActionName(title)}
         if title != "Escribir"{lastTypingBlock=nil}
+        d.schemaVersion=max(d.schemaVersion,d.minimumSchemaVersion)
         d.modified = Date(); document = d; revision += 1; queueJournal(d); changed()
     }
     func restore(_ d: NabDocument, title: String) {
@@ -171,6 +191,8 @@ struct Recent: Codable, Identifiable {
     }
     func changed() {
         editVersion += 1; status = currentURL == nil ? L10n.text("Sin guardar · recuperación local") : L10n.text("Cambios sin guardar")
+        if automaticCompilation {cancelCompile()}
+        scheduleAutomaticPreview()
         autosave?.cancel(); let id = document?.id
         autosave = Task { do { try await Task.sleep(for:.seconds(2)); guard document?.id == id else { return }; await persist(forcePanel:false) } catch {} }
     }
@@ -282,28 +304,94 @@ struct Recent: Codable, Identifiable {
         else {mutate(L10n.text("Importar bibliografía")){$0.references += references};refreshCitations()}
         libraryPersonal=importPersonal;bibliographyImport=nil;sheet = .library
     }
-    func openProof() {
-        editor?.finishTableEditing()
-        showProof = true
-        if previewURL == nil && !compiling { compile() }
+    private func restorePreferredEditorMode() {
+        setEditorMode(EditorMode(rawValue:preferences.string(forKey:"preferredEditorMode") ?? "writing") ?? .writing,persist:false)
     }
-    func compile(allowNetwork: Bool = false) {
-        editor?.finishTableEditing()
-        guard let d = document, !compiling else { return }
-        showProof = true
-        guard let engine = Composer.detectedEngine(custom:UserDefaults.standard.string(forKey:"enginePath") ?? "") else { error = NabError.missingEngine.localizedDescription; return }
-        let version = editVersion
-        compiling = true
-        compileTask = Task {
-            defer { compiling = false }
+    func setEditorMode(_ mode:EditorMode,persist:Bool=true) {
+        editorMode=mode
+        if persist {preferences.set(mode.rawValue,forKey:"preferredEditorMode")}
+        automaticTask?.cancel()
+        if mode == .combined {
+            inspector=false
+            if previewURL==nil || proofNeedsUpdate {scheduleAutomaticPreview()}
+        } else if automaticCompilation {cancelCompile()}
+    }
+    func setPreviewDelay(_ delay:Double) {
+        previewDelay=min(30,max(2,delay));preferences.set(previewDelay,forKey:"previewDelay");scheduleAutomaticPreview()
+    }
+    func setAutomaticPreview(_ enabled:Bool) {
+        automaticPreview=enabled;preferences.set(enabled,forKey:"automaticPreview")
+        automaticTask?.cancel()
+        if enabled {failedPreviewVersion=nil;scheduleAutomaticPreview()}
+        else if automaticCompilation {cancelCompile()}
+    }
+    func setPreviewActive(_ active:Bool) {
+        previewActive=active;automaticTask?.cancel()
+        if active {scheduleAutomaticPreview()}
+        else if automaticCompilation {cancelCompile()}
+    }
+    private func scheduleAutomaticPreview() {
+        automaticTask?.cancel()
+        guard editorMode == .combined,automaticPreview,previewActive,document != nil,proofNeedsUpdate,failedPreviewVersion != editVersion else{return}
+        let version=editVersion,id=document?.id,delay=max(0.02,previewDelay)
+        automaticTask=Task {
             do {
-                let result = try await Composer.compile(d,engine:engine,allowNetwork:allowNetwork)
-                guard document?.id == d.id, !Task.isCancelled else { return }
-                previewURL = result.pdf; compilation = result; previewVersion = version
-                proofPageCount = PDFDocument(url: result.pdf)?.pageCount ?? 0
-                proofPage = min(proofPage, max(0, proofPageCount-1))
+                try await Task.sleep(for:.seconds(delay))
+                guard !Task.isCancelled,editorMode == .combined,automaticPreview,previewActive,document?.id==id,editVersion==version,!compiling else{return}
+                compile(presentProof:false,automatic:true)
+            } catch {}
+        }
+    }
+    func openProof() {
+        editor?.finishTableEditing();setEditorMode(.pdf)
+        if previewURL == nil && !compiling {compile()}
+    }
+    func compile(allowNetwork:Bool=false,presentProof:Bool=true,automatic:Bool=false) {
+        if !automatic {editor?.finishTableEditing()}
+        guard let d=document,!compiling else{return}
+        if presentProof && editorMode != .combined {setEditorMode(.pdf,persist:false)}
+        guard let engine=compilationService.engine() else {
+            if automatic {previewIssue=NabError.missingEngine.localizedDescription;failedPreviewVersion=editVersion}
+            else {error=NabError.missingEngine.localizedDescription}
+            return
+        }
+        automaticTask?.cancel()
+        let version=editVersion,token=UUID();compileToken=token
+        compiling=true;automaticCompilation=automatic;previewIssue=nil
+        compileTask=Task {
+            defer {
+                if compileToken==token {
+                    compiling=false;automaticCompilation=false
+                    if editorMode == .combined,proofNeedsUpdate,failedPreviewVersion != editVersion {scheduleAutomaticPreview()}
+                }
+            }
+            do {
+                let result=try await compilationService.run(d,engine,allowNetwork)
+                guard compileToken==token,document?.id==d.id,!Task.isCancelled else{await Composer.discard(result);return}
+                retainedProofs.append(result)
+                if retainedProofs.count>2 {let expired=retainedProofs.removeFirst();Task {await Composer.discard(expired)}}
+                previewURL=result.pdf;compilation=result;failedComposition=nil;previewVersion=version;failedPreviewVersion=nil;previewIssue=nil
+                proofPageCount=PDFDocument(url:result.pdf)?.pageCount ?? 0
+                proofPage=min(proofPage,max(0,proofPageCount-1))
             } catch {
-                if !Task.isCancelled { self.failedComposition=error as? CompositionFailure; self.error = error.localizedDescription }
+                if compileToken==token,!Task.isCancelled {
+                    failedComposition=error as? CompositionFailure;failedPreviewVersion=version
+                    if automatic {previewIssue=error.localizedDescription}
+                    else {self.error=error.localizedDescription}
+                }
+            }
+        }
+    }
+    func completeDocumentResources() {
+        guard let package=document?.template.package,let id=document?.id else{return}
+        TemplateResourcePanel.choose { [self] urls in
+            Task {
+                do {
+                    let updated=try await TemplateResourcePanel.complete(package,urls:urls)
+                    guard document?.id==id else{return}
+                    mutate(L10n.text("Completar recursos")){$0.template.package=updated}
+                    previewIssue=nil;failedPreviewVersion=nil;scheduleAutomaticPreview()
+                } catch {self.error=error.localizedDescription}
             }
         }
     }
@@ -323,8 +411,16 @@ struct Recent: Codable, Identifiable {
             } catch {if !Task.isCancelled {self.failedComposition=error as? CompositionFailure;self.error=error.localizedDescription}}
         }
     }
-    func cancelCompile() { compileTask?.cancel();equationTask?.cancel() }
-    func autosaveForTestingCleanup() {autosave?.cancel();citationTask?.cancel()}
+    private func discardProofs() {
+        let proofs=retainedProofs;retainedProofs=[]
+        Task {for proof in proofs {await Composer.discard(proof)}}
+    }
+    func cancelCompile() {
+        automaticTask?.cancel();compileTask?.cancel();equationTask?.cancel()
+        compileToken=UUID();compiling=false;automaticCompilation=false
+    }
+    func waitForPreviewForTesting()async {await automaticTask?.value;await compileTask?.value}
+    func autosaveForTestingCleanup() {autosave?.cancel();citationTask?.cancel();automaticTask?.cancel();compileTask?.cancel()}
     func exportProject() {
         guard let d = document else { return }; let p = NSOpenPanel(); p.canChooseFiles = false; p.canChooseDirectories = true; p.canCreateDirectories = true; p.message = L10n.text("Selecciona la carpeta donde crear el proyecto LaTeX.")
         guard p.runModal() == .OK, let root = p.url else { return }

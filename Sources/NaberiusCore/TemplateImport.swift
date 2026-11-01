@@ -14,12 +14,14 @@ public enum TemplateImporter {
         if url.pathExtension.lowercased() == "zip" {
             let files=try TemplateZIP.read(url)
             let package=try LaTeXTemplatePackage.analyze(files:files,sourceName:url.lastPathComponent)
-            var template=DocumentTemplate(id:UUID().uuidString,name:(["sn-jnl":"Springer Nature","elsarticle":"Elsevier","IEEEtran":"IEEE","acmart":"ACM"][package.plan.documentClass] ?? package.plan.documentClass),detail:L10n.text("Paquete editorial completo. El PDF conserva su clase y recursos originales."))
-            template.category="Paquetes LaTeX";template.package=package;template.fontSize=10;template.lineSpacing=1.2
+            var template=DocumentTemplate(id:UUID().uuidString,name:(["sn-jnl":"Springer Nature","elsarticle":"Elsevier","IEEEtran":"IEEE","acmart":"ACM"][package.plan.documentClass] ?? url.deletingPathExtension().lastPathComponent.replacingOccurrences(of:"_",with:" ")),detail:L10n.text("Paquete LaTeX conservado. El PDF utiliza su clase y recursos originales."))
+            template.category="Paquetes LaTeX";template.package=package;let preview=package.editingDefaults();template.font=preview.font;template.fontSize=preview.fontSize;template.marginMM=preview.marginMM;template.paper=preview.paper;template.lineSpacing=1.15
             template.lockedProperties=TemplateProperty.allCases
             if let kind=DocumentClass(rawValue:package.plan.documentClass) {template.effectiveLayout=DocumentLayout(documentClass:kind)}
-            let messages=[L10n.format("Archivo principal: %@",package.plan.mainFile),L10n.format("Clase: %@ · Opciones: %@",package.plan.documentClass,package.plan.options.joined(separator:", ")),L10n.format("%@ archivos conservados · %@ estilos bibliográficos",files.count,package.plan.bibliographyStyles.count),L10n.format("Motor detectado: %@ · Bibliografía: %@",package.plan.requiredEngine,package.plan.bibliographyBackend),L10n.text("El análisis no compila el ZIP ni ejecuta programas del paquete. La composición utiliza un directorio aislado y el modo restringido del motor.")]
-            return TemplateAnalysis(compatible:true,partial:package.plan.requiredEngine != "tectonic" || package.plan.bibliographyBackend=="biber",messages:messages,template:template)
+            var layout=template.effectiveLayout;layout.columnCount=preview.columns;layout.paragraphSpacingPT=preview.columns==2 ? 0 : 3;template.layout=layout
+            var messages=[L10n.format("Archivo principal: %@",package.plan.mainFile),L10n.format("Clase: %@ · Opciones: %@",package.plan.documentClass,package.plan.options.joined(separator:", ")),L10n.format("%@ archivos conservados · %@ estilos bibliográficos",files.count,package.plan.bibliographyStyles.count),L10n.format("Motor detectado: %@ · Bibliografía: %@",package.plan.requiredEngine,package.plan.bibliographyBackend),L10n.text("El análisis no compila el ZIP ni ejecuta programas del paquete. La composición utiliza un directorio aislado y el modo restringido del motor.")]
+            if package.hasExternalClass {messages.append(L10n.format("El ZIP no incluye %@.cls. El motor debe disponer de esa clase; también puedes añadir sus recursos desde el catálogo.",package.plan.documentClass))}
+            return TemplateAnalysis(compatible:true,partial:package.hasExternalClass || package.plan.requiredEngine != "tectonic" || package.plan.bibliographyBackend=="biber",messages:messages,template:template)
         } else {
             guard ["tex","cls","sty"].contains(url.pathExtension.lowercased()), let s = String(data:data,encoding:.utf8) else { throw NabError.invalid(L10n.text("Selecciona .tex, .cls, .sty o .zip UTF-8.")) }; source = s
         }
