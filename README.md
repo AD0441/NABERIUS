@@ -11,7 +11,9 @@
   <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.7.0">Descargar 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![NABERIUS · Simplicidad con impacto. Escritura visual. Composición precisa. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
+![NABERIUS: aplicación en su entorno de trabajo, logo sobre el nombre y eslogan. Simplicidad con impacto.](docs/assets/promo/photographic-cover.png)
+
+*Composición promocional generada con IA a partir de recursos reales de la app. [Procedencia y capturas originales](docs/assets/promo/photographic-cover.md).*
 
 **NABERIUS** reúne escritura estructurada, ecuaciones, tablas y bibliografía en un espacio de trabajo para artículos, tesis e informes. Escribe visualmente y revisa el PDF que compone **LaTeX mediante Tectonic**. Contenido, imágenes, plantilla y referencias viajan juntos en un archivo portable `.nab`.
 
@@ -165,7 +167,7 @@ Los aportes voluntarios ayudan a mantener el desarrollo y las pruebas de Naberiu
 
 ## Identidad y licencia
 
-El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS y el [generador de iconos](script/make_brand.swift). La portada actual adopta la [identidad común de la familia](docs/FAMILY.md); la [base geométrica anterior](script/make_cover_reference.swift) y su [dirección artística](docs/assets/brand/cover-prompt.txt) se conservan como antecedentes. [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
+El sello simplificado de Naberius conserva el azul profundo y el marfil de la familia. Su geometría original combina un asta, dos barras y una curva abierta. Se incluyen SVG, PNG, ICNS y el [generador de iconos](script/make_brand.swift). La portada fotográfica actual sigue la [identidad común de la familia](docs/FAMILY.md); la [base geométrica anterior](script/make_cover_reference.swift) y su [dirección artística](docs/assets/brand/cover-prompt.txt) se conservan como antecedentes. [Criterios de identidad](docs/BRAND.md) · [Procedencia de la portada](docs/PRESENTATION.md).
 
 Código propio: **AGPL-3.0-or-later**, copyright 2026 Sebastián Pastén F. Los componentes de terceros conservan sus licencias: [avisos](THIRD_PARTY_NOTICES.md), [licencia](LICENSE) y [autoría](COPYRIGHT). citeproc-js se utiliza bajo su opción AGPL; las fuentes Latin Modern conservan GUST y los estilos/locales CSL, CC BY-SA.
 
