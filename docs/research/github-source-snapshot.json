@@ -1,0 +1,153 @@
+{
+  "date": "2026-11-01",
+  "projectCommit": "f6bb712afb60035837653adedc51268974569dc5",
+  "requirementsSHA256": "3cc766ae9e8691711a6084f823666fb6220068a733218036e7fe88373472d273",
+  "repositories": {
+    "arnog/mathlive": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "mgriebling/SwiftMath": {
+      "branch": "main",
+      "archived": false,
+      "error": false
+    },
+    "ProseMirror/prosemirror-tables": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "groue/GRDB.swift": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "retorquere/bibtex-parser": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "citation-style-language/styles": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "krzyzanowskim/STTextView": {
+      "branch": "main",
+      "archived": false,
+      "error": false
+    },
+    "CotEditor/CotEditor": {
+      "branch": "main",
+      "archived": false,
+      "error": false
+    },
+    "SwiftLaTeX/SwiftLaTeX": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "tectonic-typesetting/tectonic": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "Juris-M/citeproc-js": {
+      "branch": "master",
+      "archived": false,
+      "error": false
+    },
+    "jgm/pandoc": {
+      "branch": "main",
+      "archived": false
+    },
+    "citation-js/citation-js": {
+      "branch": "main",
+      "archived": false
+    },
+    "James-Yu/LaTeX-Workshop": {
+      "branch": "master",
+      "archived": false
+    },
+    "zotero/zotero": {
+      "sourceFile": "chrome/content/zotero/xpcom/server/server_localAPI.js",
+      "blobSHA": "b130b1409fdeaecfe4a4023eaa7c31f6037fee3e"
+    }
+  },
+  "licenses": {
+    "ProseMirror/prosemirror-tables": {
+      "path": "LICENSE",
+      "sha": "c34a4f121f66f8b1837845d0b86f3f71a4f3e318",
+      "isError": false
+    },
+    "groue/GRDB.swift": {
+      "path": "LICENSE",
+      "sha": "550890c8912ca08ff000249777b9eeb46411f189",
+      "isError": false
+    },
+    "retorquere/bibtex-parser": {
+      "path": "LICENSE",
+      "sha": "9748875e334564907a2d5d10999256371dbe2009",
+      "isError": false
+    },
+    "citation-js/citation-js": {
+      "path": "LICENSE.md",
+      "sha": "21e6a3f453bd141d8e4f2bb96656bd07704ab2ad",
+      "isError": false
+    },
+    "jgm/pandoc": {
+      "path": "pandoc.cabal",
+      "sha": "c1abc85c7a7aea4cb62814cf327e039c57d57cd3",
+      "isError": false
+    },
+    "CotEditor/CotEditor": {
+      "path": "LICENSE",
+      "sha": "b4770372445acf7fb1bdd786ae67bf5dbe1e2c37",
+      "isError": false
+    },
+    "James-Yu/LaTeX-Workshop": {
+      "path": "LICENSE.txt",
+      "sha": "e5e09b21f10a5429ce0ee46bfd03bfbac4049c8a",
+      "isError": false
+    },
+    "jlaurens/synctex": {
+      "path": "LICENSE",
+      "sha": "61ef35f231affaeac33b614e92616faa7d75051c",
+      "isError": false
+    },
+    "tectonic-typesetting/tectonic": {
+      "path": "LICENSE",
+      "sha": "89bb0b5e2012754d60211227b135ab9a95012a7e",
+      "isError": false
+    }
+  },
+  "additionalSources": {
+    "mathliveLicense": {
+      "path": "LICENSE.txt",
+      "blobSHA": "97ba1353dc3d2a84eb6e064a39b3e92664d7f09c",
+      "license": "MIT"
+    },
+    "swiftMathLicense": {
+      "path": "LICENSE",
+      "blobSHA": "dddb1a7a2828a05448ec1deebdf88889d97dc81f",
+      "license": "MIT"
+    },
+    "sttextviewLicense": {
+      "path": "LICENSE.md",
+      "blobSHA": "1b36bc031daa1beb1420da931bde70205e79b29a",
+      "license": "GPLv3 or commercial"
+    },
+    "cslStylesReadme": {
+      "path": "README.md",
+      "blobSHA": "d8eacace4110a4abb693fb4ca9c653654595a8cf",
+      "license": "CC-BY-SA-3.0"
+    },
+    "zoteroLicense": {
+      "path": "COPYING",
+      "blobSHA": "b14d531f57df630c8668473475c602966561c83e",
+      "license": "AGPLv3"
+    }
+  },
+  "integrationStatus": "research only; no dependency integration or compatibility certification"
+}

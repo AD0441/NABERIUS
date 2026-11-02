@@ -247,13 +247,20 @@
 "El documento principal no cierra el entorno document." = "El documento principal no cierra el entorno document.";
 "El documento supera el límite de 128 MB." = "El documento supera el límite de 128 MB.";
 "El fragmento contiene identidades ambiguas." = "El fragmento contiene identidades ambiguas.";
+"El motor bibliográfico no devolvió una cita válida." = "El motor bibliográfico no devolvió una cita válida.";
 "El motor bibliográfico no pudo procesar los registros: %@" = "El motor bibliográfico no pudo procesar los registros: %@";
 "El motor no produjo una ecuación visible." = "El motor no produjo una ecuación visible.";
 "El oficio de escribir" = "El oficio de escribir";
 "El paquete ZIP está vacío o supera 16 MB." = "El paquete ZIP está vacío o supera 16 MB.";
 "El paquete de plantilla contiene archivos o campos inválidos." = "El paquete de plantilla contiene archivos o campos inválidos.";
 "El paquete requiere LuaLaTeX o Biber, que no están disponibles con este motor. Sus archivos y configuración se conservan." = "El paquete requiere LuaLaTeX o Biber, que no están disponibles con este motor. Sus archivos y configuración se conservan.";
+"El pegado excedería el límite de 200 filas o 30 columnas. Elige otra celda o copia un rango más pequeño." = "El pegado excedería el límite de 200 filas o 30 columnas. Elige otra celda o copia un rango más pequeño.";
 "El proceso terminó sin generar un registro." = "El proceso terminó sin generar un registro.";
+"El rango copiado contiene una celda con comillas sin cerrar." = "El rango copiado contiene una celda con comillas sin cerrar.";
+"El rango copiado supera 200 filas." = "El rango copiado supera 200 filas.";
+"El rango copiado supera 30 columnas." = "El rango copiado supera 30 columnas.";
+"El rango copiado supera 4 MB. Copia un rango más pequeño." = "El rango copiado supera 4 MB. Copia un rango más pequeño.";
+"El rango copiado tiene texto fuera de una celda entre comillas. Vuelve a copiarlo desde la hoja de cálculo." = "El rango copiado tiene texto fuera de una celda entre comillas. Vuelve a copiarlo desde la hoja de cálculo.";
 "El recurso supera 12 MB." = "El recurso supera 12 MB.";
 "El índice del ZIP está dañado." = "El índice del ZIP está dañado.";
 "El índice del ZIP no coincide con sus entradas." = "El índice del ZIP no coincide con sus entradas.";
@@ -345,6 +352,7 @@
 "Informe / tesis" = "Informe / tesis";
 "Informe académico" = "Informe académico";
 "Inicio" = "Inicio";
+"Inserta elementos para completar esta lista. El PDF incluye las páginas definitivas." = "Inserta elementos para completar esta lista. El PDF incluye las páginas definitivas.";
 "Inserta una tabla, una figura o una ecuación desde el menú Insertar." = "Inserta una tabla, una figura o una ecuación desde el menú Insertar.";
 "Insertar" = "Insertar";
 "Insertar %@" = "Insertar %@";
@@ -390,6 +398,8 @@
 "Libro" = "Libro";
 "Lienzo continuo" = "Lienzo continuo";
 "Lista con viñetas" = "Lista con viñetas";
+"Lista de figuras" = "Lista de figuras";
+"Lista de tablas" = "Lista de tablas";
 "Lista numerada" = "Lista numerada";
 "Listas" = "Listas";
 "Listo" = "Listo";
@@ -429,6 +439,7 @@
 "No se encontró Tectonic. Selecciona un motor en Configuración → Composición. Puedes seguir escribiendo y exportar el proyecto LaTeX." = "No se encontró Tectonic. Selecciona un motor en Configuración → Composición. Puedes seguir escribiendo y exportar el proyecto LaTeX.";
 "No se encontró el motor o estilo bibliográfico." = "No se encontró el motor o estilo bibliográfico.";
 "No se encontró la entrada heredada: " = "No se encontró la entrada heredada: ";
+"No se encontró la forma narrativa del estilo bibliográfico." = "No se encontró la forma narrativa del estilo bibliográfico.";
 "No se pudo actualizar" = "No se pudo actualizar";
 "No se pudo aislar el compilador de la plantilla. El paquete se conserva sin ejecutar." = "No se pudo aislar el compilador de la plantilla. El paquete se conserva sin ejecutar.";
 "No se pudo completar la operación" = "No se pudo completar la operación";
@@ -436,6 +447,7 @@
 "No se pudo guardar la biblioteca o configuración local: " = "No se pudo guardar la biblioteca o configuración local: ";
 "No se pudo guardar la recuperación" = "No se pudo guardar la recuperación";
 "No se pudo guardar · contenido conservado" = "No se pudo guardar · contenido conservado";
+"No se pudo identificar un rango rectangular de celdas." = "No se pudo identificar un rango rectangular de celdas.";
 "No se pudo leer la codificación del archivo." = "No se pudo leer la codificación del archivo.";
 "No se pudo leer una entrada completa del ZIP." = "No se pudo leer una entrada completa del ZIP.";
 "No se pudo persistir el diario de recuperación: " = "No se pudo persistir el diario de recuperación: ";
@@ -468,6 +480,7 @@
 "Paquete conservado en el catálogo. Revisa los recursos y el motor necesarios antes de usarlo como plantilla predeterminada." = "Paquete conservado en el catálogo. Revisa los recursos y el motor necesarios antes de usarlo como plantilla predeterminada.";
 "Pausa antes de componer" = "Pausa antes de componer";
 "País" = "País";
+"Pegar celdas" = "Pegar celdas";
 "Pegar contenido" = "Pegar contenido";
 "Pegar imagen" = "Pegar imagen";
 "Personal" = "Personal";
@@ -540,6 +553,7 @@
 "Saludo" = "Saludo";
 "Sangría: %@ mm" = "Sangría: %@ mm";
 "Se actualiza a partir de los títulos. El PDF incluye las páginas definitivas." = "Se actualiza a partir de los títulos. El PDF incluye las páginas definitivas.";
+"Se actualiza con los títulos y el orden de los elementos. El PDF incluye las páginas definitivas." = "Se actualiza con los títulos y el orden de los elementos. El PDF incluye las páginas definitivas.";
 "Se actualizará tras una pausa." = "Se actualizará tras una pausa.";
 "Se esperaba una lista CSL-JSON de menos de 10 MB." = "Se esperaba una lista CSL-JSON de menos de 10 MB.";
 "Se leyó como Latin-1 y se convirtió a Unicode." = "Se leyó como Latin-1 y se convirtió a Unicode.";
@@ -569,7 +583,7 @@
 "Superior" = "Superior";
 "Superíndice" = "Superíndice";
 "Símbolos / texto" = "Símbolos / texto";
-"Tab: siguiente celda · ⇧Tab: anterior · Esc: terminar" = "Tab: siguiente celda · ⇧Tab: anterior · Esc: terminar";
+"Tab: siguiente celda · ⌘V: pegar rango · Esc: terminar" = "Tab: siguiente celda · ⌘V: pegar rango · Esc: terminar";
 "Tabla" = "Tabla";
 "Tabla %@" = "Tabla %@";
 "Tabla %@ · %@ × %@" = "Tabla %@ · %@ × %@";
@@ -634,6 +648,7 @@
 "Zoom del editor" = "Zoom del editor";
 "[Cita bibliográfica]" = "[Cita bibliográfica]";
 "[Imagen no incluida]" = "[Imagen no incluida]";
+"[Referencia no encontrada]" = "[Referencia no encontrada]";
 "[Salto de página]\n" = "[Salto de página]\n";
 "init(coder:) has not been implemented" = "init(coder:) has not been implemented";
 "no incluida" = "no incluida";

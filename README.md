@@ -6,9 +6,9 @@
   <p>
     <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.5.0" src="https://img.shields.io/badge/versi%C3%B3n-0.5.0-58616B?style=flat-square">
+    <img alt="Versión 0.6.0" src="https://img.shields.io/badge/versi%C3%B3n-0.6.0-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0">Descargar 0.5.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.6.0">Descargar 0.6.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
 ![NABERIUS · Simplicidad con impacto. Escritura visual. Composición precisa. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
@@ -17,7 +17,7 @@
 
 **Creado por Sebastián Pastén F.** Pertenece a la familia de [METATRON](https://github.com/AD0441/METATRON), [RAZIEL](https://github.com/AD0441/RAZIEL) y [PAIMON](https://github.com/AD0441/PAIMON): herramientas nativas, procesamiento local y apoyo voluntario.
 
-**Versión actual: [Naberius 0.5.0 — versión preliminar para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0).** Incluye tres vistas de trabajo, plantillas editoriales en ZIP y diseños de una o dos columnas. [Descargar la app](https://github.com/AD0441/NABERIUS/releases/download/v0.5.0/Naberius.zip) · [Historial de cambios](CHANGELOG.md).
+**Versión actual: [Naberius 0.6.0 — versión preliminar para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.6.0).** Incluye citas narrativas CSL, pegado de rangos en tablas y listas automáticas de figuras y tablas, además de las tres vistas y plantillas editoriales en ZIP. [Descargar la app](https://github.com/AD0441/NABERIUS/releases/download/v0.6.0/Naberius.zip) · [Historial de cambios](CHANGELOG.md).
 
 ## Simplicidad con impacto
 
@@ -70,6 +70,10 @@ Vista **Editor + PDF** de Naberius 0.5.0 con el documento original de demostraci
 
 ![Naberius 0.5.0: editor y PDF real, con títulos, ecuación y tabla](docs/screenshots/editor-pdf-0.5.jpg)
 
+En **0.6.0**, las citas narrativas calculan los nombres mediante CSL; las listas de figuras y tablas se actualizan con el documento y muestran sus páginas definitivas al componer. [Abrir este ejemplo](docs/examples/Escritura-y-composicion-0.6.nab).
+
+![Naberius 0.6.0: citas y listas automáticas en el editor y el PDF LaTeX](docs/screenshots/lists-pdf-0.6.jpg)
+
 Las capturas siguientes documentan la edición de tablas y la revisión bibliográfica introducidas en 0.3.0.
 
 | Tablas dentro del documento | Revisión de la importación bibliográfica |
@@ -106,7 +110,7 @@ Haz doble clic en una tabla para editar sus celdas dentro del documento. **Tab /
 
 ## Empezar
 
-[Descargar Naberius 0.5.0 para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.5.0) · [Comprobar SHA-256](https://github.com/AD0441/NABERIUS/releases/download/v0.5.0/Naberius.zip.sha256)
+[Descargar Naberius 0.6.0 para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.6.0) · [Comprobar SHA-256](https://github.com/AD0441/NABERIUS/releases/download/v0.6.0/Naberius.zip.sha256)
 
 Requiere **macOS 14 o posterior**. La app se ha verificado en un Apple M1 con 8 GB; Intel no está verificado. El ZIP tiene firma local ad hoc y no está notarizado.
 
@@ -135,7 +139,7 @@ La interfaz usa SwiftUI, AppKit/TextKit y PDFKit. La composición y el trabajo d
 
 ## Validación
 
-La versión 0.5.0 pasó **86 pruebas** localmente, incluidas integraciones con Tectonic real; también se verificó la ruta SwiftPM nativa. [CI de la versión](https://github.com/AD0441/NABERIUS/actions/runs/41265658069) · [Pruebas y evidencias](docs/TESTING.md).
+La versión 0.6.0 pasó **101 pruebas** localmente, incluidas integraciones con Tectonic real y pruebas AppKit de deshacer/rehacer. Se comprobaron en pantalla el pegado de rangos, las citas y las listas con páginas finales. [CI](https://github.com/AD0441/NABERIUS/actions) · [Pruebas y evidencias](docs/TESTING.md).
 
 ```sh
 python3 script/sync_localization.py --check

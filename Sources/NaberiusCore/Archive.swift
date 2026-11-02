@@ -41,7 +41,7 @@ public enum NabArchive {
         let document = try d.decode(NabDocument.self,from:json); try validate(document); return document
     }
     public static func validate(_ d: NabDocument) throws {
-        guard [1,2,3].contains(d.schemaVersion) else { throw NabError.invalid(L10n.text("Esta versión de documento requiere una versión más reciente de Naberius.")) }
+        guard [1,2,3,4].contains(d.schemaVersion) else { throw NabError.invalid(L10n.text("Esta versión de documento requiere una versión más reciente de Naberius.")) }
         guard d.blocks.count <= 100_000, d.assets.count <= 2000, d.nodes.count <= 50_000 else { throw NabError.invalid(L10n.text("El documento contiene demasiados elementos.")) }
         guard Set(d.blocks.map(\.id)).count == d.blocks.count, Set(d.nodes.map(\.id)).count == d.nodes.count, Set(d.assets.map(\.id)).count == d.assets.count, Set(d.references.map(\.id)).count == d.references.count else { throw NabError.invalid(L10n.text("El documento contiene identificadores duplicados.")) }
         guard d.assets.allSatisfy({ $0.data.count <= 32*1024*1024 && ($0.originalData?.count ?? 0) <= 32*1024*1024 }), d.assets.reduce(0, { $0 + $1.data.count + ($1.originalData?.count ?? 0) }) <= 80*1024*1024 else { throw NabError.invalid(L10n.text("Los recursos superan el tamaño admitido (32 MB por imagen; 80 MB en total).")) }

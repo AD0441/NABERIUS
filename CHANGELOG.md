@@ -1,5 +1,13 @@
 # Cambios
 
+## 0.6.0 — 2026-11-01
+
+- Citas narrativas calculadas por CSL: autores múltiples, instituciones, títulos sin autor y desambiguación que actualiza citas anteriores. APA distingue conjunción narrativa y ampersand parentético; los grupos narrativos conservan cada fuente.
+- Pegado de rangos TSV dentro de las tablas mediante ⌘V, con comillas, tabulaciones y saltos internos; expansión hasta 200 × 30, validación completa y un solo deshacer/rehacer.
+- Listas automáticas de figuras y tablas desde Insertar, con vista del editor, formato de clase y páginas definitivas en LaTeX. Las tablas continuadas no duplican entradas.
+- Schema 4 para los nodos nuevos, fragmentos portables y recuperación de diarios anteriores; lectura de documentos existentes conservada.
+- Revisión de los 175 requisitos y evaluación de soluciones de GitHub, con evidencia y límites documentados.
+
 ## 0.5.0 — 2026-10-31
 
 - Vistas configurables Escritura, Editor + PDF y PDF. Actualización automática tras una pausa, cancelable, sin red implícita y con errores en línea.

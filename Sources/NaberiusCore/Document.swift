@@ -34,7 +34,7 @@ public struct Block: Codable, Equatable, Identifiable, Sendable {
         return merged
     }
 }
-public enum NodeKind: String, Codable, Sendable { case figure, table, equation, citation, crossReference, footnote, contents, separator }
+public enum NodeKind: String, Codable, Sendable { case figure, table, equation, citation, crossReference, footnote, contents, figureList, tableList, separator }
 public enum MathOperation: String, Codable, CaseIterable, Sendable {
     case text, fraction, root, power, subscripted, sum, integral
     public var label:String {switch self {case .text:L10n.text("Símbolos / texto");case .fraction:L10n.text("Fracción");case .root:L10n.text("Raíz");case .power:L10n.text("Exponente");case .subscripted:L10n.text("Subíndice");case .sum:L10n.text("Sumatoria");case .integral:L10n.text("Integral")}}
@@ -204,7 +204,10 @@ public struct NabDocument: Codable, Equatable, Identifiable, Sendable {
     public var cursor = Cursor()
     public var modified = Date()
     public init(template: DocumentTemplate = DocumentTemplate.builtins[0]) { self.template = template;schemaVersion=minimumSchemaVersion }
-    public var minimumSchemaVersion:Int {template.effectiveLayout.needsSchemaThree ? 3 : (template.package==nil ? 1 : 2)}
+    public var minimumSchemaVersion:Int {
+        if nodes.contains(where:{$0.kind == .figureList || $0.kind == .tableList}) {return 4}
+        return template.effectiveLayout.needsSchemaThree ? 3 : (template.package==nil ? 1 : 2)
+    }
     public var wordCount: Int { blocks.map(\.text).joined(separator:" ").split { $0.isWhitespace || $0 == "\u{fffc}" }.count }
     public var orderedNodes: [AcademicNode] { blocks.flatMap(\.runs).compactMap { r in r.nodeID.flatMap { id in nodes.first { $0.id == id } } } }
     public func number(of id: UUID) -> Int? {

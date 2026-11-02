@@ -1,4 +1,4 @@
-# Estado de requisitos — 0.3.0
+# Estado de requisitos — 0.6.0
 
 Esta matriz usa «implementado» para la capacidad presente y «parcial / pendiente» cuando no cubre todavía el alcance completo. TESTING.md contiene la evidencia ejecutada; implementado no significa auditado en todas sus variantes. P1/P2 se conservan como hoja de ruta, salvo funciones básicas que se hayan incorporado. La revisión 0.2.0 y su evidencia están en TYPESETTING.md; las capturas/ensayos acotados no sustituyen la auditoría completa con VoiceOver.
 
@@ -49,7 +49,7 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | TXT-05 | P0 | Implementado: fragmento portable con imágenes, objetos, referencias y UUID reconectados; pruebas entre documentos. |
 | TXT-06 | P0 | Implementado para RTF compatible normalizado y degradación a texto; adjuntos externos sin dependencia se identifican. |
 | TXT-07 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| TXT-08 | P1 | Pendiente / alcance posterior. |
+| TXT-08 | P1 | Parcial: conteo de palabras y páginas del PDF presentes; faltan caracteres y estadísticas completas de avance. |
 | BUS-01 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | BUS-02 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | BUS-03 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -68,8 +68,8 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | TAB-03 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | TAB-04 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | TAB-05 | P0 | Implementado: académico, simple y cuadrícula con reglas distintas en LaTeX; tabularx ajusta tablas cortas y longtable distribuye las extensas con encabezados repetidos. |
-| TAB-06 | P1 | Pendiente / alcance posterior. |
-| TAB-07 | P1 | Pendiente / alcance posterior. |
+| TAB-06 | P1 | Implementado para rangos TSV de hojas de cálculo: ⌘V, celdas entre comillas, expansión hasta 200 × 30 y un solo deshacer. HTML tabular y celdas combinadas pendientes. |
+| TAB-07 | P1 | Parcial: tablas extensas con paginación y encabezados repetidos en PDF; faltan celdas combinadas y cobertura de variantes complejas. |
 | FIG-01 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | FIG-02 | P0 | Implementado mediante controles visuales de ancho/alineación y reemplazo, conservando proporción; tiradores directos pendientes como mejora. |
 | FIG-03 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -84,16 +84,16 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | EQ-05 | P1 | Pendiente / alcance posterior. |
 | EQ-06 | P1 | Pendiente / alcance posterior. |
 | INS-01 | P0 | Implementado: enlace, nota, cita extensa, salto de página y separador semántico. |
-| INS-02 | P1 | Pendiente / alcance posterior. |
+| INS-02 | P1 | Implementado: índice, listas de figuras y tablas y anexos. Numeración derivada del documento y páginas definitivas en LaTeX; schema 4 para las listas nuevas. |
 | INS-03 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | INS-04 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | INS-05 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | PL-01 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| PL-02 | P0 | Implementado: seis formatos con clases reales article/report/book/letter, probados con PDF de cada uno. |
+| PL-02 | P0 | Implementado: siete entradas integradas, incluido artículo en dos columnas; clases reales article/report/book/letter con evidencia de composición. |
 | PL-03 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | PL-04 | P0 | Implementado: catálogo, duplicación, personalización, restauración, baja y selección predeterminada para nuevos documentos. |
-| PL-05 | P0 | Implementado con compatibilidad progresiva: análisis seguro, clases/fuentes/márgenes básicos, dependencias detectadas y documento de prueba; macros complejas pendientes. |
-| PL-06 | P0 | Implementado con clasificación del mapeo semántico; sin ejecución del original. |
+| PL-05 | P0 | Implementado con compatibilidad progresiva: mapeo de archivos individuales y ZIP con clase/recursos originales, campos y diagnóstico. Dependencias LuaLaTeX/Biber y macros no cubiertas siguen limitadas. |
+| PL-06 | P0 | Implementado con clasificación y diagnóstico según importación. El análisis no ejecuta el paquete; la composición ZIP interpreta TeX bajo aislamiento. No se declara compatibilidad universal. |
 | PL-07 | P1 | Pendiente / alcance posterior. |
 | PL-08 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | PL-09 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -102,9 +102,9 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | EST-03 | P0 | Implementado: excepciones documentales y bloqueo de diseño completo o por propiedades. |
 | EST-04 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | EST-05 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| EST-06 | P1 | Pendiente / alcance posterior. |
+| EST-06 | P1 | Parcial: duplicación y variantes personales presentes; exportación/importación dedicada de plantillas personales pendiente. |
 | DOC-01 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| DOC-02 | P0 | Implementado: papel, márgenes uniformes, cuerpo, interlineado, sangría y espacio entre párrafos. |
+| DOC-02 | P0 | Implementado: papel, márgenes uniformes o por lado, una/dos columnas, cuerpo, interlineado, sangría y espacio entre párrafos. |
 | DOC-03 | P0 | Implementado: portada, índice, numeración, anexos, encabezado y pie en la composición real. |
 | DOC-04 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | DOC-05 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -121,7 +121,7 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | REF-10 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | REF-11 | P1 | Pendiente / alcance posterior. |
 | CIT-01 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| CIT-02 | P0 | Implementado; consultar evidencia en TESTING.md. |
+| CIT-02 | P0 | Implementado: formas narrativas calculadas por CSL, grupos de fuentes, localizadores y afijos; actualización de citas previas al desambiguar. Pruebas con cuatro estilos, instituciones y autor ausente. |
 | CIT-03 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | CIT-04 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | CIT-05 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -165,9 +165,9 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | VIS-09 | P0 | Parcial: todas las ventanas básicas; algunas propiedades avanzadas pendientes. |
 | VIS-10 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | VIS-11 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| VIS-12 | P0 | Implementado; consultar evidencia en TESTING.md. |
+| VIS-12 | P0 | Implementado con el destino comprobado de la familia: https://ko-fi.com/C0C51WQ1T0. Se conserva frente al alias anterior del documento base, según la instrucción de identidad del autor. |
 | VIS-13 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| VIS-14 | P1 | Pendiente / alcance posterior. |
+| VIS-14 | P1 | Implementado documentalmente: BRAND.md, fuentes editables del icono, procedimientos de portada y avisos de terceros presentes. |
 | VIS-15 | P0 | Parcial: capturas claro/oscuro; revisión completa de Finder y Dock pendiente. |
 | VIS-16 | P0 | Parcial: español y catálogo base; mensajes dinámicos e inglés pendientes. |
 | CAL-01 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -179,6 +179,8 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | CAL-07 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | CAL-08 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | CAL-09 | P0 | Implementado; consultar evidencia en TESTING.md. |
+
+Revisión documental y de código del 1 de noviembre de 2026: [informe y bases de GitHub](REQUIREMENTS_REVIEW_GITHUB.md), [matriz completa de revisión](REQUIREMENTS_REVIEW.csv). Se corrigen rótulos desactualizados y se documenta el diagnóstico de citas narrativas; no se presenta como una nueva validación integral de interfaz.
 
 ## Lote 0.3.0
 
@@ -198,3 +200,7 @@ Importación, campos editoriales, creación directa de documento, escritura del 
 Escritura orientativa y Editor + PDF real disponibles junto a la vista PDF completa. Actualización automática opcional tras una pausa, con cancelación y sin red implícita. Columnas, separación y márgenes por lado en diseños libres; pistas tipográficas de la clase para edición. Tres ZIP adicionales compuestos y CJS diagnosticado como incompleto. Ver EDITOR_MODES.md y TEMPLATE_PACKAGES.md. La edición directa del PDF y la compatibilidad universal con clases editoriales no se declaran implementadas.
 
 Prueba nativa de 0.5.0: las tres vistas, apariencia clara/oscura, importación de los cuatro ZIP y actualización automática/manual verificadas. 86 pruebas pasan con motor real y backend nativo. La revisión señaló el reparto inicial del modo combinado; está corregido, probado con AppKit y recapturado. El revisor puntuó ese arreglo como resuelto.
+
+## Lote 0.6.0 — citas, rangos y listas
+
+Las citas narrativas usan las formas de nombre de citeproc-js y aplican todas las revisiones de desambiguación. Los rangos TSV se pegan en la celda activa, amplían la tabla dentro de 200 filas/30 columnas y se deshacen como una transacción. Las listas de figuras y tablas tienen nodos propios, vista derivada en el editor y comandos LaTeX con referencias de página; las continuaciones de tablas extensas no duplican entradas. La reapertura y recuperación conservan schema 4 y UUID. La revisión de requisitos de 0.5.0 se conserva como diagnóstico histórico; no se han adoptado sus otras dependencias candidatas.

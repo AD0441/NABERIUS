@@ -26,6 +26,7 @@ struct RecoveryDelta:Codable,Sendable {
         let ids=order ?? d.blocks.map(\.id)
         guard ids.allSatisfy({blocks[$0] != nil}),Set(ids).count==ids.count else{throw NabError.invalid(L10n.text("El diario de recuperación contiene una transacción inválida."))}
         d.blocks=ids.compactMap{blocks[$0]};if let nodes{d.nodes=nodes};if let assets{d.assets=assets};if let references{d.references=references};if let metadata{d.metadata=metadata};if let template{d.template=template};d.cursor=cursor;d.modified=modified
+        d.schemaVersion=max(d.schemaVersion,d.minimumSchemaVersion)
     }
 }
 extension DocumentDisk {

@@ -1,0 +1,3 @@
+NABERIUS actual: Pérez (2024)
+Motor CSL author-only: Pérez et al.
+Composición usando nombre calculado por CSL: Pérez et al. (2024)

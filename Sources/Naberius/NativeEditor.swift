@@ -108,6 +108,13 @@ enum RichText {
         case .contents:
             let headings = d.blocks.filter{$0.style.headingLevel != nil}.map { String(repeating:"   ",count:($0.style.headingLevel ?? 1)-1)+$0.text }.joined(separator:"\n")
             image = textImage("Índice\n"+headings,width:width,size:14)
+        case .figureList,.tableList:
+            let kind:NodeKind=n.kind == .figureList ? .figure : .table
+            let title=n.kind == .figureList ? L10n.text("Lista de figuras") : L10n.text("Lista de tablas")
+            let entries=d.orderedNodes.filter{$0.kind==kind}.map {d.crossReference($0.id)+". "+$0.caption}
+            let content=entries.isEmpty ? L10n.text("Inserta elementos para completar esta lista. El PDF incluye las páginas definitivas.") : entries.joined(separator:"\n")
+            image=textImage(title+"\n"+content,width:width,size:14)
+
         }
         let attachment = NSTextAttachment(); attachment.attachmentCell = NSTextAttachmentCell(imageCell:image)
         let result = NSMutableAttributedString(attributedString:NSAttributedString(attachment:attachment))

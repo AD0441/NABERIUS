@@ -6,7 +6,7 @@ Frank Bennett, Copyright 2009–2019, con los avisos incluidos en el archivo dis
 
 ## Citation Style Language
 
-Estilos APA, IEEE, Chicago y NLM citation-sequence (Vancouver), y locales es-ES/en-US: https://github.com/citation-style-language/styles y https://github.com/citation-style-language/locales . Conservan sus autores, enlaces y derechos dentro de los XML. Repositorios bajo CC BY-SA 3.0: https://creativecommons.org/licenses/by-sa/3.0/ . No se modificaron los XML; el fichero Vancouver conserva el identificador original nlm-citation-sequence. Se incluye únicamente con otro nombre de recurso local.
+Estilos APA, IEEE, Chicago y NLM citation-sequence (Vancouver), y locales es-ES/en-US: https://github.com/citation-style-language/styles y https://github.com/citation-style-language/locales . Conservan sus autores, enlaces y derechos dentro de los XML. Repositorios bajo CC BY-SA 3.0: https://creativecommons.org/licenses/by-sa/3.0/ . No se modificaron los XML; el fichero Vancouver conserva el identificador original nlm-citation-sequence. Se incluye únicamente con otro nombre de recurso local. Desde 0.6.0, Naberius genera en memoria extensiones de forma narrativa: una variante del macro author-short de APA con conjunción textual y un bloque intext para los estilos numéricos. Conservan esta procedencia y CC BY-SA 3.0; los XML originales distribuidos y sus atribuciones permanecen intactos.
 
 ## Motor y frameworks
 

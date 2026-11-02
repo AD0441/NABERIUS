@@ -83,6 +83,8 @@ struct InsertMenu:View {
         Button(L10n.text("Nota al pie")) { var n=AcademicNode(.footnote);n.note=L10n.text("Escribe la nota en el inspector");session.insert(n) }
         Button(L10n.text("Referencia cruzada…")) { session.sheet = .reference }
         Button(L10n.text("Índice automático")) { session.insert(AcademicNode(.contents)) }
+        Button(L10n.text("Lista de figuras")) { session.insert(AcademicNode(.figureList)) }
+        Button(L10n.text("Lista de tablas")) { session.insert(AcademicNode(.tableList)) }
         Button(L10n.text("Salto de página")) {session.editor?.insertPageBreak()}
         Button(L10n.text("Separador estructural")) {session.insert(AcademicNode(.separator))}
     }

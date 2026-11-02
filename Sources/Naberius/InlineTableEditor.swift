@@ -7,16 +7,37 @@ final class TableCellField:NSTextField {
     var registeredEdit=false
 }
 
+/// A cell-specific field editor intercepts only rectangular spreadsheet text.
+final class TableFieldEditor:NSTextView {
+    weak var grid:InlineTableEditor?
+    weak var field:TableCellField?
+    override var undoManager:UndoManager? {grid?.session?.undo ?? super.undoManager}
+    override func paste(_ sender:Any?) {
+        if let field,grid?.pasteCells(from:.general,at:field)==true {return}
+        super.paste(sender)
+    }
+    override func pasteAsPlainText(_ sender:Any?) {paste(sender)}
+}
+final class TableFieldCell:NSTextFieldCell {
+    weak var grid:InlineTableEditor?
+    override func fieldEditor(for controlView:NSView)->NSTextView? {
+        guard let grid,let field=controlView as? TableCellField else{return nil}
+        grid.fieldEditor.field=field
+        return grid.fieldEditor
+    }
+}
+
 /// One native grid is mounted over the active table attachment, in the document itself.
 final class InlineTableEditor:NSView,NSTableViewDataSource,NSTableViewDelegate,NSTextFieldDelegate {
     weak var owner:NativeTextView?
     weak var session:Session?
     let nodeID:UUID
     private var node:AcademicNode
+    let fieldEditor=TableFieldEditor()
     private let table=NSTableView()
     private let scroll=NSScrollView()
     private let heading=NSTextField(labelWithString:"")
-    private let hint=NSTextField(labelWithString:L10n.text("Tab: siguiente celda · ⇧Tab: anterior · Esc: terminar"))
+    private let hint=NSTextField(labelWithString:L10n.text("Tab: siguiente celda · ⌘V: pegar rango · Esc: terminar"))
     private var updating=false
     private var lastWidth=0.0
     private var font:NSFont
@@ -24,6 +45,7 @@ final class InlineTableEditor:NSView,NSTableViewDataSource,NSTableViewDelegate,N
         self.owner=owner;self.session=session;nodeID=node.id;self.node=node
         font=DocumentFonts.font(family:session.document?.template.font ?? DocumentTypography.defaultFont,size:13)
         super.init(frame:.zero)
+        fieldEditor.isFieldEditor=true;fieldEditor.grid=self
         wantsLayer=true;layer?.cornerRadius=5;layer?.borderWidth=1
         heading.font = .systemFont(ofSize:11,weight:.semibold)
         heading.lineBreakMode = .byTruncatingTail
@@ -101,6 +123,7 @@ final class InlineTableEditor:NSView,NSTableViewDataSource,NSTableViewDelegate,N
         guard let tableColumn,let c=node.columnIDs.firstIndex(where:{$0.uuidString==tableColumn.identifier.rawValue}),row<node.rows.count else{return nil}
         let identifier=NSUserInterfaceItemIdentifier("NaberiusTableCell")
         let field=(tableView.makeView(withIdentifier:identifier,owner:self) as? TableCellField) ?? TableCellField()
+        if !(field.cell is TableFieldCell) {let cell=TableFieldCell(textCell:"");cell.grid=self;field.cell=cell}
         field.identifier=identifier;field.rowID=node.rowIDs[row];field.columnID=node.columnIDs[c]
         field.delegate=self;field.isEditable=true;field.isSelectable=true;field.isBordered=false;field.drawsBackground=false
         field.cell?.wraps=true;field.cell?.isScrollable=false;field.maximumNumberOfLines=0;field.lineBreakMode = .byWordWrapping
@@ -142,6 +165,27 @@ final class InlineTableEditor:NSView,NSTableViewDataSource,NSTableViewDelegate,N
         table.scrollRowToVisible(row);table.scrollColumnToVisible(column)
         if let field=table.view(atColumn:column,row:row,makeIfNecessary:true) as? TableCellField {window?.makeFirstResponder(field);field.selectText(nil)}
     }
+    /// Validate against the live document before committing dimensions, content and IDs.
+    @discardableResult func pasteCells(from pasteboard:NSPasteboard,at field:TableCellField)->Bool {
+        let tsv=NSPasteboard.PasteboardType("public.utf8-tab-separated-values-text")
+        guard let text=pasteboard.string(forType:tsv) ?? pasteboard.string(forType:.string),
+              text.contains("\t") || text.contains("\n") || text.contains("\r"),
+              let session,let current=session.document?.nodes.first(where:{$0.id==nodeID}),
+              let row=current.rowIDs.firstIndex(where:{$0==field.rowID}),
+              let column=current.columnIDs.firstIndex(where:{$0==field.columnID}) else{return false}
+        do {
+            let cells=try TablePaste.parse(text)
+            guard cells.count>1 || (cells.first?.count ?? 0)>1 else{return false}
+            let updated=try TablePaste.applying(cells,to:current,row:row,column:column)
+            window?.makeFirstResponder(self)
+            session.mutate(L10n.text("Pegar celdas")) {document in
+                if let index=document.nodes.firstIndex(where:{$0.id==nodeID}) {document.nodes[index]=updated}
+            }
+            sync(updated);table.noteHeightOfRows(withIndexesChanged:IndexSet(integersIn:row..<row+cells.count))
+            focus(row:row,column:column)
+        } catch {session.error=error.localizedDescription}
+        return true
+    }
     private func change(_ title:String,_ body:(inout AcademicNode)->Void) {
         guard let session else{return}
         window?.makeFirstResponder(self)
@@ -150,7 +194,7 @@ final class InlineTableEditor:NSView,NSTableViewDataSource,NSTableViewDelegate,N
     }
     @objc private func addRow() {change(L10n.text("Añadir fila")) {if $0.rows.count<200 {$0.rows.append(Array(repeating:"",count:$0.columnIDs.count))}}}
     @objc private func removeRow() {change(L10n.text("Quitar fila")) {if $0.rows.count>1 {$0.rows.removeLast()}}}
-    @objc private func addColumn() {change(L10n.text("Añadir columna")) {if $0.columnIDs.count<12 {$0.rows=$0.rows.map{$0+[""]}}}}
+    @objc private func addColumn() {change(L10n.text("Añadir columna")) {if $0.columnIDs.count<TablePaste.maximumColumns {$0.rows=$0.rows.map{$0+[""]}}}}
     @objc private func removeColumn() {change(L10n.text("Quitar columna")) {if $0.columnIDs.count>1 {$0.rows=$0.rows.map{Array($0.dropLast())}}}}
     @objc private func closeEditor() {owner?.finishTableEditing()}
 }

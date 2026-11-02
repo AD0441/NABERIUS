@@ -91,6 +91,10 @@ struct NodeInspector:View {
             if node.kind == .crossReference {Text(L10n.text("Referencia cruzada")).font(.headline);Text(session.document?.crossReference(node.targetID) ?? "");Button(L10n.text("Cambiar destino…")){session.sheet = .reference}}
             if node.kind == .separator {Text(L10n.text("Separador estructural")).font(.headline);Text(L10n.text("Separa partes del documento con una línea tipográfica.")).font(.callout).foregroundStyle(.secondary)}
             if node.kind == .contents {Text(L10n.text("Índice automático")).font(.headline);Text(L10n.text("Se actualiza a partir de los títulos. El PDF incluye las páginas definitivas.")).font(.callout).foregroundStyle(.secondary)}
+            if node.kind == .figureList || node.kind == .tableList {
+                Text(node.kind == .figureList ? L10n.text("Lista de figuras") : L10n.text("Lista de tablas")).font(.headline)
+                Text(L10n.text("Se actualiza con los títulos y el orden de los elementos. El PDF incluye las páginas definitivas.")).font(.callout).foregroundStyle(.secondary)
+            }
             Divider();Text(L10n.text("Identificador estable")).font(.caption).foregroundStyle(.secondary);Text(id.uuidString).font(.system(size:9,design:.monospaced)).textSelection(.enabled)
             Button(L10n.text("Seleccionar objeto en el texto")){guard let editor=session.editor else{return};editor.attributedString().enumerateAttribute(NSAttributedString.Key("nab.node"),in:NSRange(location:0,length:editor.string.utf16.count)){v,r,stop in if v as? String == id.uuidString{editor.setSelectedRange(r);editor.scrollRangeToVisible(r);stop.pointee=true}}}
         }

@@ -33,3 +33,7 @@ El portapapeles propio utiliza un contenedor .nab con la selección y solo sus o
 ## Schema 3
 
 Columnas, separación y márgenes por lado son opcionales en `DocumentLayout`. Los documentos que los usan se guardan como schemaVersion 3; los demás conservan 1 o 2 según sus recursos. Se validan una o dos columnas, separación de 3 a 20 mm y márgenes finitos de 10 a 60 mm. Versiones anteriores rechazan schema 3 para evitar descartar estos ajustes.
+
+## Schema 4 — listas automáticas (0.6.0)
+
+Los nodos `figureList` y `tableList` conservan su UUID y posición en los bloques. Su contenido se deriva de los elementos del documento; los números de página se calculan al componer. Un documento que los incluye se guarda con `schemaVersion=4`, también al copiar un fragmento o recuperar un diario iniciado con una versión anterior del esquema. Las versiones anteriores de Naberius deben actualizarse para abrirlo. Sin esos nodos se conserva el esquema mínimo anterior, o una versión superior que ya tuviera el archivo. El contenedor binario sigue siendo v1.

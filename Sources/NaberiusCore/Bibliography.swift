@@ -14,7 +14,7 @@ public enum Bibliography {
         var jsError: String?
         context.exceptionHandler = { _, error in jsError = error?.toString() }
         context.evaluateScript(try String(contentsOf:jsURL,encoding:.utf8))
-        let style = try String(contentsOf:styleURL,encoding:.utf8)
+        let style = try narrativeStyle(String(contentsOf:styleURL,encoding:.utf8), for:document.metadata.citationStyle)
         var locales: [String:String] = [:]
         for lang in ["es-ES","en-US"] {
             if let u = Bundle.module.url(forResource:"locales-"+lang,withExtension:"xml",subdirectory:"Resources/CSL") { locales[lang] = try String(contentsOf:u,encoding:.utf8) }
@@ -25,32 +25,68 @@ public enum Bibliography {
         context.setObject(document.metadata.language,forKeyedSubscript:"nabLanguage" as NSString)
         context.evaluateScript("var nabSys={retrieveLocale:function(lang){return nabLocales[lang]||nabLocales['en-US'];}, retrieveItem:function(id){return nabItems[id];}}; var nabEngine=new CSL.Engine(nabSys,nabStyle,nabLanguage); nabEngine.setOutputFormat('text');")
         let nodes = document.orderedNodes.filter { $0.kind == .citation }
-        var cited: [String] = []
-        for n in nodes { for id in n.referenceIDs where !cited.contains(id.uuidString) && document.references.contains(where:{$0.id==id}) { cited.append(id.uuidString) } }
-        context.setObject(cited,forKeyedSubscript:"nabIDs" as NSString)
-        context.evaluateScript("nabEngine.updateItems(nabIDs);")
-        var output = CitationOutput()
-        for n in nodes {
+        // Processing a citation may disambiguate an earlier one. Keep every update from CSL.
+        context.evaluateScript("var nabPrior=[];")
+        let referenceIDs=Set(document.references.map(\.id))
+        var labels:[String:String]=[:]
+        var citationIDs:[UUID:[String]]=[:]
+        for node in nodes {
             try Task.checkCancellation()
-            let refs = n.referenceIDs.filter { id in document.references.contains { $0.id == id } }
-            if refs.isEmpty { output.citations[n.id] = "[Referencia no encontrada]"; continue }
-            let items: [[String:Any]] = refs.map { id in
-                var item: [String:Any] = ["id":id.uuidString]
-                if !n.locator.isEmpty { item["locator"] = n.locator; item["label"] = "page" }
-                if n.narrative { item["suppress-author"] = true }
+            let refs=node.referenceIDs.filter {referenceIDs.contains($0)}
+            guard !refs.isEmpty else {labels[node.id.uuidString]=L10n.text("[Referencia no encontrada]");citationIDs[node.id]=[node.id.uuidString];continue}
+            let items:[[String:Any]]=refs.map {id in
+                var item:[String:Any]=["id":id.uuidString]
+                if !node.locator.isEmpty {item["locator"]=node.locator;item["label"]="page"}
                 return item
             }
-            context.setObject(items,forKeyedSubscript:"nabCluster" as NSString)
-            var label = context.evaluateScript("nabEngine.makeCitationCluster(nabCluster)")?.toString() ?? "[Cita]"
-            if n.narrative {
-                let author = refs.compactMap { id in document.references.first(where:{$0.id==id})?.authors.components(separatedBy:";").first?.components(separatedBy:",").first }.joined(separator:"; ")
-                label = author + " " + label
+            // Composite mode speaks for the first item only. A narrative group therefore
+            // needs one composite citation per source, with affixes applied once to the group.
+            let clusters=node.narrative ? items.map{[$0]} : [items]
+            for (index,cluster) in clusters.enumerated() {
+                try Task.checkCancellation()
+                let id=node.id.uuidString+":"+String(index)
+                citationIDs[node.id,default:[]].append(id)
+                var properties:[String:Any]=["noteIndex":0]
+                if node.narrative {properties["mode"]="composite"}
+                let citation:[String:Any]=["citationID":id,"citationItems":cluster,"properties":properties]
+                context.setObject(citation,forKeyedSubscript:"nabCitation" as NSString)
+                let updates=context.evaluateScript("var nabUpdates=nabEngine.processCitationCluster(nabCitation,nabPrior,[])[1]; nabPrior.push([nabCitation.citationID,0]); nabUpdates;")?.toArray() as? [[Any]] ?? []
+                for update in updates {
+                    guard update.count>=3,let label=update[1] as? String,let id=update[2] as? String else {continue}
+                    labels[id]=label
+                }
             }
-            output.citations[n.id] = n.prefix + (n.prefix.isEmpty ? "" : " ") + label + (n.suffix.isEmpty ? "" : " ") + n.suffix
+        }
+        var output=CitationOutput()
+        for node in nodes {
+            let ids=citationIDs[node.id] ?? []
+            guard !ids.isEmpty,ids.allSatisfy({labels[$0] != nil}) else {throw NabError.invalid(L10n.text("El motor bibliográfico no devolvió una cita válida."))}
+            let label=ids.compactMap{labels[$0]}.joined(separator:"; ")
+            output.citations[node.id]=node.prefix+(node.prefix.isEmpty ? "" : " ")+label+(node.suffix.isEmpty ? "" : " ")+node.suffix
         }
         if let entries = context.evaluateScript("(nabEngine.makeBibliography()||[{},[]])[1]")?.toArray() as? [String] { output.bibliography = entries.map { $0.trimmingCharacters(in:.whitespacesAndNewlines) } }
         if let jsError { throw NabError.invalid(L10n.format("El motor bibliográfico no pudo procesar los registros: %@",jsError)) }
         return output
+    }
+    /// citeproc's composite mode uses the style's author form and its normal citation form.
+    /// Numeric styles have no author form; APA's parenthetical ampersand needs a narrative
+    /// variant. These runtime extensions leave the distributed CSL files unchanged.
+    private static func narrativeStyle(_ style:String,for kind:CitationStyle)throws->String {
+        let extensionXML:String
+        switch kind {
+        case .chicago: return style
+        case .apa:
+            guard let range=style.range(of:#"<macro name="author-short">[\s\S]*?</macro>"#,options:.regularExpression) else {
+                throw NabError.invalid(L10n.text("No se encontró la forma narrativa del estilo bibliográfico."))
+            }
+            let macro=String(style[range]).replacingOccurrences(of:"name=\"author-short\"",with:"name=\"nab-narrative-author\"")
+                .replacingOccurrences(of:"and=\"symbol\"",with:"and=\"text\"")
+                .replacingOccurrences(of:"<name ",with:"<name et-al-min=\"3\" et-al-use-first=\"1\" ")
+            extensionXML=macro+"<intext><layout><text macro=\"nab-narrative-author\"/></layout></intext>"
+        case .ieee,.vancouver:
+            extensionXML=#"<intext><layout><names variable="author"><name form="short" and="text" delimiter=", " et-al-min="3" et-al-use-first="1"/><substitute><names variable="editor"/><text variable="title" form="short"/></substitute></names></layout></intext>"#
+        }
+        return style.replacingOccurrences(of:"</style>",with:extensionXML+"</style>")
     }
     public static func cslJSON(_ references:[Reference])throws->Data {
         let items=try references.map {reference->[String:Any] in

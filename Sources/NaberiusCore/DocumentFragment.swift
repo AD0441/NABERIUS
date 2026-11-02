@@ -12,6 +12,7 @@ public enum DocumentFragment {
         fragment.assets=source.assets.filter {assets.contains($0.id)}
         let references=Set(fragment.nodes.flatMap(\.referenceIDs))
         fragment.references=source.references.filter {references.contains($0.id)}
+        fragment.schemaVersion=fragment.minimumSchemaVersion
         return fragment
     }
     /// Clones semantic identities and reconnects dependencies before inserting the text.

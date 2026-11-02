@@ -49,7 +49,7 @@ public enum LaTeX {
         lines += ["\\usepackage[\(spanish ? "spanish" : "english")]{babel}", "\\usepackage[top=\(layout.marginTopMM ?? t.marginMM)mm,bottom=\(layout.marginBottomMM ?? t.marginMM)mm,left=\(layout.marginLeftMM ?? t.marginMM)mm,right=\(layout.marginRightMM ?? t.marginMM)mm,headheight=16pt]{geometry}", "\\usepackage{graphicx,amsmath,amssymb,tabularx,booktabs,longtable}", "\\usepackage{fancyhdr}", "\\usepackage[unicode,hidelinks]{hyperref}", "\\hypersetup{pdftitle={\(escape(m.title))},pdfauthor={\(escape(m.authors))},pdfkeywords={\(escape(m.keywords))}}"]
         if layout.columnCount==2 {lines.append("\\setlength{\\columnsep}{\(layout.columnSeparationMM)mm}")}
         if kind != .letter {
-            lines += ["\\addto\\captions\(spanish ? "spanish" : "english"){\\renewcommand{\\figurename}{\(spanish ? "Figura" : "Figure")}\\renewcommand{\\tablename}{\(spanish ? "Tabla" : "Table")}\\renewcommand{\\contentsname}{\(spanish ? "Índice" : "Contents")}}", "\\setcounter{secnumdepth}{\(t.numberedHeadings ? (kind.hasChapters ? 3 : 4) : -1)}"]
+            lines += ["\\addto\\captions\(spanish ? "spanish" : "english"){\\renewcommand{\\figurename}{\(spanish ? "Figura" : "Figure")}\\renewcommand{\\tablename}{\(spanish ? "Tabla" : "Table")}\\renewcommand{\\contentsname}{\(spanish ? "Índice" : "Contents")}\\renewcommand{\\listfigurename}{\(spanish ? "Lista de figuras" : "List of Figures")}\\renewcommand{\\listtablename}{\(spanish ? "Lista de tablas" : "List of Tables")}}", "\\setcounter{secnumdepth}{\(t.numberedHeadings ? (kind.hasChapters ? 3 : 4) : -1)}"]
         }
         if kind.hasChapters {
             // Semantic object numbers are global and do not reset at each chapter.
@@ -154,8 +154,24 @@ public enum LaTeX {
             return "\\hyperref[n\(target.uuidString)]{\(escape(d.crossReference(target)))}"
         case .footnote: return "\\footnote{\(escape(n.note))}"
         case .contents: return d.template.effectiveLayout.documentClass == .letter ? "" : "\\tableofcontents"
+        case .figureList,.tableList: return elementList(n.kind,in:d)
         case .separator: return "\\par\\medskip\\noindent\\rule{\\linewidth}{0.4pt}\\par\\medskip"
         }
+    }
+    private static func elementList(_ kind:NodeKind,in document:NabDocument)->String {
+        let figures=kind == .figureList
+        let command=figures ? "listoffigures" : "listoftables"
+        let spanish=document.metadata.language.hasPrefix("es")
+        let title=figures ? (spanish ? "Lista de figuras" : "List of Figures") : (spanish ? "Lista de tablas" : "List of Tables")
+        let entries=document.orderedNodes.filter{$0.kind == (figures ? .figure : .table)}.map {node in
+            let target="n"+node.id.uuidString
+            return "\\noindent\\hyperref[\(target)]{\(document.number(of:node.id) ?? 0). \(bodyText(node.caption))}\\nobreak\\dotfill\\pageref{\(target)}\\par"
+        }.joined(separator:"\n")
+        let fallback="\\par\\medskip{\\large\\bfseries \(title)\\par}\n"+entries
+        // Some journal classes and letter omit these commands. Keep a semantic fallback
+        // with real page references rather than dropping the requested list.
+        if document.template.effectiveLayout.documentClass == .letter && document.template.package==nil {return fallback}
+        return "\\makeatletter\\@ifundefined{\(command)}{\(fallback)}{\\\(command)}\\makeatother"
     }
     private static func tableCell(_ value:String)->String {
         value.split(separator:" ",omittingEmptySubsequences:false).map {word in
@@ -193,7 +209,8 @@ public enum LaTeX {
                 let body=values[start..<min(start+12,values.count)].map{row($0,header:false)}.joined(separator:"\n")
                 let caption=bodyText(n.caption)+(part==0 ? "" : " ("+continuation+")")
                 let counter=part==0 ? "" : "\\addtocounter{table}{-1}"
-                return "\\begin{table*}[tp]\\centering\(counter)\\caption{\(caption)}\(part==0 ? label : "")\n\\begin{tabularx}{\\linewidth}{\(floatSpec)}\(top)\n\(head)\n\(body)\n\(bottom)\\end{tabularx}\\par{\\small \(notes)}\\end{table*}"
+                let captionCommand=part==0 ? "\\caption{\(caption)}" : "\\begingroup\\renewcommand{\\addcontentsline}[3]{}\\caption{\(caption)}\\endgroup"
+                return "\\begin{table*}[tp]\\centering\(counter)\(captionCommand)\(part==0 ? label : "")\n\\begin{tabularx}{\\linewidth}{\(floatSpec)}\(top)\n\(head)\n\(body)\n\(bottom)\\end{tabularx}\\par{\\small \(notes)}\\end{table*}"
             }.joined(separator:"\n")
             return "\\makeatletter\n\\if@twocolumn\n\(parts)\n\\else\n\(longTable)\n\\fi\n\\makeatother"
         }
