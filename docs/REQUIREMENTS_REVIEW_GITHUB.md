@@ -4,6 +4,8 @@
 
 **Seguimiento 0.6.0:** la implementación posterior corrige las citas narrativas, incorpora pegado TSV en tablas y añade las listas de figuras y tablas. Las observaciones y el CSV siguientes conservan el estado histórico de 0.5.0; el estado actual está en [STATUS](STATUS.md) y la validación en [TESTING](TESTING.md). Las demás bibliotecas de esta revisión siguen siendo candidatas.
 
+**Seguimiento 0.7.0:** SyncTeX ya está integrado para navegación por párrafo entre editor y PDF. Su implementación, procedencia, pruebas y límites están en [SYNCTEX](SYNCTEX.md). El resto de la evaluación conserva su contexto histórico.
+
 
 La recomendación es conservar el editor nativo y el formato `.nab`, corregir primero las citas narrativas y ampliar capacidades mediante componentes concretos. Pandoc, SyncTeX, bibliotecas matemáticas y el parser de Better BibTeX ofrecen puntos de apoyo; ninguno sustituye por sí solo el modelo semántico y las pruebas de Naberius.
 

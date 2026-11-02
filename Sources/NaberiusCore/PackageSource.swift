@@ -29,6 +29,9 @@ extension LaTeXTemplatePackage {
         return TeXTemplate.calls(prefix).filter{["author","Author"].contains($0.name)}.map{TeXTemplate.plain(TeXTemplate.value($0,in:prefix))}.joined(separator:"; ")
     }
     public func source(_ document:NabDocument,citations:CitationOutput)->String {
+        renderedSource(document,citations:citations,blockOutput:nil)
+    }
+    func renderedSource(_ document:NabDocument,citations:CitationOutput,blockOutput:((Block,String)->String)?)->String {
         var effective=document
         if let title=document.blocks.first(where:{$0.style == .title}) {effective.metadata.title=title.text}
         if let subtitle=document.blocks.first(where:{$0.style == .subtitle}) {effective.metadata.subtitle=subtitle.text}
@@ -48,7 +51,7 @@ extension LaTeXTemplatePackage {
             if resources.isEmpty {header=TeXTemplate.replacing(header,[(NSRange(location:begin.range.location,length:0),"\\addbibresource{naberius-references.bib}\n")])}
         }
         header += "\n\\hypersetup{pdftitle={\(LaTeX.escape(effective.metadata.title))},pdfauthor={\(LaTeX.escape(authors(metadata:document.metadata)))}}\n"
-        let body=LaTeX.body(document,citations:citations,omitTitle:true)
+        let body=LaTeX.body(document,citations:citations,omitTitle:true,blockOutput:blockOutput)
         var bibliography=""
         if document.metadata.bibliography && document.nodes.contains(where:{$0.kind == .citation && !$0.referenceIDs.isEmpty}) && !document.references.isEmpty {
             bibliography=plan.dependencies.contains("biblatex") ? "\\printbibliography" : "\\bibliography{naberius-references}"

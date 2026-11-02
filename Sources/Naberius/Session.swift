@@ -48,6 +48,14 @@ struct Recent: Codable, Identifiable {
     private let preferences:UserDefaults
     var compilation: Compilation?
     var failedComposition:CompositionFailure?
+    var pdfNavigation:PDFNavigationRequest?
+    var synchronizationMessage:String?
+    var synchronizing=false
+    private var navigationToken=UUID()
+    private var navigationTask:Task<Void,Never>?
+    private let navigationService:any PDFNavigating
+    var canSynchronize:Bool {compilation?.synchronization?.documentID==document?.id && compilation?.synchronization != nil && compilation?.synchronization?.pdf==previewURL && !proofNeedsUpdate && !compiling}
+
     var proofZoom:Double?
     var proofPage = 0
     var proofPageCount = 0
@@ -91,8 +99,9 @@ struct Recent: Codable, Identifiable {
     private let logger = Logger(subsystem:"cl.sebastianpasten.Naberius",category:"Document")
     let support: URL
     enum Sheet: String, Identifiable { case templates, library, insert, citation, link, reference, about, export, recovery, diagnostic; var id: String { rawValue } }
-    init(supportDirectory:URL? = nil,compilationService:(any DocumentCompiling)? = nil,preferences:UserDefaults? = nil) {
+    init(supportDirectory:URL? = nil,compilationService:(any DocumentCompiling)? = nil,preferences:UserDefaults? = nil,navigationService:(any PDFNavigating)?=nil) {
         self.compilationService=compilationService ?? SystemDocumentCompiler()
+        self.navigationService=navigationService ?? SystemPDFNavigator()
         self.preferences=preferences ?? .standard
         automaticPreview=self.preferences.object(forKey:"automaticPreview") as? Bool ?? true
         previewDelay=self.preferences.object(forKey:"previewDelay") as? Double ?? 4.0
@@ -121,11 +130,11 @@ struct Recent: Codable, Identifiable {
         if let package=template.package,let existing=templates.first(where:{$0.package?.files==package.files}) {return existing.id}
         templates.append(template);persistLocal();return template.id
     }
-    func reveal(blockID:UUID) {
+    func reveal(blockID:UUID,highlight:Bool=false) {
         if showProof {showProof=false}
         guard let editor else{return}
         editor.attributedString().enumerateAttribute(NSAttributedString.Key("nab.block"),in:NSRange(location:0,length:editor.string.utf16.count)){value,range,stop in
-            if value as? String == blockID.uuidString {editor.setSelectedRange(NSRange(location:range.location,length:0));editor.scrollRangeToVisible(editor.selectedRange());editor.window?.makeFirstResponder(editor);stop.pointee=true}
+            if value as? String == blockID.uuidString {self.selectedBlock=blockID;editor.setSelectedRange(NSRange(location:range.location,length:highlight ? range.length : 0));editor.scrollRangeToVisible(editor.selectedRange());editor.window?.makeFirstResponder(editor);stop.pointee=true}
         }
     }
     func goHome(){editor?.finishTableEditing();flushRecovery();documentOperation=UUID();document=nil;cancelCompile();discardProofs()}
@@ -190,6 +199,7 @@ struct Recent: Codable, Identifiable {
         lastTypingBlock=blockID;lastTypingTime=Date();lastTypingEnd=cursor.location
     }
     func changed() {
+        cancelNavigation()
         editVersion += 1; status = currentURL == nil ? L10n.text("Sin guardar · recuperación local") : L10n.text("Cambios sin guardar")
         if automaticCompilation {cancelCompile()}
         scheduleAutomaticPreview()
@@ -370,6 +380,7 @@ struct Recent: Codable, Identifiable {
                 guard compileToken==token,document?.id==d.id,!Task.isCancelled else{await Composer.discard(result);return}
                 retainedProofs.append(result)
                 if retainedProofs.count>2 {let expired=retainedProofs.removeFirst();Task {await Composer.discard(expired)}}
+                cancelNavigation()
                 previewURL=result.pdf;compilation=result;failedComposition=nil;previewVersion=version;failedPreviewVersion=nil;previewIssue=nil
                 proofPageCount=PDFDocument(url:result.pdf)?.pageCount ?? 0
                 proofPage=min(proofPage,max(0,proofPageCount-1))
@@ -382,6 +393,60 @@ struct Recent: Codable, Identifiable {
             }
         }
     }
+    private func navigationMap()->PDFSynchronization? {
+        guard !proofNeedsUpdate else {
+            synchronizationMessage=L10n.text("Actualiza el PDF para sincronizarlo con los cambios del documento.");return nil
+        }
+        guard let map=compilation?.synchronization,map.documentID==document?.id,map.pdf==previewURL else {
+            synchronizationMessage=L10n.text("Vuelve a componer el PDF para generar su mapa de sincronización.");return nil
+        }
+        return map
+    }
+    func locateSelectionInPDF() {
+        editor?.finishTableEditing()
+        guard let blockID=selectedBlock else {synchronizationMessage=L10n.text("Selecciona un párrafo en el editor para localizarlo en el PDF.");return}
+        setEditorMode(.combined)
+        guard let map=navigationMap() else{return}
+        beginNavigation(map:map,blockID:blockID,point:nil,page:proofPage)
+    }
+    func locatePDFSource(at point:CGPoint,page:Int) {
+        guard let map=navigationMap() else{return}
+        beginNavigation(map:map,blockID:nil,point:point,page:page)
+    }
+    private func beginNavigation(map:PDFSynchronization,blockID:UUID?,point:CGPoint?,page:Int) {
+        cancelNavigation()
+        let token=UUID(),version=editVersion
+        navigationToken=token;synchronizing=true
+        synchronizationMessage=L10n.text("Localizando párrafo…")
+        navigationTask=Task {
+            defer{if navigationToken==token {synchronizing=false}}
+            do {
+                let match:PDFSourceLocation?
+                if let blockID {match=try await navigationService.locations(map,blockID,page).first}
+                else if let point {match=try await navigationService.source(map,point,page)}
+                else {match=nil}
+                guard navigationToken==token,!Task.isCancelled,document?.id==map.documentID,editVersion==version,previewURL==map.pdf else{return}
+                guard let match,document?.blocks.contains(where:{$0.id==match.blockID})==true else {
+                    synchronizationMessage=L10n.text("No hay un párrafo editable asociado a esta posición. Prueba con texto del cuerpo del documento.");return
+                }
+                if blockID != nil {
+                    proofPage=match.page;pdfNavigation=PDFNavigationRequest(pdf:map.pdf,location:match)
+                    synchronizationMessage=L10n.text("Párrafo localizado en el PDF.")
+                } else {
+                    setEditorMode(.combined)
+                    reveal(blockID:match.blockID,highlight:true)
+                    synchronizationMessage=L10n.text("Párrafo localizado en el editor.")
+                }
+            } catch {
+                if navigationToken==token,!Task.isCancelled {synchronizationMessage=error.localizedDescription}
+            }
+        }
+    }
+    private func cancelNavigation() {
+        navigationTask?.cancel();navigationToken=UUID();synchronizing=false
+        pdfNavigation=nil;synchronizationMessage=nil
+    }
+    func waitForNavigationForTesting()async {await navigationTask?.value}
     func completeDocumentResources() {
         guard let package=document?.template.package,let id=document?.id else{return}
         TemplateResourcePanel.choose { [self] urls in
@@ -416,11 +481,12 @@ struct Recent: Codable, Identifiable {
         Task {for proof in proofs {await Composer.discard(proof)}}
     }
     func cancelCompile() {
+        cancelNavigation()
         automaticTask?.cancel();compileTask?.cancel();equationTask?.cancel()
         compileToken=UUID();compiling=false;automaticCompilation=false
     }
     func waitForPreviewForTesting()async {await automaticTask?.value;await compileTask?.value}
-    func autosaveForTestingCleanup() {autosave?.cancel();citationTask?.cancel();automaticTask?.cancel();compileTask?.cancel()}
+    func autosaveForTestingCleanup() {navigationTask?.cancel();autosave?.cancel();citationTask?.cancel();automaticTask?.cancel();compileTask?.cancel()}
     func exportProject() {
         guard let d = document else { return }; let p = NSOpenPanel(); p.canChooseFiles = false; p.canChooseDirectories = true; p.canCreateDirectories = true; p.message = L10n.text("Selecciona la carpeta donde crear el proyecto LaTeX.")
         guard p.runModal() == .OK, let root = p.url else { return }

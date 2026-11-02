@@ -1,4 +1,4 @@
-# Límites de la versión 0.6.0
+# Límites de la versión 0.7.0
 
 Esta entrega es una primera versión local funcional. No se declara terminado todo el alcance P0 de la especificación.
 
@@ -12,7 +12,7 @@ Esta entrega es una primera versión local funcional. No se declara terminado to
 - La importación bibliográfica ofrece revisión previa y conserva datos originales/adicionales. Admite @string, concatenación y herencia compatibles; no interpreta todas las extensiones BibLaTeX. Omite preámbulos con aviso. BibTeX desde RIS/CSL exporta los campos del formulario; .nab y CSL-JSON conservan los datos adicionales. Ver BIBLIOGRAPHY.md.
 - Tectonic se detecta en el sistema o se selecciona manualmente. No se incluye un motor autónomo con todos sus paquetes. La primera preparación necesita red explícita; después puede componerse sin conexión con dependencias en caché.
 - No hay DOCX, Markdown, sincronización entre documentos y servicios externos, Zotero, búsqueda de DOI/ISBN, proyectos, reorganización completa de secciones ni colaboración en esta versión.
-- Editor + PDF presenta ambas vistas y permite actualización automática tras una pausa, pero no ofrece navegación bidireccional mediante SyncTeX ni edición directa del PDF.
+- La navegación SyncTeX trabaja por párrafo y exige un PDF actualizado. Las portadas, cabeceras, bibliografías o índices generados por una clase pueden no tener un bloque editable asociado; se informa sin elegir otro destino. Las páginas rotadas no están certificadas. No hay edición directa del PDF ni seguimiento automático del cursor. Ver SYNCTEX.md.
 - Las citas narrativas de los cuatro estilos usan citeproc-js, con extensiones locales de forma narrativa. No hay importación de CSL personal ni certificación de todos los tipos legales/editoriales de cada norma. Las plantillas ZIP conservan su propio estilo bibliográfico en el PDF.
 - Los documentos que incluyen las nuevas listas usan schema 4 y requieren Naberius 0.6.0 o posterior. Las versiones anteriores no pueden abrirlos; los documentos sin esas listas conservan el esquema mínimo que corresponda.
 - El editor comparte una sesión en las ventanas de la aplicación. Los documentos independientes en ventanas/pestañas requieren una fase posterior.

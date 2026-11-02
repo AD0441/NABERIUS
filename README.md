@@ -6,9 +6,9 @@
   <p>
     <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.6.0" src="https://img.shields.io/badge/versi%C3%B3n-0.6.0-58616B?style=flat-square">
+    <img alt="Versión 0.7.0" src="https://img.shields.io/badge/versi%C3%B3n-0.7.0-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.6.0">Descargar 0.6.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/NABERIUS/releases/tag/v0.7.0">Descargar 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
 ![NABERIUS · Simplicidad con impacto. Escritura visual. Composición precisa. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
@@ -17,7 +17,7 @@
 
 **Creado por Sebastián Pastén F.** Pertenece a la familia de [METATRON](https://github.com/AD0441/METATRON), [RAZIEL](https://github.com/AD0441/RAZIEL) y [PAIMON](https://github.com/AD0441/PAIMON): herramientas nativas, procesamiento local y apoyo voluntario.
 
-**Versión actual: [Naberius 0.6.0 — versión preliminar para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.6.0).** Incluye citas narrativas CSL, pegado de rangos en tablas y listas automáticas de figuras y tablas, además de las tres vistas y plantillas editoriales en ZIP. [Descargar la app](https://github.com/AD0441/NABERIUS/releases/download/v0.6.0/Naberius.zip) · [Historial de cambios](CHANGELOG.md).
+**Versión actual: [Naberius 0.7.0 — versión preliminar para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.7.0).** Añade navegación SyncTeX entre escritura y PDF. Incluye citas narrativas CSL, pegado de rangos en tablas y listas automáticas de figuras y tablas, además de las tres vistas y plantillas editoriales en ZIP. [Descargar la app](https://github.com/AD0441/NABERIUS/releases/download/v0.7.0/Naberius.zip) · [Historial de cambios](CHANGELOG.md).
 
 ## Simplicidad con impacto
 
@@ -70,9 +70,9 @@ Vista **Editor + PDF** de Naberius 0.5.0 con el documento original de demostraci
 
 ![Naberius 0.5.0: editor y PDF real, con títulos, ecuación y tabla](docs/screenshots/editor-pdf-0.5.jpg)
 
-En **0.6.0**, las citas narrativas calculan los nombres mediante CSL; las listas de figuras y tablas se actualizan con el documento y muestran sus páginas definitivas al componer. [Abrir este ejemplo](docs/examples/Escritura-y-composicion-0.6.nab).
+En **0.7.0**, selecciona un párrafo y pulsa **⌥⌘J** para encontrarlo en el PDF real. Haz **⌘-clic** sobre texto del PDF para volver al editor. El mapa se renueva con cada composición y los saltos se bloquean mientras el PDF esté desactualizado. [Cómo usar SyncTeX](docs/SYNCTEX.md) · [Abrir este ejemplo](docs/examples/Escritura-y-composicion-0.6.nab).
 
-![Naberius 0.6.0: citas y listas automáticas en el editor y el PDF LaTeX](docs/screenshots/lists-pdf-0.6.jpg)
+![Naberius 0.7.0: un párrafo del editor localizado y resaltado en el PDF real mediante SyncTeX](docs/screenshots/synctex-forward-0.7.jpg)
 
 Las capturas siguientes documentan la edición de tablas y la revisión bibliográfica introducidas en 0.3.0.
 
@@ -110,7 +110,7 @@ Haz doble clic en una tabla para editar sus celdas dentro del documento. **Tab /
 
 ## Empezar
 
-[Descargar Naberius 0.6.0 para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.6.0) · [Comprobar SHA-256](https://github.com/AD0441/NABERIUS/releases/download/v0.6.0/Naberius.zip.sha256)
+[Descargar Naberius 0.7.0 para Apple Silicon](https://github.com/AD0441/NABERIUS/releases/tag/v0.7.0) · [Comprobar SHA-256](https://github.com/AD0441/NABERIUS/releases/download/v0.7.0/Naberius.zip.sha256)
 
 Requiere **macOS 14 o posterior**. La app se ha verificado en un Apple M1 con 8 GB; Intel no está verificado. El ZIP tiene firma local ad hoc y no está notarizado.
 
@@ -139,7 +139,7 @@ La interfaz usa SwiftUI, AppKit/TextKit y PDFKit. La composición y el trabajo d
 
 ## Validación
 
-La versión 0.6.0 pasó **101 pruebas** localmente, incluidas integraciones con Tectonic real y pruebas AppKit de deshacer/rehacer. Se comprobaron en pantalla el pegado de rangos, las citas y las listas con páginas finales. [CI](https://github.com/AD0441/NABERIUS/actions) · [Pruebas y evidencias](docs/TESTING.md).
+La versión 0.7.0 pasó **108 pruebas** localmente, incluidas integraciones con Tectonic y SyncTeX reales, plantillas ZIP y pruebas AppKit. Se comprobaron en pantalla ambos sentidos de navegación, el bloqueo del PDF desactualizado y la renovación del mapa al recomponer. [CI](https://github.com/AD0441/NABERIUS/actions) · [Pruebas y evidencias](docs/TESTING.md).
 
 ```sh
 python3 script/sync_localization.py --check

@@ -8,6 +8,10 @@ Frank Bennett, Copyright 2009–2019, con los avisos incluidos en el archivo dis
 
 Estilos APA, IEEE, Chicago y NLM citation-sequence (Vancouver), y locales es-ES/en-US: https://github.com/citation-style-language/styles y https://github.com/citation-style-language/locales . Conservan sus autores, enlaces y derechos dentro de los XML. Repositorios bajo CC BY-SA 3.0: https://creativecommons.org/licenses/by-sa/3.0/ . No se modificaron los XML; el fichero Vancouver conserva el identificador original nlm-citation-sequence. Se incluye únicamente con otro nombre de recurso local. Desde 0.6.0, Naberius genera en memoria extensiones de forma narrativa: una variante del macro author-short de APA con conjunción textual y un bloque intext para los estilos numéricos. Conservan esta procedencia y CC BY-SA 3.0; los XML originales distribuidos y sus atribuciones permanecen intactos.
 
+## SyncTeX
+
+Lector oficial SyncTeX 1.31 de Jérôme Laurens, copyright 2008–2024, licencia MIT. Revisión fija 04cf8e3e8665ff203248d7af78ee1129afbc1b64 de https://github.com/jlaurens/synctex . Los dos archivos C y cuatro headers originales se conservan sin modificar en Sources/CSyncTeX; el puente y la configuración local de Naberius evitan modificar el locale global del proceso. Se incluye el texto íntegro en docs/licenses/SyncTeX-MIT.txt y en la app. No se distribuye el ejecutable de línea de comandos; se utiliza zlib del sistema. Ver docs/SYNCTEX.md.
+
 ## Motor y frameworks
 
 Tectonic es una dependencia externa opcional detectada en el sistema o seleccionada por el usuario; no se redistribuye su binario. https://tectonic-typesetting.github.io/ . SwiftUI, AppKit, PDFKit, JavaScriptCore, CryptoKit y Compression pertenecen al SDK de Apple. Los SF Symbols se usan dentro de controles nativos; no se exportan como recursos independientes.

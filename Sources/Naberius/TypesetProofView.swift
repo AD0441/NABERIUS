@@ -22,6 +22,7 @@ struct TypesetProofView: View {
                 } else {
                     Button(L10n.text("Actualizar PDF")) { session.compile() }
                 }
+                PDFSynchronizationButton(session:session)
                 Button { session.showProof = false } label: { Label(L10n.text("Escribir"), systemImage: "square.and.pencil") }
             }.padding(16)
             Divider()
@@ -34,6 +35,7 @@ struct TypesetProofView: View {
                 Divider()
             }
             if let url = session.previewURL {
+                PDFSynchronizationHint(session:session)
                 ProofPDFView(url: url, session: session)
                 Divider()
                 HStack {
@@ -71,6 +73,7 @@ struct ProofPDFView: NSViewRepresentable {
     func makeNSView(context:Context) -> FittingPDFView {
         let view=FittingPDFView()
         view.autoScales=false;view.displayMode = .singlePageContinuous;view.displaysPageBreaks=true
+        view.onSourceClick={ [weak session] point,page in session?.locatePDFSource(at:point,page:page) }
         view.setAccessibilityLabel(L10n.text("PDF compuesto por el motor LaTeX"))
         NotificationCenter.default.addObserver(context.coordinator,selector:#selector(Coordinator.pageChanged(_:)),name:.PDFViewPageChanged,object:view)
         return view
@@ -78,7 +81,19 @@ struct ProofPDFView: NSViewRepresentable {
     func updateNSView(_ view:FittingPDFView,context:Context) {
         context.coordinator.updating=true
         defer {context.coordinator.updating=false}
-        if view.document?.documentURL != url {view.document=PDFDocument(url:url);view.revealPageAfterLayout=true}
+        if view.document?.documentURL != url {
+            let previous=view.currentDestination
+            if view.representedDocumentID==session.document?.id,let document=view.document,let destination=previous,let page=destination.page {
+                view.preservedViewport=(document.index(for:page),destination.point)
+            }
+            view.document=PDFDocument(url:url);view.representedDocumentID=session.document?.id
+            view.highlightedSelections=[];view.lastNavigationID=nil;view.revealPageAfterLayout=true
+        }
+        if let request=session.pdfNavigation,request.pdf==url,request.id != view.lastNavigationID {
+            view.lastNavigationID=request.id;view.pendingLocation=request.location
+        } else if session.pdfNavigation==nil,view.lastNavigationID != nil {
+            view.lastNavigationID=nil;view.highlightedSelections=[]
+        }
         if let document=view.document,let page=document.page(at:session.proofPage),view.currentPage != page {view.go(to:page)}
         view.fitsPage=session.proofZoom==nil
         if let zoom=session.proofZoom,abs(view.scaleFactor-zoom)>0.001 {view.scaleFactor=zoom}
@@ -100,6 +115,27 @@ struct ProofPDFView: NSViewRepresentable {
 final class FittingPDFView:PDFView {
     var fitsPage=true
     var revealPageAfterLayout=false
+    var representedDocumentID:UUID?
+    var lastNavigationID:UUID?
+    var pendingLocation:PDFSourceLocation?
+    var preservedViewport:(page:Int,point:NSPoint)?
+    var onSourceClick:((CGPoint,Int)->Void)?
+    static func pageRect(_ rectangle:CGRect,mediaBounds:CGRect)->CGRect {
+        CGRect(x:mediaBounds.minX+rectangle.minX,y:mediaBounds.maxY-rectangle.maxY,width:rectangle.width,height:rectangle.height)
+    }
+    override func hitTest(_ point:NSPoint)->NSView? {
+        guard let hit=super.hitTest(point) else{return nil}
+        if NSApp.currentEvent?.type == .leftMouseDown,NSApp.currentEvent?.modifierFlags.contains(.command)==true {return self}
+        return hit
+    }
+    override func mouseDown(with event:NSEvent) {
+        if event.modifierFlags.contains(.command),let document,let page=page(for:convert(event.locationInWindow,from:nil),nearest:false) {
+            let point=convert(convert(event.locationInWindow,from:nil),to:page),media=page.bounds(for:.mediaBox)
+            onSourceClick?(CGPoint(x:point.x-media.minX,y:media.maxY-point.y),document.index(for:page))
+            return
+        }
+        super.mouseDown(with:event)
+    }
     override func layout() {
         super.layout()
         guard let page=currentPage ?? document?.page(at:0),bounds.width>24,bounds.height>24 else{return}
@@ -108,7 +144,18 @@ final class FittingPDFView:PDFView {
             let scale=min((bounds.width-20)/max(1,pageSize.width),(bounds.height-20)/max(1,pageSize.height))
             if abs(scaleFactor-scale)>0.001 {scaleFactor=scale}
         }
-        if revealPageAfterLayout {
+        if let location=pendingLocation,let target=document?.page(at:location.page) {
+            pendingLocation=nil;preservedViewport=nil;revealPageAfterLayout=false
+            let rectangle=Self.pageRect(location.bounds,mediaBounds:target.bounds(for:.mediaBox))
+            if let selection=target.selection(for:rectangle.insetBy(dx:0,dy:-1)) {
+                selection.color=NSColor.selectedTextBackgroundColor.withAlphaComponent(0.4)
+                highlightedSelections=[selection]
+            }
+            go(to:rectangle.insetBy(dx:-6,dy:-6),on:target)
+        } else if let previous=preservedViewport,let document,let target=document.page(at:min(previous.page,max(0,document.pageCount-1))) {
+            preservedViewport=nil;revealPageAfterLayout=false
+            go(to:PDFDestination(page:target,at:previous.point))
+        } else if revealPageAfterLayout {
             revealPageAfterLayout=false
             let rectangle=page.bounds(for:displayBox)
             go(to:PDFDestination(page:page,at:NSPoint(x:rectangle.minX,y:rectangle.maxY)))

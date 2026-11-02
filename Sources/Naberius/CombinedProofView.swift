@@ -9,6 +9,7 @@ struct CombinedProofView:View {
                 Text(L10n.text("PDF LaTeX")).font(.headline)
                 Spacer()
                 Toggle(L10n.text("Automático"),isOn:Binding(get:{session.automaticPreview},set:{session.setAutomaticPreview($0)})).toggleStyle(.switch).controlSize(.mini).fixedSize()
+                PDFSynchronizationButton(session:session)
                 Button {session.compile(presentProof:false)} label:{Image(systemName:"arrow.clockwise")}.help(L10n.text("Actualizar PDF · ⇧⌘R")).disabled(session.compiling)
                 Button {session.setEditorMode(.pdf)} label:{Image(systemName:"arrow.up.left.and.arrow.down.right")}.help(L10n.text("Ampliar PDF"))
             }.padding(12)
@@ -21,7 +22,10 @@ struct CombinedProofView:View {
                 if session.previewIssue != nil {Button(L10n.text("Detalles")){session.sheet = .diagnostic}}
             }.font(.caption).foregroundStyle(.secondary).padding(.horizontal,12).padding(.bottom,10)
             Divider()
-            if let url=session.previewURL {ProofPDFView(url:url,session:session)}
+            if let url=session.previewURL {
+                PDFSynchronizationHint(session:session)
+                ProofPDFView(url:url,session:session)
+            }
             else {
                 VStack(spacing:12) {
                     Image(systemName:"doc.richtext").font(.largeTitle).foregroundStyle(.secondary)

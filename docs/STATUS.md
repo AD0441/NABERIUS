@@ -1,4 +1,4 @@
-# Estado de requisitos — 0.6.0
+# Estado de requisitos — 0.7.0
 
 Esta matriz usa «implementado» para la capacidad presente y «parcial / pendiente» cuando no cubre todavía el alcance completo. TESTING.md contiene la evidencia ejecutada; implementado no significa auditado en todas sus variantes. P1/P2 se conservan como hoja de ruta, salvo funciones básicas que se hayan incorporado. La revisión 0.2.0 y su evidencia están en TYPESETTING.md; las capturas/ensayos acotados no sustituyen la auditoría completa con VoiceOver.
 
@@ -27,7 +27,7 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | ED-02 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | ED-03 | P0 | Implementado: páginas orientativas según papel y navegación; PDF con navegación de páginas finales y zoom propio. |
 | ED-04 | P0 | Implementado; consultar evidencia en TESTING.md. |
-| ED-05 | P0 | Implementado; consultar evidencia en TESTING.md. |
+| ED-05 | P0 | Implementado: conservación de selección/cursor entre vistas y posición geométrica del PDF al recomponer; SyncTeX permite localizar el párrafo en ambos sentidos. Alcance en SYNCTEX.md. |
 | ED-06 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | ED-07 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | ED-08 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -149,7 +149,7 @@ Esta matriz usa «implementado» para la capacidad presente y «parcial / pendie
 | EXP-04 | P1 | Pendiente / alcance posterior. |
 | EXP-05 | P1 | Pendiente / alcance posterior. |
 | EXP-06 | P2 | Pendiente / alcance posterior. |
-| EXP-07 | P0 | Implementado; consultar evidencia en TESTING.md. |
+| EXP-07 | P0 | Implementado: PDF bajo demanda o tras una pausa, composición fuera de la escritura y cancelable; SyncTeX añade navegación por párrafo sin compilar por cada tecla. |
 | EXP-08 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | EXP-09 | P0 | Implementado; consultar evidencia en TESTING.md. |
 | EXP-10 | P0 | Implementado; consultar evidencia en TESTING.md. |
@@ -204,3 +204,7 @@ Prueba nativa de 0.5.0: las tres vistas, apariencia clara/oscura, importación d
 ## Lote 0.6.0 — citas, rangos y listas
 
 Las citas narrativas usan las formas de nombre de citeproc-js y aplican todas las revisiones de desambiguación. Los rangos TSV se pegan en la celda activa, amplían la tabla dentro de 200 filas/30 columnas y se deshacen como una transacción. Las listas de figuras y tablas tienen nodos propios, vista derivada en el editor y comandos LaTeX con referencias de página; las continuaciones de tablas extensas no duplican entradas. La reapertura y recuperación conservan schema 4 y UUID. La revisión de requisitos de 0.5.0 se conserva como diagnóstico histórico; no se han adoptado sus otras dependencias candidatas.
+
+## Lote 0.7.0 — navegación SyncTeX
+
+Se conecta el párrafo seleccionado con la posición del PDF y se vuelve al editor mediante ⌘-clic. Cada composición tiene su mapa de UUID independiente. Las consultas atrasadas y los PDF desactualizados no cambian la selección. Se conserva la posición geométrica del visor al recomponer el mismo documento. El lector oficial MIT se integra de forma nativa; no se incorpora un servicio remoto. El alcance y las regiones sin destino están documentados en SYNCTEX.md.

@@ -44,6 +44,7 @@
 "Académico" = "Académico";
 "Aceptar" = "Aceptar";
 "Acerca de Naberius" = "Acerca de Naberius";
+"Actualiza el PDF para sincronizarlo con los cambios del documento." = "Actualiza el PDF para sincronizarlo con los cambios del documento.";
 "Actualiza para ver los cambios." = "Actualiza para ver los cambios.";
 "Actualizar PDF" = "Actualizar PDF";
 "Actualizar PDF tras una pausa" = "Actualizar PDF tras una pausa";
@@ -403,6 +404,9 @@
 "Lista numerada" = "Lista numerada";
 "Listas" = "Listas";
 "Listo" = "Listo";
+"Localizando párrafo…" = "Localizando párrafo…";
+"Localizar selección del editor en el PDF · ⌥⌘J" = "Localizar selección del editor en el PDF · ⌥⌘J";
+"Localizar selección en el PDF" = "Localizar selección en el PDF";
 "Localizar…" = "Localizar…";
 "Los campos adicionales se conservan en .nab y CSL-JSON. BibTeX conserva los campos originales de entradas BibTeX/BibLaTeX; al exportar otros formatos se usan los campos del formulario." = "Los campos adicionales se conservan en .nab y CSL-JSON. BibTeX conserva los campos originales de entradas BibTeX/BibLaTeX; al exportar otros formatos se usan los campos del formulario.";
 "Los campos editoriales se solapan o no coinciden con la plantilla." = "Los campos editoriales se solapan o no coinciden con la plantilla.";
@@ -433,6 +437,7 @@
 "No compatible" = "No compatible";
 "No compatible: contiene instrucciones que requieren acceso o ejecución no admitidos: " = "No compatible: contiene instrucciones que requieren acceso o ejecución no admitidos: ";
 "No está disponible la clase %@. Añade sus archivos desde Configuración → Plantillas → Añadir recursos, o crea una variante libre. El documento y el paquete se conservan." = "No está disponible la clase %@. Añade sus archivos desde Configuración → Plantillas → Añadir recursos, o crea una variante libre. El documento y el paquete se conservan.";
+"No hay un párrafo editable asociado a esta posición. Prueba con texto del cuerpo del documento." = "No hay un párrafo editable asociado a esta posición. Prueba con texto del cuerpo del documento.";
 "No hay un registro de composición disponible." = "No hay un registro de composición disponible.";
 "No se encontraron registros RIS completos (TY / ER)." = "No se encontraron registros RIS completos (TY / ER).";
 "No se encontraron registros bibliográficos." = "No se encontraron registros bibliográficos.";
@@ -440,6 +445,7 @@
 "No se encontró el motor o estilo bibliográfico." = "No se encontró el motor o estilo bibliográfico.";
 "No se encontró la entrada heredada: " = "No se encontró la entrada heredada: ";
 "No se encontró la forma narrativa del estilo bibliográfico." = "No se encontró la forma narrativa del estilo bibliográfico.";
+"No se pudieron leer los datos de sincronización de este PDF. Vuelve a componerlo." = "No se pudieron leer los datos de sincronización de este PDF. Vuelve a componerlo.";
 "No se pudo actualizar" = "No se pudo actualizar";
 "No se pudo aislar el compilador de la plantilla. El paquete se conserva sin ejecutar." = "No se pudo aislar el compilador de la plantilla. El paquete se conserva sin ejecutar.";
 "No se pudo completar la operación" = "No se pudo completar la operación";
@@ -516,6 +522,8 @@
 "Páginas" = "Páginas";
 "Páginas / continuo" = "Páginas / continuo";
 "Párrafo" = "Párrafo";
+"Párrafo localizado en el PDF." = "Párrafo localizado en el PDF.";
+"Párrafo localizado en el editor." = "Párrafo localizado en el editor.";
 "Quitar" = "Quitar";
 "Quitar columna" = "Quitar columna";
 "Quitar fila" = "Quitar fila";
@@ -561,6 +569,7 @@
 "Selecciona .tex, .cls, .sty o .zip UTF-8." = "Selecciona .tex, .cls, .sty o .zip UTF-8.";
 "Selecciona la carpeta donde crear el proyecto LaTeX." = "Selecciona la carpeta donde crear el proyecto LaTeX.";
 "Selecciona un ZIP de recursos o los archivos de clase, estilo y bibliografía que faltan. El documento principal se conserva." = "Selecciona un ZIP de recursos o los archivos de clase, estilo y bibliografía que faltan. El documento principal se conserva.";
+"Selecciona un párrafo en el editor para localizarlo en el PDF." = "Selecciona un párrafo en el editor para localizarlo en el PDF.";
 "Selecciona una plantilla para previsualizarla y administrarla." = "Selecciona una plantilla para previsualizarla y administrarla.";
 "Seleccionar motor…" = "Seleccionar motor…";
 "Seleccionar objeto en el texto" = "Seleccionar objeto en el texto";
@@ -642,6 +651,7 @@
 "Viñetas" = "Viñetas";
 "Volumen" = "Volumen";
 "Volver al documento" = "Volver al documento";
+"Vuelve a componer el PDF para generar su mapa de sincronización." = "Vuelve a componer el PDF para generar su mapa de sincronización.";
 "ZIP cifrado, compresión no admitida o archivo mayor de 12 MB." = "ZIP cifrado, compresión no admitida o archivo mayor de 12 MB.";
 "ZIP configurado como plantilla predeterminada. Crea un documento y usa PDF LaTeX para comprobar la composición." = "ZIP configurado como plantilla predeterminada. Crea un documento y usa PDF LaTeX para comprobar la composición.";
 "Zoom del PDF" = "Zoom del PDF";
@@ -660,4 +670,5 @@
 "− Columna" = "− Columna";
 "− Fila" = "− Fila";
 "√" = "√";
+"⌘-clic en el PDF: mostrar el párrafo en el editor." = "⌘-clic en el PDF: mostrar el párrafo en el editor.";
 "⚠ Destino no encontrado" = "⚠ Destino no encontrado";

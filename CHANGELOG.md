@@ -1,5 +1,13 @@
 # Cambios
 
+## 0.7.0 — 2026-11-02
+
+- Navegación SyncTeX entre el editor y el PDF real: ⌥⌘J o botón para localizar el párrafo; ⌘-clic en el PDF para volver al editor, también desde el modo PDF.
+- Mapa por composición ligado a UUID, revisión y PDF; se bloquean saltos con una prueba desactualizada y se descartan consultas atrasadas.
+- Resaltado del destino y conservación de la página/posición del visor al recomponer el mismo documento.
+- Lector oficial SyncTeX 1.31 integrado con licencia MIT, sin ejecutable externo ni cambios del locale global. Consultas fuera del actor principal.
+- El formato .nab conserva sus esquemas existentes; la información de sincronización es temporal.
+
 ## 0.6.0 — 2026-11-01
 
 - Citas narrativas calculadas por CSL: autores múltiples, instituciones, títulos sin autor y desambiguación que actualiza citas anteriores. APA distingue conjunción narrativa y ampersand parentético; los grupos narrativos conservan cada fuente.

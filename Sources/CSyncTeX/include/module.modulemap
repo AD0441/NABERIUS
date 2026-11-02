@@ -1,0 +1,4 @@
+module CSyncTeX {
+    header "CSyncTeX.h"
+    export *
+}

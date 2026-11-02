@@ -36,7 +36,10 @@ public enum LaTeX {
         return ["\\usepackage{fontspec}", "\\setmainfont{\(DocumentTypography.safeFont(font))}"]
     }
     public static func source(_ d: NabDocument, citations: CitationOutput = CitationOutput()) -> String {
-        if let package=d.template.package {return package.source(d,citations:citations)}
+        renderedSource(d,citations:citations,blockOutput:nil)
+    }
+    static func renderedSource(_ d:NabDocument,citations:CitationOutput,blockOutput:((Block,String)->String)?)->String {
+        if let package=d.template.package {return package.renderedSource(d,citations:citations,blockOutput:blockOutput)}
         let t = d.template, m = d.metadata, layout = t.effectiveLayout
         let kind = layout.documentClass
         let paper = ["letterpaper", "legalpaper"].contains(t.paper) ? t.paper : "a4paper"
@@ -69,7 +72,7 @@ public enum LaTeX {
             else { lines += [kind.hasChapters ? "\\chapter*{\(spanish ? "Resumen" : "Abstract")}" : "{\\large\\bfseries \(spanish ? "Resumen" : "Abstract")\\par}", bodyText(m.abstract)] }
         }
         lines.append("\\fontsize{\(t.fontSize)}{\(t.fontSize*1.2)}\\selectfont")
-        lines.append(body(d,citations:citations))
+        lines.append(body(d,citations:citations,blockOutput:blockOutput))
         if m.bibliography && !citations.bibliography.isEmpty {
             lines.append(kind.hasChapters ? "\\chapter*{Referencias}" : (kind == .letter ? "{\\large\\bfseries Referencias\\par}" : "\\section*{Referencias}"))
             lines += citations.bibliography.map { "\\noindent \(bodyText($0))\\par\\medskip" }
@@ -78,7 +81,7 @@ public enum LaTeX {
         lines.append("\\end{document}")
         return lines.joined(separator: "\n")
     }
-    static func body(_ d:NabDocument,citations:CitationOutput,omitTitle:Bool=false)->String {
+    static func body(_ d:NabDocument,citations:CitationOutput,omitTitle:Bool=false,blockOutput:((Block,String)->String)?=nil)->String {
         let kind=d.template.effectiveLayout.documentClass
         var lines:[String]=[]
         var activeList: String?
@@ -121,7 +124,7 @@ public enum LaTeX {
                 default: text
                 }
             }
-            lines.append(rendered+"\n")
+            lines.append((blockOutput?(block,rendered) ?? rendered)+"\n")
         }
         if let activeList { lines.append("\\end{\(activeList)}") }
         return lines.joined(separator:"\n")
@@ -230,6 +233,9 @@ public enum LaTeX {
         }
     }
     @discardableResult public static func writeProject(_ d: NabDocument, at url: URL) throws -> URL {
+        try writeProject(d,at:url,synchronized:false).main
+    }
+    static func writeProject(_ d:NabDocument,at url:URL,synchronized:Bool)throws->(main:URL,sources:[UUID:URL]) {
         try NabArchive.validate(d)
         let fm = FileManager.default; try fm.createDirectory(at:url,withIntermediateDirectories:true)
         let main=try d.template.package?.materialize(at:url) ?? url.appendingPathComponent("main.tex")
@@ -237,7 +243,24 @@ public enum LaTeX {
         let assets = working.appendingPathComponent("assets"); try fm.createDirectory(at:assets,withIntermediateDirectories:true)
         if d.template.package==nil {try writeFonts(at:working)}
         let cites = try Bibliography.render(d)
-        try source(d,citations:cites).write(to:main,atomically:true,encoding:.utf8)
+        var blocks:[UUID:String]=[:]
+        let folder="naberius-source-"+UUID().uuidString
+        let blockOutput:((Block,String)->String)?=synchronized ? {block,content in
+            blocks[block.id]=content
+            return "\\input{\(folder)/\(block.id.uuidString).tex}"
+        } : nil
+        let generated=renderedSource(d,citations:cites,blockOutput:blockOutput)
+        var sources:[UUID:URL]=[:]
+        if synchronized {
+            let directory=working.appendingPathComponent(folder)
+            try fm.createDirectory(at:directory,withIntermediateDirectories:true)
+            for (id,content) in blocks {
+                let file=directory.appendingPathComponent(id.uuidString+".tex")
+                try (content+"\n\n").write(to:file,atomically:true,encoding:.utf8)
+                sources[id]=file
+            }
+        }
+        try generated.write(to:main,atomically:true,encoding:.utf8)
         try Bibliography.cslJSON(d.references).write(to:url.appendingPathComponent("references.json"),options:.atomic)
         try Bibliography.bibTeX(d.references).write(to:url.appendingPathComponent("references.bib"),atomically:true,encoding:.utf8)
         if let package=d.template.package {try package.bibliography(d.references).write(to:working.appendingPathComponent("naberius-references.bib"),atomically:true,encoding:.utf8)}
@@ -257,7 +280,7 @@ public enum LaTeX {
             """
         } else {instructions="Compilar main.tex con XeLaTeX o Tectonic. Citas y bibliografía se resuelven con CSL antes de exportar. No se requiere shell-escape.\n"}
         try instructions.write(to:url.appendingPathComponent("README.txt"),atomically:true,encoding:.utf8)
-        return main
+        return (main,sources)
     }
 }
 
@@ -273,6 +296,7 @@ public struct Compilation: Sendable {
     public let engine: URL
     public let completedAt: Date
     public let elapsed: TimeInterval
+    public var synchronization:PDFSynchronization?=nil
 }
 public enum Composer {
     public static func detectedEngine(custom: String = "") -> URL? {
@@ -283,9 +307,12 @@ public enum Composer {
         try Task.checkCancellation()
         let work = FileManager.default.temporaryDirectory.appendingPathComponent("Naberius-"+UUID().uuidString)
         do {
-            let main=try LaTeX.writeProject(d,at:work)
+            let project=try LaTeX.writeProject(d,at:work,synchronized:true)
+            let main=project.main
             if let package=d.template.package,package.plan.requiredEngine != "tectonic" || package.plan.bibliographyBackend=="biber" {throw NabError.invalid(L10n.text("El paquete requiere LuaLaTeX o Biber, que no están disponibles con este motor. Sus archivos y configuración se conservan."))}
-            return try await run(engine:engine,work:main.deletingLastPathComponent(),allowNetwork:allowNetwork,isolationRoot:d.template.package==nil ? nil : work)
+            var result=try await run(engine:engine,work:main.deletingLastPathComponent(),allowNetwork:allowNetwork,isolationRoot:d.template.package==nil ? nil : work,synchronized:true)
+            result.synchronization=PDFSynchronization(documentID:d.id,pdf:result.pdf,sources:project.sources)
+            return result
         } catch {try? FileManager.default.removeItem(at:work);throw error}
     }
     @concurrent public static func discard(_ result:Compilation)async {
@@ -313,14 +340,14 @@ public enum Composer {
         let missingCache=log.lowercased().contains("not in cache") || log.contains("only-cached") || (!allowNetwork && (log.contains("not loadable: Metric") || log.contains("not found") && log.contains("LaTeX Error: File")))
         return missingCache ? L10n.text("Faltan paquetes o fuentes de LaTeX en la caché local. Prepáralos desde Configuración → Composición con «Componer y permitir descarga de paquetes». Puedes seguir escribiendo y guardando.") : L10n.text("LaTeX no pudo componer este PDF. Puedes seguir escribiendo y guardando; revisa los detalles de composición.")
     }
-    @concurrent private static func run(engine: URL, work: URL, allowNetwork: Bool,isolationRoot:URL?=nil) async throws -> Compilation {
+    @concurrent private static func run(engine: URL, work: URL, allowNetwork: Bool,isolationRoot:URL?=nil,synchronized:Bool=false) async throws -> Compilation {
         try Task.checkCancellation()
         let started = Date()
         let logURL = work.appendingPathComponent("composition.log")
         FileManager.default.createFile(atPath:logURL.path,contents:nil)
         let handle = try FileHandle(forWritingTo:logURL); defer { try? handle.close() }
         let p = Process(); p.executableURL = engine; p.currentDirectoryURL = work
-        p.arguments = ["-X","compile","--untrusted","--keep-logs","--outdir",work.path] + (allowNetwork ? [] : ["--only-cached"]) + [work.appendingPathComponent("main.tex").path]
+        p.arguments = ["-X","compile","--untrusted","--keep-logs","--outdir",work.path] + (synchronized ? ["--synctex"] : []) + (allowNetwork ? [] : ["--only-cached"]) + [work.appendingPathComponent("main.tex").path]
         if let isolationRoot {
             guard FileManager.default.isExecutableFile(atPath:"/usr/bin/sandbox-exec") else {throw NabError.invalid(L10n.text("No se pudo aislar el compilador de la plantilla. El paquete se conserva sin ejecutar."))}
             p.executableURL=URL(fileURLWithPath:"/usr/bin/sandbox-exec")
